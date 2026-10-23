@@ -2038,105 +2038,129 @@ html, body {
 }
 .avc-edit-btn:active { background: rgba(255,255,255,.25); }
 
-/* ── HYBRID ACCESSORIES ── */
-/* SwimTrack – Hybrides Accessoire-System CSS */
+/* ── SVG AVATAR V2 ── */
+/* SwimTrack – SVG Avatar v2 + Accessoire-Illustrationen */
 
-/* ── PATH OVERVIEW ── */
-.hybrid-overview {
-  background: var(--card);
-  border-radius: 16px;
-  padding: 14px 16px;
-  margin-bottom: 14px;
-  box-shadow: var(--sh);
-  border: 1px solid var(--borderL);
+/* ── SVG ACCESSOIRE CARDS ── */
+.acc-card-v2.svg-card {
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
 }
-.hybrid-path-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid var(--borderL);
+.acc-card-v2.svg-card:active { transform: scale(.95); }
+.acc-card-v2.svg-card.unlocked:hover {
+  box-shadow: 0 6px 20px rgba(255,167,38,.25);
 }
-.hybrid-path-stat {
+
+.acc-svg-preview {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  padding: 8px 4px 4px;
+  min-height: 72px;
 }
-.hps-icon { font-size: 1rem; flex-shrink: 0; width: 20px; text-align: center; }
-.hps-info { flex: 1; }
-.hps-label { font-size: .72rem; font-weight: 600; color: var(--t2); margin-bottom: 3px; }
-.hps-prog-wrap {
-  height: 5px;
-  background: var(--subtle);
-  border-radius: 999px;
-  overflow: hidden;
+.acc-svg-preview svg {
+  width: 64px !important;
+  height: 64px !important;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.12));
 }
-.hps-prog-fill {
-  height: 100%;
-  border-radius: 999px;
-  transition: width .6s ease;
-}
-.hps-count {
-  font-size: .72rem;
-  font-weight: 700;
-  color: var(--tm);
-  min-width: 32px;
-  text-align: right;
-}
+.acc-card-v2.locked .acc-svg-preview { filter: grayscale(.8); opacity: .6; }
 
-/* ── EARLY REWARD BADGE ── */
-.acc-card-v2 .early-badge {
-  position: absolute;
-  top: 4px; left: 4px;
-  font-size: .55rem;
-  font-weight: 800;
-  color: var(--g5);
-  background: var(--g1);
-  padding: 1px 5px;
-  border-radius: 999px;
-}
-
-/* ── PATH LABEL IN CARD ── */
-.acc-card-cat-label {
-  font-size: .6rem !important;
-  font-weight: 700 !important;
-  text-transform: uppercase;
-  letter-spacing: .3px;
-}
-
-/* ── SLOT SECTION IMPROVEMENTS ── */
-.avc-slot-section {
-  margin-bottom: 22px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--borderL);
-}
-.avc-slot-section:last-of-type { border-bottom: none; }
-
-/* ── PATH EXPLANATION CARD ── */
-.hybrid-path-explain {
-  background: var(--subtle);
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin-bottom: 16px;
+/* ── ACCESSOIRE DETAIL MODAL ── */
+.mad-content {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 14px;
 }
-.hpe-item {
+.mad-top {
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
 }
-.hpe-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
-.hpe-text { flex: 1; }
-.hpe-title { font-size: .78rem; font-weight: 700; color: var(--t1); }
-.hpe-desc  { font-size: .7rem; color: var(--tm); margin-top: 1px; line-height: 1.4; }
+.mad-avatar-wrap {
+  flex-shrink: 0;
+  width: 120px; height: 120px;
+  border-radius: 16px;
+  background: var(--subtle);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.mad-avatar-wrap svg { width: 120px !important; height: 120px !important; }
+.mad-item-info { flex: 1; }
+.mad-item-svg-wrap {
+  width: 64px; height: 64px;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,.15));
+}
+.mad-item-svg-wrap svg { width: 64px !important; height: 64px !important; }
+.mad-name {
+  font-size: 1rem; font-weight: 800; color: var(--t1); margin-bottom: 3px;
+}
+.mad-path {
+  font-size: .72rem; font-weight: 700; margin-bottom: 6px;
+}
+.mad-story {
+  font-size: .83rem; color: var(--t2); line-height: 1.6;
+  font-style: italic; text-align: center;
+  padding: 10px 14px;
+  background: var(--subtle);
+  border-radius: 12px;
+  border-left: 3px solid var(--b1);
+  width: 100%;
+}
+
+/* ── AVATAR CARD: SVG preview ── */
+.avc-preview-avatar svg {
+  width: 180px !important;
+  height: 180px !important;
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,.25));
+}
+
+/* ── AVATAR INTERACTIVE CARD: SVG ── */
+.aic-avatar-wrap svg {
+  filter: drop-shadow(0 4px 12px rgba(0,68,255,.2));
+}
+
+/* ── HEADER AVATAR: SVG ── */
+.havatar svg {
+  width: 36px !important;
+  height: 36px !important;
+}
+
+/* ── AVATAR CUSTOMIZER: SVG items ── */
+.avc-item .acc-svg-mini {
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+}
+.avc-item .acc-svg-mini svg { width: 44px !important; height: 44px !important; }
+
+/* ── PAGE AVATAR STRIP: SVG ── */
+.pas-svg svg {
+  width: 48px !important;
+  height: 48px !important;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.1));
+}
+
+/* ── ERFOLGE: Level hero SVG ── */
+.avatar-big-svg svg {
+  width: 120px !important;
+  height: 120px !important;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,.3));
+}
+
+/* ── ANIMATIONS ── */
+@keyframes svgFloat {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+.acc-svg-preview svg { animation: svgFloat 3s ease infinite; }
+.acc-card-v2.locked .acc-svg-preview svg { animation: none; }
 
 /* ── RESPONSIVE ── */
 @media(min-width:400px) {
-  .hybrid-path-stats { flex-direction: row; flex-wrap: wrap; gap: 6px; }
-  .hybrid-path-stat  { flex: 1; min-width: 140px; }
+  .acc-svg-preview svg { width: 72px !important; height: 72px !important; }
+  .acc-svg-preview { min-height: 80px; }
 }
 </style>
 </head>
@@ -7056,332 +7080,585 @@ window.nav = function(page) {
 // Make avatar card "Gestalten" button work
 window.openAvatarCustomizer = function() { nav('avatar-custom'); };
 </script>
+
+<!-- ACCESSOIRE DETAIL MODAL -->
+<div id="macc-detail" class="moverlay hidden">
+  <div class="msheet">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="font-size:1rem">Accessoire</h3>
+      <button class="btnsm" onclick="closeM('macc-detail')">✕</button>
+    </div>
+    <div class="mad-content">
+      <div class="mad-top">
+        <div class="mad-avatar-wrap" id="mad-avatar"></div>
+        <div class="mad-item-info">
+          <div class="mad-item-svg-wrap" id="mad-item-svg"></div>
+          <div class="mad-name" id="mad-name">Accessoire</div>
+          <div class="mad-path" id="mad-path">Pfad</div>
+        </div>
+      </div>
+      <div class="mad-story" id="mad-story">Geschichte</div>
+      <button class="btn full" id="mad-equip-btn">Ausrüsten</button>
+      <button class="btn2 full" onclick="closeM('macc-detail')">Schließen</button>
+    </div>
+  </div>
+</div>
+
 <script>
-/* SwimTrack – Hybrides Accessoire-System
-   Zwei Pfade: Dokumentation (inklusiv) + Wettkampf (leistungsorientiert)
-   Prinzip: PB statt Podium · Frühe Belohnungen · Bedeutungsvolle Highlights
+/* SwimTrack – SVG Avatar v2
+   Vollständiger Avatar mit Accessoires direkt am Körper
+   Detaillierte SVG-Illustrationen für alle Items
    ================================================================ */
 'use strict';
 
-// ── PFAD-DEFINITIONEN ─────────────────────────────────────────────────────────
-const PATHS = {
-  doku:      { key:'doku',      label:'Dokumentations-Pfad', icon:'📋', color:'#2980B9',
-               desc:'Für alle – durch Kontinuität, Reflexion und Einsatz' },
-  wettkampf: { key:'wettkampf', label:'Wettkampf-Pfad',      icon:'🏆', color:'#E67E22',
-               desc:'Für Wettkämpferinnen – durch persönliche Verbesserung' },
-  heimuebung:{ key:'heimuebung',label:'Heimübungs-Pfad',     icon:'🤸', color:'#27AE60',
-               desc:'Für alle – durch Training zuhause' },
-  geheim:    { key:'geheim',    label:'Geheim',               icon:'🔮', color:'#8E44AD',
-               desc:'Besondere Leistungen – für alle erreichbar' }
+// ── FARB-PALETTEN PRO ACCESSOIRE ──────────────────────────────────────────────
+const ACC_COLORS = {
+  // Kappen
+  cap_starter:  { main:'#4A90D9', shine:'#7AB8F5', shadow:'#2C5F8A', stripe:null },
+  cap_club:     { main:'#1A5276', shine:'#2E86C1', shadow:'#0D2B3E', stripe:'#FFD700' },
+  cap_think:    { main:'#8E44AD', shine:'#BB8FCE', shadow:'#5B2C6F', stripe:'#E8DAEF' },
+  cap_glitter:  { main:'#FFD700', shine:'#FFF176', shadow:'#F9A825', stripe:'#FFF9C4' },
+  cap_race:     { main:'#E74C3C', shine:'#F1948A', shadow:'#922B21', stripe:'#FADBD8' },
+  cap_fire:     { main:'#E74C3C', shine:'#FF8C00', shadow:'#922B21', stripe:'#FF6B00' },
+  cap_gold:     { main:'#FFD700', shine:'#FFECB3', shadow:'#F57F17', stripe:'#FFF9C4' },
+  // Brillen
+  goggle_starter:{ frame:'#2C3E50', lens:'rgba(100,180,255,0.5)', strap:'#1A252F' },
+  goggle_tech:   { frame:'#2980B9', lens:'rgba(100,200,255,0.5)', strap:'#1A5276' },
+  goggle_wisdom: { frame:'#6C3483', lens:'rgba(180,100,255,0.4)', strap:'#4A235A' },
+  goggle_race:   { frame:'#E74C3C', lens:'rgba(255,100,100,0.4)', strap:'#922B21' },
+  goggle_shark:  { frame:'#1A5276', lens:'rgba(0,100,180,0.5)',   strap:'#0D2B3E' },
+  goggle_gold:   { frame:'#FFD700', lens:'rgba(255,220,0,0.4)',   strap:'#F57F17' },
+  // Anzüge
+  suit_club:    { main:'#1A5276', stripe:'#FFD700', accent:'#2E86C1' },
+  suit_tech:    { main:'#1A6FA8', stripe:'#00C2E0', accent:'#0D3B6E' },
+  suit_home:    { main:'#8E44AD', stripe:'#BB8FCE', accent:'#5B2C6F' },
+  suit_rainbow: { main:'#E74C3C', stripe:'#FFD700', accent:'#27AE60' },
+  suit_race:    { main:'#0D3B6E', stripe:'#00C2E0', accent:'#1A5276' },
+  suit_star:    { main:'#1A1A2E', stripe:'#FFD700', accent:'#2C3E50' },
+  // Medaillen
+  medal_refl:   { main:'#8E44AD', ribbon:'#BB8FCE' },
+  medal_regen:  { main:'#27AE60', ribbon:'#82E0AA' },
+  medal_silver: { main:'#BDC3C7', ribbon:'#85929E' },
+  medal_gold:   { main:'#FFD700', ribbon:'#F39C12' },
+  medal_trophy: { main:'#FFD700', ribbon:'#E67E22' },
+  // Extras
+  extra_regen:  { main:'#27AE60', accent:'#82E0AA' },
+  extra_stretch:{ main:'#27AE60', accent:'#A9DFBF' },
+  extra_trainer:{ main:'#2980B9', accent:'#7FB3D3' },
+  extra_streak: { main:'#E74C3C', accent:'#F1948A' },
+  extra_aura:   { main:'#FFD700', accent:'#FFF176' }
 };
 
-// ── HYBRIDES ACCESSOIRE-SYSTEM ────────────────────────────────────────────────
-// Jedes Item hat: Pfad, Slot, Freischalt-Bedingung, Story, Enthüllungsschwelle
-const HYBRID_ACC = [
+// ── MASTER SVG AVATAR BUILDER ─────────────────────────────────────────────────
+function buildAvatarSVGv2(levelNum, customization, size = 200, animated = false) {
+  const W = size, H = size;
+  const cx = W / 2;
+  const s  = size / 200; // scale factor
 
-  // ════════════════════════════════════════════════════════
-  // 🧢 KAPPE – Zeigt Zugehörigkeit und Trainingsweg
-  // ════════════════════════════════════════════════════════
+  // Get selected accessories
+  const custom = customization || {};
+  const capKey    = custom.cap    || null;
+  const gogKey    = custom.goggle || null;
+  const suitKey   = custom.suit   || null;
+  const medalKey  = custom.medal  || null;
+  const extraKey  = custom.extra  || null;
 
-  // Pfad A: Dokumentation (früh, für alle)
-  {
-    key:'cap_starter', slot:'cap', path:'doku', secret:false, revealAt:0,
-    name:'Erste Trainingskappe', icon:'🧢', color:'#4A90D9',
-    story:'Deine erste eigene Kappe. Ab jetzt bist du keine Gästin mehr – du gehörst dazu.',
-    req:{ type:'entries', value:5 }, reqLabel:'5 Trainingseinheiten dokumentiert',
-    earlyReward: true
-  },
-  {
-    key:'cap_club', slot:'cap', path:'doku', secret:false, revealAt:0.6,
-    name:'Vereinskappe', icon:'🧢', color:'#1A5276',
-    story:'Eine vollständige Woche. Du bist nicht nur dabei – du bist Teil des Vereins.',
-    req:{ type:'weeks', value:1 }, reqLabel:'Erste vollständige Woche dokumentiert'
-  },
-  {
-    key:'cap_think', slot:'cap', path:'doku', secret:false, revealAt:0.7,
-    name:'Denkkappe', icon:'🧢', color:'#8E44AD',
-    story:'20 Reflexionen. Du schwimmst nicht nur – du denkst. Das macht den Unterschied.',
-    req:{ type:'reflEntries', value:20 }, reqLabel:'20 Einträge mit Reflexion'
-  },
-  {
-    key:'cap_glitter', slot:'cap', path:'doku', secret:true, revealAt:0.9,
-    name:'Glitzer-Kappe', icon:'✨', color:'#FFD700',
-    story:'100 Einheiten. Hundert Mal aufgestanden. Diese Kappe leuchtet wie dein Einsatz.',
-    req:{ type:'entries', value:100 }, reqLabel:'100 Trainingseinheiten dokumentiert'
-  },
+  const capC  = capKey    ? ACC_COLORS[capKey]    : null;
+  const gogC  = gogKey    ? ACC_COLORS[gogKey]    : null;
+  const suitC = suitKey   ? ACC_COLORS[suitKey]   : null;
+  const medC  = medalKey  ? ACC_COLORS[medalKey]  : null;
+  const extC  = extraKey  ? ACC_COLORS[extraKey]  : null;
 
-  // Pfad B: Wettkampf (leistungsorientiert, PB-basiert)
-  {
-    key:'cap_race', slot:'cap', path:'wettkampf', secret:false, revealAt:0.6,
-    name:'Wettkampfkappe', icon:'🧢', color:'#E74C3C',
-    story:'Drei Wettkämpfe. Du kennst das Kribbeln am Start. Diese Kappe ist für Wettkämpferinnen.',
-    req:{ type:'comps', value:3 }, reqLabel:'3 Wettkämpfe dokumentiert'
-  },
-  {
-    key:'cap_fire', slot:'cap', path:'wettkampf', secret:true, revealAt:0.88,
-    name:'Feuer-Kappe', icon:'🔥', color:'#C0392B',
-    story:'30 Tage Streak. Du brennst für diesen Sport. Diese Kappe leuchtet wie dein Wille.',
-    req:{ type:'streak', value:30 }, reqLabel:'30 Tage Streak'
-  },
-  {
-    key:'cap_gold', slot:'cap', path:'wettkampf', secret:true, revealAt:0.9,
-    name:'Goldkappe', icon:'🏆', color:'#FFD700',
-    story:'5 persönliche Bestzeiten. Du bist schneller als gestern – immer wieder. Gold verdient.',
-    req:{ type:'pbs', value:5 }, reqLabel:'5 persönliche Bestzeiten'
-  },
+  // Skin color
+  const skin = '#FDBCB4';
+  const hair = '#4A2C0A';
 
-  // ════════════════════════════════════════════════════════
-  // 🥽 BRILLE – Zeigt Fokus und Aufmerksamkeit
-  // ════════════════════════════════════════════════════════
+  // Suit color (default or custom)
+  const suitMain   = suitC ? suitC.main   : '#B0C4DE';
+  const suitStripe = suitC ? suitC.stripe : null;
+  const suitAccent = suitC ? suitC.accent : '#8FA8C8';
 
-  // Pfad A: Dokumentation
-  {
-    key:'goggle_starter', slot:'goggle', path:'doku', secret:false, revealAt:0,
-    name:'Trainingsbrille', icon:'🥽', color:'#2C3E50',
-    story:'3 Tage in Folge. Du hast eine Gewohnheit begonnen. Diese Brille gehört jetzt zu dir.',
-    req:{ type:'streak', value:3 }, reqLabel:'3 Tage Streak',
-    earlyReward: true
-  },
-  {
-    key:'goggle_tech', slot:'goggle', path:'doku', secret:false, revealAt:0.6,
-    name:'Technik-Brille', icon:'🥽', color:'#2980B9',
-    story:'5 Techniktrainings. Technik ist die Basis von allem. Diese Brille zeigt deinen Fokus.',
-    req:{ type:'techEntries', value:5 }, reqLabel:'5 Techniktrainings dokumentiert'
-  },
-  {
-    key:'goggle_wisdom', slot:'goggle', path:'doku', secret:true, revealAt:0.88,
-    name:'Weisheits-Brille', icon:'🔮', color:'#6C3483',
-    story:'50 Reflexionen. Du siehst das Training mit anderen Augen. Buchstäblich.',
-    req:{ type:'reflEntries', value:50 }, reqLabel:'50 Einträge mit Reflexion'
-  },
+  // Glow for champion
+  const isChampion = levelNum >= 10 || extraKey === 'extra_aura';
+  const hasGlow    = isChampion;
 
-  // Pfad B: Wettkampf
-  {
-    key:'goggle_race', slot:'goggle', path:'wettkampf', secret:false, revealAt:0.6,
-    name:'Rennbrille', icon:'🥽', color:'#E74C3C',
-    story:'Dein erster Wettkampf. Du kennst jetzt das Gefühl wenn der Startschuss fällt.',
-    req:{ type:'comps', value:1 }, reqLabel:'1 Wettkampf dokumentiert'
-  },
-  {
-    key:'goggle_shark', slot:'goggle', path:'wettkampf', secret:true, revealAt:0.85,
-    name:'Haifisch-Brille', icon:'🦈', color:'#1A5276',
-    story:'7 Tage Streak. Haie hören nie auf zu schwimmen. Du auch nicht.',
-    req:{ type:'streak', value:7 }, reqLabel:'7 Tage Streak'
-  },
-  {
-    key:'goggle_gold', slot:'goggle', path:'wettkampf', secret:true, revealAt:0.9,
-    name:'Goldbrille', icon:'🥽', color:'#FFD700',
-    story:'Level 8. Spitzenschwimmerin. Diese Brille sieht alles – auch die Details die andere übersehen.',
-    req:{ type:'level', value:8 }, reqLabel:'Level 8 erreicht'
-  },
+  // Animation
+  const swimAnim = animated
+    ? `<animateTransform attributeName="transform" type="translate" values="0,0;2,1;0,0;-2,1;0,0" dur="2.5s" repeatCount="indefinite"/>`
+    : '';
 
-  // ════════════════════════════════════════════════════════
-  // 👙 ANZUG – Zeigt Gesamtentwicklung
-  // ════════════════════════════════════════════════════════
+  // ── WATER ──
+  const water = `
+    <ellipse cx="${cx}" cy="${H*0.84}" rx="${W*0.46}" ry="${H*0.055}" fill="#0066FF" opacity="0.18"/>
+    <path d="M${W*0.06},${H*0.79} Q${W*0.2},${H*0.75} ${W*0.35},${H*0.79} Q${W*0.5},${H*0.83} ${W*0.65},${H*0.79} Q${W*0.8},${H*0.75} ${W*0.94},${H*0.79}"
+      stroke="#0066FF" stroke-width="${2.5*s}" fill="none" opacity="0.5" stroke-linecap="round"/>
+    <path d="M${W*0.06},${H*0.84} Q${W*0.2},${H*0.80} ${W*0.35},${H*0.84} Q${W*0.5},${H*0.88} ${W*0.65},${H*0.84} Q${W*0.8},${H*0.80} ${W*0.94},${H*0.84}"
+      stroke="#00C2E0" stroke-width="${1.8*s}" fill="none" opacity="0.4" stroke-linecap="round"/>
+  `;
 
-  // Pfad A: Dokumentation
-  {
-    key:'suit_club', slot:'suit', path:'doku', secret:false, revealAt:0.6,
-    name:'Vereinsbadeanzug', icon:'👙', color:'#1A5276',
-    story:'20 Einheiten. Du hast bewiesen dass du dabei bist. Der Vereinsanzug zeigt wo du hingehörst.',
-    req:{ type:'entries', value:20 }, reqLabel:'20 Trainingseinheiten dokumentiert'
-  },
-  {
-    key:'suit_tech', slot:'suit', path:'doku', secret:false, revealAt:0.7,
-    name:'Technik-Anzug', icon:'👙', color:'#1A6FA8',
-    story:'15 Technikeinheiten. Deine Bewegungen werden präziser. Sichtbar.',
-    req:{ type:'techEntries', value:15 }, reqLabel:'15 Techniktrainings dokumentiert'
-  },
-  {
-    key:'suit_home', slot:'suit', path:'heimuebung', secret:false, revealAt:0.7,
-    name:'Home-Hero-Anzug', icon:'🦸', color:'#8E44AD',
-    story:'50 Heimübungen. Du trainierst überall. Das macht dich zur Heldin deines eigenen Trainings.',
-    req:{ type:'heEntries', value:50 }, reqLabel:'50 Heimübungen absolviert'
-  },
-  {
-    key:'suit_rainbow', slot:'suit', path:'geheim', secret:true, revealAt:0.9,
-    name:'Regenbogen-Anzug', icon:'🌈', color:'#E74C3C',
-    story:'Alle 7 Trainingsarten. Dein Training ist so vielfältig wie dieser Anzug bunt ist.',
-    req:{ type:'allTypes', value:7 }, reqLabel:'Alle 7 Trainingsarten dokumentiert'
-  },
+  // ── BODY / SUIT ──
+  const body = `
+    <!-- Torso -->
+    <ellipse cx="${cx}" cy="${H*0.62}" rx="${W*0.17}" ry="${H*0.21}" fill="${suitMain}"/>
+    ${suitStripe ? `
+    <!-- Suit stripe -->
+    <path d="M${cx-W*0.04},${H*0.42} L${cx-W*0.04},${H*0.82} Q${cx},${H*0.84} ${cx+W*0.04},${H*0.82} L${cx+W*0.04},${H*0.42}"
+      fill="${suitStripe}" opacity="0.35"/>` : ''}
+    ${suitKey === 'suit_rainbow' ? `
+    <!-- Rainbow stripes -->
+    <path d="M${cx-W*0.17},${H*0.55} L${cx+W*0.17},${H*0.55}" stroke="#E74C3C" stroke-width="${4*s}" opacity="0.6"/>
+    <path d="M${cx-W*0.17},${H*0.60} L${cx+W*0.17},${H*0.60}" stroke="#FFD700" stroke-width="${4*s}" opacity="0.6"/>
+    <path d="M${cx-W*0.17},${H*0.65} L${cx+W*0.17},${H*0.65}" stroke="#27AE60" stroke-width="${4*s}" opacity="0.6"/>
+    <path d="M${cx-W*0.17},${H*0.70} L${cx+W*0.17},${H*0.70}" stroke="#2980B9" stroke-width="${4*s}" opacity="0.6"/>` : ''}
+    ${suitKey === 'suit_star' ? `
+    <!-- Star suit stars -->
+    <text x="${cx-W*0.08}" y="${H*0.58}" font-size="${10*s}" fill="#FFD700" opacity="0.7">★</text>
+    <text x="${cx+W*0.02}" y="${H*0.68}" font-size="${8*s}" fill="#FFD700" opacity="0.5">★</text>` : ''}
+    ${suitKey === 'suit_tech' ? `
+    <!-- Tech suit lines -->
+    <path d="M${cx-W*0.17},${H*0.52} Q${cx-W*0.1},${H*0.62} ${cx-W*0.17},${H*0.72}" stroke="${suitAccent}" stroke-width="${2*s}" fill="none" opacity="0.6"/>
+    <path d="M${cx+W*0.17},${H*0.52} Q${cx+W*0.1},${H*0.62} ${cx+W*0.17},${H*0.72}" stroke="${suitAccent}" stroke-width="${2*s}" fill="none" opacity="0.6"/>` : ''}
+  `;
 
-  // Pfad B: Wettkampf
-  {
-    key:'suit_race', slot:'suit', path:'wettkampf', secret:false, revealAt:0.7,
-    name:'Wettkampfanzug', icon:'🏊', color:'#0D3B6E',
-    story:'3 Wettkämpfe. Du weißt wie es sich anfühlt wenn der Startschuss fällt. Dieser Anzug ist für Schwimmerinnen die es ernst meinen.',
-    req:{ type:'comps', value:3 }, reqLabel:'3 Wettkämpfe dokumentiert'
-  },
-  {
-    key:'suit_star', slot:'suit', path:'wettkampf', secret:true, revealAt:0.9,
-    name:'Sternen-Anzug', icon:'⭐', color:'#FFD700',
-    story:'Level 9. Du bist auf dem Weg zum Superstar. Dieser Anzug leuchtet genauso wie deine Zukunft.',
-    req:{ type:'level', value:9 }, reqLabel:'Level 9 erreicht'
-  },
+  // ── ARMS ──
+  const arms = `
+    <path d="M${cx-W*0.17},${H*0.52} Q${cx-W*0.36},${H*0.44} ${cx-W*0.46},${H*0.56}"
+      stroke="${skin}" stroke-width="${11*s}" fill="none" stroke-linecap="round"/>
+    <path d="M${cx+W*0.17},${H*0.52} Q${cx+W*0.36},${H*0.44} ${cx+W*0.46},${H*0.56}"
+      stroke="${skin}" stroke-width="${11*s}" fill="none" stroke-linecap="round"/>
+    <!-- Hands -->
+    <ellipse cx="${cx-W*0.46}" cy="${H*0.56}" rx="${6*s}" ry="${5*s}" fill="${skin}"/>
+    <ellipse cx="${cx+W*0.46}" cy="${H*0.56}" rx="${6*s}" ry="${5*s}" fill="${skin}"/>
+    <!-- Suit sleeves -->
+    <path d="M${cx-W*0.17},${H*0.52} Q${cx-W*0.28},${H*0.46} ${cx-W*0.36},${H*0.50}"
+      stroke="${suitMain}" stroke-width="${8*s}" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <path d="M${cx+W*0.17},${H*0.52} Q${cx+W*0.28},${H*0.46} ${cx+W*0.36},${H*0.50}"
+      stroke="${suitMain}" stroke-width="${8*s}" fill="none" stroke-linecap="round" opacity="0.7"/>
+  `;
 
-  // ════════════════════════════════════════════════════════
-  // 🏅 MEDAILLE – Persönliche Verbesserung (nie Platzierung)
-  // ════════════════════════════════════════════════════════
+  // ── LEGS ──
+  const legs = `
+    <path d="M${cx-W*0.09},${H*0.82} Q${cx-W*0.13},${H*0.91} ${cx-W*0.07},${H*0.96}"
+      stroke="${suitMain}" stroke-width="${10*s}" fill="none" stroke-linecap="round"/>
+    <path d="M${cx+W*0.09},${H*0.82} Q${cx+W*0.13},${H*0.89} ${cx+W*0.07},${H*0.94}"
+      stroke="${suitMain}" stroke-width="${10*s}" fill="none" stroke-linecap="round"/>
+    <ellipse cx="${cx-W*0.07}" cy="${H*0.96}" rx="${5*s}" ry="${4*s}" fill="${skin}"/>
+    <ellipse cx="${cx+W*0.07}" cy="${H*0.94}" rx="${5*s}" ry="${4*s}" fill="${skin}"/>
+  `;
 
-  // Pfad A: Dokumentation (frühe Belohnung)
-  {
-    key:'medal_refl', slot:'medal', path:'doku', secret:false, revealAt:0,
-    name:'Reflexions-Pin', icon:'📝', color:'#8E44AD',
-    story:'5 Reflexionen. Wer über sein Training nachdenkt wächst doppelt so schnell.',
-    req:{ type:'reflEntries', value:5 }, reqLabel:'5 Einträge mit Reflexion',
-    earlyReward: true
-  },
-  {
-    key:'medal_regen', slot:'medal', path:'doku', secret:false, revealAt:0.6,
-    name:'Erholungs-Medaille', icon:'💙', color:'#27AE60',
-    story:'15 Regenerationseinheiten. Du pflegst deinen Körper wie eine Profi.',
-    req:{ type:'regenEntries', value:15 }, reqLabel:'15 Regenerationseinheiten dokumentiert'
-  },
+  // ── NECK ──
+  const neck = `
+    <rect x="${cx-W*0.055}" y="${H*0.38}" width="${W*0.11}" height="${H*0.09}" rx="${4*s}" fill="${skin}"/>
+  `;
 
-  // Pfad B: Wettkampf (PB-basiert, nie Platzierung)
-  {
-    key:'medal_silver', slot:'medal', path:'wettkampf', secret:false, revealAt:0.6,
-    name:'Silbermedaille', icon:'🥈', color:'#C0C0C0',
-    story:'Deine erste persönliche Bestzeit. Du bist schneller als gestern. Das ist alles was zählt.',
-    req:{ type:'pbs', value:1 }, reqLabel:'1 persönliche Bestzeit – egal wie schnell'
-  },
-  {
-    key:'medal_gold', slot:'medal', path:'wettkampf', secret:false, revealAt:0.7,
-    name:'Goldmedaille', icon:'🥇', color:'#FFD700',
-    story:'3 persönliche Bestzeiten. Du verbesserst dich immer weiter. Nicht gegen andere – gegen dich selbst von gestern.',
-    req:{ type:'pbs', value:3 }, reqLabel:'3 persönliche Bestzeiten'
-  },
-  {
-    key:'medal_trophy', slot:'medal', path:'wettkampf', secret:true, revealAt:0.9,
-    name:'Champion-Pokal', icon:'🏆', color:'#FFD700',
-    story:'10 persönliche Bestzeiten. Du bist dein eigener Rekord. Immer. Dieser Pokal gehört dir allein.',
-    req:{ type:'pbs', value:10 }, reqLabel:'10 persönliche Bestzeiten – nie Platzierung gegen andere'
-  },
+  // ── HEAD ──
+  const head = `
+    <ellipse cx="${cx}" cy="${H*0.29}" rx="${W*0.145}" ry="${H*0.135}" fill="${skin}"/>
+  `;
 
-  // ════════════════════════════════════════════════════════
-  // ✨ EXTRA – Besondere Qualitäten
-  // ════════════════════════════════════════════════════════
+  // ── HAIR (only if no cap) ──
+  const hairLayer = !capC ? `
+    <ellipse cx="${cx}" cy="${H*0.20}" rx="${W*0.145}" ry="${H*0.075}" fill="${hair}"/>
+    <path d="M${cx-W*0.145},${H*0.27} Q${cx-W*0.19},${H*0.34} ${cx-W*0.13},${H*0.38}"
+      stroke="${hair}" stroke-width="${5*s}" fill="none" stroke-linecap="round"/>
+    <path d="M${cx+W*0.145},${H*0.27} Q${cx+W*0.19},${H*0.34} ${cx+W*0.13},${H*0.38}"
+      stroke="${hair}" stroke-width="${5*s}" fill="none" stroke-linecap="round"/>
+  ` : `
+    <!-- Hair peek under cap -->
+    <path d="M${cx-W*0.05},${H*0.38} Q${cx},${H*0.41} ${cx+W*0.05},${H*0.38}"
+      stroke="${hair}" stroke-width="${3*s}" fill="none" stroke-linecap="round"/>
+  `;
 
-  // Pfad A: Dokumentation
-  {
-    key:'extra_regen', slot:'extra', path:'doku', secret:false, revealAt:0,
-    name:'Erholungs-Armband', icon:'💙', color:'#27AE60',
-    story:'5 Regenerationseinheiten. Erholung ist kein Zeichen von Schwäche – sie ist Teil des Trainings.',
-    req:{ type:'regenEntries', value:5 }, reqLabel:'5 Regenerationseinheiten dokumentiert',
-    earlyReward: true
-  },
-  {
-    key:'extra_stretch', slot:'extra', path:'heimuebung', secret:false, revealAt:0.6,
-    name:'Dehn-Armband', icon:'🤸', color:'#27AE60',
-    story:'10 Heimübungen. Du trainierst auch wenn niemand zuschaut. Das ist der Unterschied.',
-    req:{ type:'heEntries', value:10 }, reqLabel:'10 Heimübungen absolviert'
-  },
-  {
-    key:'extra_trainer', slot:'extra', path:'doku', secret:false, revealAt:0.7,
-    name:'Trainer-Aufnäher', icon:'📋', color:'#2980B9',
-    story:'20 Reflexionen. Du denkst wie eine Trainerin. Das macht dich besser als jedes Tempo.',
-    req:{ type:'reflEntries', value:20 }, reqLabel:'20 Einträge mit Reflexion'
-  },
-  {
-    key:'extra_streak', slot:'extra', path:'wettkampf', secret:true, revealAt:0.88,
-    name:'Sieger-Armband', icon:'💪', color:'#E74C3C',
-    story:'30 Tage Streak. Ein ganzer Monat. Außergewöhnliche Kontinuität verdient außergewöhnliche Belohnungen.',
-    req:{ type:'streak', value:30 }, reqLabel:'30 Tage Streak'
-  },
-  {
-    key:'extra_aura', slot:'extra', path:'geheim', secret:true, revealAt:0.95,
-    name:'Champion-Aura', icon:'✨', color:'#FFD700',
-    story:'Level 10. Champion. Es gibt nichts mehr zu beweisen – außer dir selbst. Jeden Tag aufs Neue.',
-    req:{ type:'level', value:10 }, reqLabel:'Level 10 – Champion erreicht'
+  // ── CAP ──
+  let capLayer = '';
+  if (capC) {
+    const isGlitter = capKey === 'cap_glitter';
+    const isFire    = capKey === 'cap_fire';
+    const isGold    = capKey === 'cap_gold';
+    capLayer = `
+      <!-- Cap base -->
+      <ellipse cx="${cx}" cy="${H*0.24}" rx="${W*0.148}" ry="${H*0.105}" fill="${capC.main}"/>
+      <ellipse cx="${cx}" cy="${H*0.185}" rx="${W*0.135}" ry="${H*0.065}" fill="${capC.main}"/>
+      <!-- Cap shine -->
+      <ellipse cx="${cx-W*0.04}" cy="${H*0.175}" rx="${W*0.04}" ry="${H*0.025}" fill="${capC.shine}" opacity="0.5"/>
+      ${capC.stripe ? `
+      <!-- Cap stripe -->
+      <path d="M${cx-W*0.14},${H*0.245} Q${cx},${H*0.22} ${cx+W*0.14},${H*0.245}"
+        stroke="${capC.stripe}" stroke-width="${3*s}" fill="none" opacity="0.7"/>` : ''}
+      ${isGlitter ? `
+      <!-- Glitter sparkles -->
+      <text x="${cx-W*0.06}" y="${H*0.19}" font-size="${7*s}" fill="white" opacity="0.9">✦</text>
+      <text x="${cx+W*0.02}" y="${H*0.22}" font-size="${5*s}" fill="white" opacity="0.7">✦</text>
+      <text x="${cx-W*0.02}" y="${H*0.16}" font-size="${6*s}" fill="white" opacity="0.8">✦</text>` : ''}
+      ${isFire ? `
+      <!-- Fire effect -->
+      <path d="M${cx-W*0.06},${H*0.16} Q${cx-W*0.04},${H*0.10} ${cx},${H*0.13} Q${cx+W*0.04},${H*0.08} ${cx+W*0.06},${H*0.16}"
+        fill="#FF6B00" opacity="0.8"/>
+      <path d="M${cx-W*0.03},${H*0.16} Q${cx-W*0.01},${H*0.12} ${cx+W*0.01},${H*0.14} Q${cx+W*0.03},${H*0.10} ${cx+W*0.03},${H*0.16}"
+        fill="#FFD700" opacity="0.9"/>` : ''}
+      ${isGold ? `
+      <!-- Gold cap star -->
+      <text x="${cx}" y="${H*0.215}" text-anchor="middle" font-size="${10*s}" fill="white" opacity="0.8">★</text>` : ''}
+    `;
   }
-];
 
-// ── PROGRESS CALCULATOR (reuses existing logic) ───────────────────────────────
-async function getHybridAccProgress(acc) {
-  const entries  = await dbAll('training');
-  const comps    = await dbAll('competitions');
-  const pbs      = await dbAll('pbs');
-  const extStats = typeof computeExtendedStats === 'function'
-    ? await computeExtendedStats() : await computeStats();
-  const stats    = await computeStats();
-  const lv       = getLvl(stats.totalPoints);
-  const heLog    = JSON.parse(localStorage.getItem('st_he_log') || '[]');
+  // ── GOGGLES ──
+  let gogLayer = '';
+  if (gogC) {
+    const isShark = gogKey === 'goggle_shark';
+    const isGold  = gogKey === 'goggle_gold';
+    const isRace  = gogKey === 'goggle_race';
+    // Race goggles are flatter/sleeker
+    const lensH = isRace ? H*0.032 : H*0.042;
+    const lensW = isRace ? W*0.058 : W*0.055;
+    gogLayer = `
+      <!-- Left lens -->
+      <ellipse cx="${cx-W*0.065}" cy="${H*0.305}" rx="${lensW}" ry="${lensH}" fill="${gogC.lens}" stroke="${gogC.frame}" stroke-width="${2.5*s}"/>
+      <!-- Right lens -->
+      <ellipse cx="${cx+W*0.065}" cy="${H*0.305}" rx="${lensW}" ry="${lensH}" fill="${gogC.lens}" stroke="${gogC.frame}" stroke-width="${2.5*s}"/>
+      <!-- Bridge -->
+      <line x1="${cx-W*0.007}" y1="${H*0.305}" x2="${cx+W*0.007}" y2="${H*0.305}" stroke="${gogC.frame}" stroke-width="${2.5*s}"/>
+      <!-- Straps -->
+      <path d="M${cx-W*0.123},${H*0.305} Q${cx-W*0.145},${H*0.29} ${cx-W*0.145},${H*0.27}"
+        stroke="${gogC.strap}" stroke-width="${2*s}" fill="none"/>
+      <path d="M${cx+W*0.123},${H*0.305} Q${cx+W*0.145},${H*0.29} ${cx+W*0.145},${H*0.27}"
+        stroke="${gogC.strap}" stroke-width="${2*s}" fill="none"/>
+      <!-- Lens shine -->
+      <ellipse cx="${cx-W*0.075}" cy="${H*0.298}" rx="${W*0.018}" ry="${H*0.012}" fill="white" opacity="0.35"/>
+      <ellipse cx="${cx+W*0.055}" cy="${H*0.298}" rx="${W*0.018}" ry="${H*0.012}" fill="white" opacity="0.35"/>
+      ${isShark ? `
+      <!-- Shark teeth detail on frame -->
+      <path d="M${cx-W*0.123},${H*0.31} L${cx-W*0.115},${H*0.32} L${cx-W*0.107},${H*0.31}"
+        fill="${gogC.frame}" opacity="0.8"/>` : ''}
+      ${isGold ? `
+      <!-- Gold sparkle -->
+      <text x="${cx-W*0.065}" y="${H*0.315}" text-anchor="middle" font-size="${6*s}" fill="#FFD700" opacity="0.8">★</text>` : ''}
+    `;
+  }
 
-  const map = {
-    entries:     entries.length,
-    streak:      extStats.dayStreak || 0,
-    comps:       comps.length,
-    pbs:         pbs.length,
-    reflEntries: entries.filter(e=>e.reflGood||e.reflHard||e.reflNext).length,
-    techEntries: entries.filter(e=>e.type==='Techniktraining').length,
-    regenEntries:entries.filter(e=>e.type==='Regeneration').length,
-    allTypes:    new Set(entries.map(e=>e.type)).size,
-    totalMin:    entries.reduce((s,e)=>s+e.durationMin,0),
-    level:       lv.num,
-    heEntries:   heLog.length,
-    weeks:       stats.completedWeeks || 0
-  };
+  // ── FACE ──
+  const face = `
+    <!-- Eyes (behind goggles if present) -->
+    ${!gogC ? `
+    <circle cx="${cx-W*0.055}" cy="${H*0.295}" r="${3*s}" fill="#2C3E50"/>
+    <circle cx="${cx+W*0.055}" cy="${H*0.295}" r="${3*s}" fill="#2C3E50"/>
+    <circle cx="${cx-W*0.048}" cy="${H*0.29}" r="${1.2*s}" fill="white" opacity="0.6"/>
+    <circle cx="${cx+W*0.062}" cy="${H*0.29}" r="${1.2*s}" fill="white" opacity="0.6"/>` : `
+    <circle cx="${cx-W*0.065}" cy="${H*0.305}" r="${2*s}" fill="#2C3E50" opacity="0.6"/>
+    <circle cx="${cx+W*0.065}" cy="${H*0.305}" r="${2*s}" fill="#2C3E50" opacity="0.6"/>`}
+    <!-- Smile -->
+    <path d="M${cx-W*0.055},${H*0.345} Q${cx},${H*0.375} ${cx+W*0.055},${H*0.345}"
+      stroke="#2C3E50" stroke-width="${1.8*s}" fill="none" stroke-linecap="round"/>
+    <!-- Cheeks -->
+    <circle cx="${cx-W*0.095}" cy="${H*0.325}" r="${4*s}" fill="#FFB6C1" opacity="0.5"/>
+    <circle cx="${cx+W*0.095}" cy="${H*0.325}" r="${4*s}" fill="#FFB6C1" opacity="0.5"/>
+  `;
 
-  const cur = map[acc.req.type] || 0;
-  const max = acc.req.value;
-  const pct = Math.min(100, Math.round((cur/max)*100));
-  return { cur, max, pct, done: cur >= max };
-}
-
-// ── UNLOCK STATE ──────────────────────────────────────────────────────────────
-function getHybridUnlocked() {
-  return JSON.parse(localStorage.getItem('st_hybrid_acc') || '{}');
-}
-function setHybridUnlocked(state) {
-  localStorage.setItem('st_hybrid_acc', JSON.stringify(state));
-}
-
-async function checkHybridUnlocks() {
-  const state    = getHybridUnlocked();
-  const newItems = [];
-  for (const acc of HYBRID_ACC) {
-    if (state[acc.key]) continue;
-    const prog = await getHybridAccProgress(acc);
-    if (prog.done) {
-      state[acc.key] = { unlockedAt: today() };
-      newItems.push(acc);
+  // ── MEDAL ──
+  let medalLayer = '';
+  if (medC) {
+    const isTrophy = medalKey === 'medal_trophy';
+    const isRefl   = medalKey === 'medal_refl';
+    if (isTrophy) {
+      medalLayer = `
+        <!-- Trophy -->
+        <rect x="${cx+W*0.18}" y="${H*0.48}" width="${W*0.1}" height="${H*0.08}" rx="${3*s}" fill="${medC.main}"/>
+        <ellipse cx="${cx+W*0.23}" cy="${H*0.48}" rx="${W*0.06}" ry="${H*0.04}" fill="${medC.main}"/>
+        <rect x="${cx+W*0.205}" y="${H*0.56}" width="${W*0.05}" height="${H*0.03}" rx="${2*s}" fill="${medC.main}"/>
+        <rect x="${cx+W*0.19}" y="${H*0.59}" width="${W*0.08}" height="${H*0.015}" rx="${2*s}" fill="${medC.main}"/>
+        <text x="${cx+W*0.23}" y="${H*0.535}" text-anchor="middle" font-size="${7*s}" fill="white">★</text>
+      `;
+    } else if (isRefl) {
+      medalLayer = `
+        <!-- Pin/Badge -->
+        <circle cx="${cx+W*0.22}" cy="${H*0.52}" r="${9*s}" fill="${medC.main}"/>
+        <circle cx="${cx+W*0.22}" cy="${H*0.52}" r="${7*s}" fill="${medC.ribbon}" opacity="0.5"/>
+        <text x="${cx+W*0.22}" y="${H*0.527}" text-anchor="middle" font-size="${8*s}" fill="white">📝</text>
+      `;
+    } else {
+      medalLayer = `
+        <!-- Medal ribbon -->
+        <rect x="${cx+W*0.205}" y="${H*0.44}" width="${W*0.03}" height="${H*0.07}" rx="${2*s}" fill="${medC.ribbon}"/>
+        <!-- Medal circle -->
+        <circle cx="${cx+W*0.22}" cy="${H*0.52}" r="${11*s}" fill="${medC.main}" stroke="rgba(255,255,255,0.3)" stroke-width="${1.5*s}"/>
+        <circle cx="${cx+W*0.22}" cy="${H*0.52}" r="${8*s}" fill="${medC.main}" opacity="0.7"/>
+        <text x="${cx+W*0.22}" y="${H*0.527}" text-anchor="middle" font-size="${9*s}" fill="white" font-weight="bold">★</text>
+        <!-- Medal shine -->
+        <ellipse cx="${cx+W*0.215}" cy="${H*0.508}" rx="${4*s}" ry="${3*s}" fill="white" opacity="0.25"/>
+      `;
     }
   }
-  if (newItems.length > 0) {
-    setHybridUnlocked(state);
-    newItems.forEach(acc => {
-      if (typeof queueUnlockScreen === 'function') queueUnlockScreen(acc);
-      else if (typeof showUnlockScreen === 'function') showUnlockScreen(acc);
-    });
+
+  // ── EXTRA ──
+  let extraLayer = '';
+  if (extC) {
+    if (extraKey === 'extra_aura' || extraKey === 'extra_streak') {
+      // Wristband on left arm
+      extraLayer = `
+        <rect x="${cx-W*0.42}" y="${H*0.535}" width="${W*0.08}" height="${H*0.04}" rx="${4*s}"
+          fill="${extC.main}" stroke="${extC.accent}" stroke-width="${1.5*s}"/>
+        ${extraKey === 'extra_aura' ? `<text x="${cx-W*0.38}" y="${H*0.562}" text-anchor="middle" font-size="${6*s}" fill="white">★</text>` : ''}
+      `;
+    } else if (extraKey === 'extra_regen' || extraKey === 'extra_stretch') {
+      extraLayer = `
+        <rect x="${cx-W*0.42}" y="${H*0.535}" width="${W*0.08}" height="${H*0.035}" rx="${3*s}"
+          fill="${extC.main}" opacity="0.9"/>
+        <rect x="${cx-W*0.41}" y="${H*0.538}" width="${W*0.06}" height="${H*0.015}" rx="${2*s}"
+          fill="${extC.accent}" opacity="0.6"/>
+      `;
+    } else if (extraKey === 'extra_trainer') {
+      // Badge on suit
+      extraLayer = `
+        <rect x="${cx-W*0.08}" y="${H*0.48}" width="${W*0.1}" height="${H*0.06}" rx="${3*s}"
+          fill="${extC.main}" opacity="0.9"/>
+        <text x="${cx-W*0.03}" y="${H*0.518}" text-anchor="middle" font-size="${6*s}" fill="white">📋</text>
+      `;
+    }
   }
-  return newItems;
+
+  // ── CHAMPION AURA ──
+  const auraLayer = hasGlow ? `
+    <ellipse cx="${cx}" cy="${H*0.55}" rx="${W*0.42}" ry="${H*0.38}"
+      fill="none" stroke="#FFD700" stroke-width="${2*s}" opacity="0.3"
+      stroke-dasharray="${6*s} ${4*s}">
+      <animateTransform attributeName="transform" type="rotate"
+        values="0 ${cx} ${H*0.55};360 ${cx} ${H*0.55}" dur="8s" repeatCount="indefinite"/>
+    </ellipse>
+  ` : '';
+
+  // ── LEVEL BADGE ──
+  const levelBadge = `
+    <circle cx="${W*0.84}" cy="${H*0.14}" r="${13*s}" fill="#0044FF" stroke="white" stroke-width="${2*s}"/>
+    <text x="${W*0.84}" y="${H*0.148}" text-anchor="middle" dominant-baseline="middle"
+      font-size="${9*s}" fill="white" font-weight="bold" font-family="Inter,sans-serif">${levelNum}</text>
+  `;
+
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" style="overflow:visible">
+    <defs>
+      <radialGradient id="skinGrad${levelNum}" cx="40%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#FECFCA"/>
+        <stop offset="100%" stop-color="#F4A090"/>
+      </radialGradient>
+    </defs>
+    ${auraLayer}
+    <g>
+      ${swimAnim ? `<animateTransform attributeName="transform" type="translate" values="0,0;2,1;0,0;-2,1;0,0" dur="2.5s" repeatCount="indefinite"/>` : ''}
+      ${water}
+      ${body}
+      ${legs}
+      ${arms}
+      ${neck}
+      ${head}
+      ${hairLayer}
+      ${capLayer}
+      ${gogLayer}
+      ${face}
+      ${medalLayer}
+      ${extraLayer}
+    </g>
+    ${levelBadge}
+  </svg>`;
 }
 
-// ── HYBRID GALLERY ────────────────────────────────────────────────────────────
-async function renderHybridGallery(containerId) {
+// ── ACCESSOIRE ITEM SVG (für Galerie-Karten) ──────────────────────────────────
+function buildAccItemSVG(accKey, size = 80) {
+  const W = size, H = size;
+  const cx = W/2, cy = H/2;
+  const s = size/80;
+  const c = ACC_COLORS[accKey] || { main:'#9090A8', shine:'#B8B8CC', shadow:'#6B6B8A' };
+
+  // Determine item type from key
+  if (accKey.startsWith('cap_')) {
+    return buildCapSVG(accKey, c, W, H, cx, cy, s);
+  } else if (accKey.startsWith('goggle_')) {
+    return buildGoggleSVG(accKey, c, W, H, cx, cy, s);
+  } else if (accKey.startsWith('suit_')) {
+    return buildSuitSVG(accKey, c, W, H, cx, cy, s);
+  } else if (accKey.startsWith('medal_')) {
+    return buildMedalSVG(accKey, c, W, H, cx, cy, s);
+  } else if (accKey.startsWith('extra_')) {
+    return buildExtraSVG(accKey, c, W, H, cx, cy, s);
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}"><text x="${cx}" y="${cy+8}" text-anchor="middle" font-size="${24*s}">🎽</text></svg>`;
+}
+
+function buildCapSVG(key, c, W, H, cx, cy, s) {
+  const isGlitter = key === 'cap_glitter';
+  const isFire    = key === 'cap_fire';
+  const isGold    = key === 'cap_gold';
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+    <!-- Cap dome -->
+    <ellipse cx="${cx}" cy="${cy+8*s}" rx="${W*0.42}" ry="${H*0.3}" fill="${c.main}"/>
+    <ellipse cx="${cx}" cy="${cy-4*s}" rx="${W*0.38}" ry="${H*0.22}" fill="${c.main}"/>
+    <!-- Brim -->
+    <ellipse cx="${cx}" cy="${cy+8*s}" rx="${W*0.46}" ry="${H*0.1}" fill="${c.shadow}"/>
+    <!-- Shine -->
+    <ellipse cx="${cx-W*0.1}" cy="${cy-8*s}" rx="${W*0.12}" ry="${H*0.07}" fill="${c.shine}" opacity="0.6"/>
+    ${c.stripe ? `<path d="M${cx-W*0.38},${cy+2*s} Q${cx},${cy-4*s} ${cx+W*0.38},${cy+2*s}" stroke="${c.stripe}" stroke-width="${3*s}" fill="none" opacity="0.8"/>` : ''}
+    ${isGlitter ? `
+      <text x="${cx-W*0.1}" y="${cy}" font-size="${10*s}" fill="white" opacity="0.9">✦</text>
+      <text x="${cx+W*0.05}" y="${cy+8*s}" font-size="${8*s}" fill="white" opacity="0.7">✦</text>
+      <text x="${cx}" y="${cy-8*s}" font-size="${9*s}" fill="white" opacity="0.8">✦</text>` : ''}
+    ${isFire ? `
+      <path d="M${cx-W*0.1},${cy-10*s} Q${cx-W*0.05},${cy-22*s} ${cx},${cy-16*s} Q${cx+W*0.05},${cy-26*s} ${cx+W*0.1},${cy-10*s}" fill="#FF6B00" opacity="0.9"/>
+      <path d="M${cx-W*0.05},${cy-10*s} Q${cx},${cy-18*s} ${cx+W*0.05},${cy-10*s}" fill="#FFD700" opacity="0.9"/>` : ''}
+    ${isGold ? `<text x="${cx}" y="${cy+4*s}" text-anchor="middle" font-size="${14*s}" fill="white" opacity="0.8">★</text>` : ''}
+  </svg>`;
+}
+
+function buildGoggleSVG(key, c, W, H, cx, cy, s) {
+  const isRace  = key === 'goggle_race' || key === 'goggle_gold';
+  const isShark = key === 'goggle_shark';
+  const lensH   = isRace ? H*0.18 : H*0.22;
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+    <!-- Left lens -->
+    <ellipse cx="${cx-W*0.22}" cy="${cy}" rx="${W*0.2}" ry="${lensH}" fill="${c.lens}" stroke="${c.frame}" stroke-width="${3*s}"/>
+    <!-- Right lens -->
+    <ellipse cx="${cx+W*0.22}" cy="${cy}" rx="${W*0.2}" ry="${lensH}" fill="${c.lens}" stroke="${c.frame}" stroke-width="${3*s}"/>
+    <!-- Bridge -->
+    <rect x="${cx-W*0.04}" y="${cy-H*0.04}" width="${W*0.08}" height="${H*0.08}" rx="${3*s}" fill="${c.frame}"/>
+    <!-- Straps -->
+    <path d="M${cx-W*0.42},${cy} L${cx-W*0.42},${cy-H*0.15}" stroke="${c.strap}" stroke-width="${3*s}" stroke-linecap="round"/>
+    <path d="M${cx+W*0.42},${cy} L${cx+W*0.42},${cy-H*0.15}" stroke="${c.strap}" stroke-width="${3*s}" stroke-linecap="round"/>
+    <!-- Lens shine -->
+    <ellipse cx="${cx-W*0.28}" cy="${cy-H*0.06}" rx="${W*0.06}" ry="${H*0.04}" fill="white" opacity="0.4"/>
+    <ellipse cx="${cx+W*0.16}" cy="${cy-H*0.06}" rx="${W*0.06}" ry="${H*0.04}" fill="white" opacity="0.4"/>
+    ${isShark ? `<path d="M${cx-W*0.42},${cy+H*0.1} L${cx-W*0.36},${cy+H*0.18} L${cx-W*0.3},${cy+H*0.1}" fill="${c.frame}"/>` : ''}
+    ${key === 'goggle_gold' ? `<text x="${cx}" y="${cy+H*0.08}" text-anchor="middle" font-size="${10*s}" fill="#FFD700">★</text>` : ''}
+  </svg>`;
+}
+
+function buildSuitSVG(key, c, W, H, cx, cy, s) {
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+    <!-- Suit body -->
+    <path d="M${cx-W*0.35},${cy-H*0.1} Q${cx-W*0.38},${cy+H*0.35} ${cx-W*0.3},${cy+H*0.42} L${cx+W*0.3},${cy+H*0.42} Q${cx+W*0.38},${cy+H*0.35} ${cx+W*0.35},${cy-H*0.1} Q${cx+W*0.2},${cy-H*0.3} ${cx},${cy-H*0.32} Q${cx-W*0.2},${cy-H*0.3} ${cx-W*0.35},${cy-H*0.1}Z"
+      fill="${c.main}"/>
+    <!-- Straps -->
+    <path d="M${cx-W*0.15},${cy-H*0.32} L${cx-W*0.1},${cy-H*0.45}" stroke="${c.main}" stroke-width="${6*s}" stroke-linecap="round"/>
+    <path d="M${cx+W*0.15},${cy-H*0.32} L${cx+W*0.1},${cy-H*0.45}" stroke="${c.main}" stroke-width="${6*s}" stroke-linecap="round"/>
+    ${c.stripe ? `
+    <!-- Center stripe -->
+    <path d="M${cx-W*0.06},${cy-H*0.3} L${cx-W*0.06},${cy+H*0.42} L${cx+W*0.06},${cy+H*0.42} L${cx+W*0.06},${cy-H*0.3}Z"
+      fill="${c.stripe}" opacity="0.4"/>` : ''}
+    ${key === 'suit_rainbow' ? `
+    <path d="M${cx-W*0.38},${cy} L${cx+W*0.38},${cy}" stroke="#E74C3C" stroke-width="${4*s}" opacity="0.7"/>
+    <path d="M${cx-W*0.38},${cy+H*0.1}" stroke="#FFD700" stroke-width="${4*s}" opacity="0.7"/>
+    <path d="M${cx-W*0.37},${cy+H*0.2} L${cx+W*0.37},${cy+H*0.2}" stroke="#27AE60" stroke-width="${4*s}" opacity="0.7"/>` : ''}
+    ${key === 'suit_star' ? `
+    <text x="${cx}" y="${cy+H*0.05}" text-anchor="middle" font-size="${16*s}" fill="#FFD700" opacity="0.8">★</text>
+    <text x="${cx-W*0.2}" y="${cy+H*0.2}" text-anchor="middle" font-size="${10*s}" fill="#FFD700" opacity="0.5">★</text>` : ''}
+    ${key === 'suit_tech' ? `
+    <path d="M${cx-W*0.35},${cy-H*0.05} Q${cx-W*0.2},${cy+H*0.15} ${cx-W*0.35},${cy+H*0.35}" stroke="${c.accent}" stroke-width="${2*s}" fill="none" opacity="0.7"/>
+    <path d="M${cx+W*0.35},${cy-H*0.05} Q${cx+W*0.2},${cy+H*0.15} ${cx+W*0.35},${cy+H*0.35}" stroke="${c.accent}" stroke-width="${2*s}" fill="none" opacity="0.7"/>` : ''}
+    <!-- Shine -->
+    <ellipse cx="${cx-W*0.15}" cy="${cy-H*0.15}" rx="${W*0.08}" ry="${H*0.06}" fill="white" opacity="0.15"/>
+  </svg>`;
+}
+
+function buildMedalSVG(key, c, W, H, cx, cy, s) {
+  const isTrophy = key === 'medal_trophy';
+  const isPin    = key === 'medal_refl';
+  if (isTrophy) {
+    return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+      <!-- Trophy cup -->
+      <path d="M${cx-W*0.25},${cy-H*0.3} Q${cx-W*0.3},${cy+H*0.05} ${cx-W*0.15},${cy+H*0.15} L${cx+W*0.15},${cy+H*0.15} Q${cx+W*0.3},${cy+H*0.05} ${cx+W*0.25},${cy-H*0.3}Z"
+        fill="${c.main}"/>
+      <!-- Handles -->
+      <path d="M${cx-W*0.25},${cy-H*0.2} Q${cx-W*0.42},${cy-H*0.1} ${cx-W*0.25},${cy}" stroke="${c.main}" stroke-width="${5*s}" fill="none"/>
+      <path d="M${cx+W*0.25},${cy-H*0.2} Q${cx+W*0.42},${cy-H*0.1} ${cx+W*0.25},${cy}" stroke="${c.main}" stroke-width="${5*s}" fill="none"/>
+      <!-- Stem -->
+      <rect x="${cx-W*0.06}" y="${cy+H*0.15}" width="${W*0.12}" height="${H*0.15}" rx="${3*s}" fill="${c.main}"/>
+      <!-- Base -->
+      <rect x="${cx-W*0.2}" y="${cy+H*0.3}" width="${W*0.4}" height="${H*0.08}" rx="${4*s}" fill="${c.main}"/>
+      <!-- Star -->
+      <text x="${cx}" y="${cy+H*0.05}" text-anchor="middle" font-size="${16*s}" fill="white" opacity="0.9">★</text>
+      <!-- Shine -->
+      <ellipse cx="${cx-W*0.08}" cy="${cy-H*0.15}" rx="${W*0.06}" ry="${H*0.05}" fill="white" opacity="0.3"/>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+    <!-- Ribbon -->
+    <rect x="${cx-W*0.06}" y="${cy-H*0.42}" width="${W*0.12}" height="${H*0.22}" rx="${3*s}" fill="${c.ribbon}"/>
+    <!-- Medal circle -->
+    <circle cx="${cx}" cy="${cy+H*0.05}" r="${W*0.32}" fill="${c.main}"/>
+    <circle cx="${cx}" cy="${cy+H*0.05}" r="${W*0.24}" fill="${c.main}" opacity="0.7"/>
+    <!-- Star or icon -->
+    <text x="${cx}" y="${cy+H*0.12}" text-anchor="middle" font-size="${isPin?'14':'18'}${s>1?'px':''}" fill="white" font-size="${isPin?14*s:18*s}">${isPin?'📝':'★'}</text>
+    <!-- Shine -->
+    <ellipse cx="${cx-W*0.1}" cy="${cy-H*0.05}" rx="${W*0.08}" ry="${H*0.06}" fill="white" opacity="0.25"/>
+  </svg>`;
+}
+
+function buildExtraSVG(key, c, W, H, cx, cy, s) {
+  if (key === 'extra_aura') {
+    return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+      <circle cx="${cx}" cy="${cy}" r="${W*0.38}" fill="none" stroke="${c.main}" stroke-width="${3*s}" stroke-dasharray="${5*s} ${3*s}" opacity="0.7"/>
+      <circle cx="${cx}" cy="${cy}" r="${W*0.28}" fill="${c.main}" opacity="0.2"/>
+      <text x="${cx}" y="${cy+H*0.08}" text-anchor="middle" font-size="${22*s}" fill="${c.main}">✨</text>
+    </svg>`;
+  }
+  // Wristband / badge
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
+    <!-- Band -->
+    <rect x="${cx-W*0.38}" y="${cy-H*0.15}" width="${W*0.76}" height="${H*0.3}" rx="${H*0.15}" fill="${c.main}"/>
+    <rect x="${cx-W*0.32}" y="${cy-H*0.08}" width="${W*0.64}" height="${H*0.16}" rx="${H*0.08}" fill="${c.accent}" opacity="0.5"/>
+    <!-- Clasp -->
+    <rect x="${cx-W*0.06}" y="${cy-H*0.18}" width="${W*0.12}" height="${H*0.36}" rx="${4*s}" fill="${c.main}" stroke="${c.accent}" stroke-width="${2*s}"/>
+    ${key === 'extra_streak' ? `<text x="${cx}" y="${cy+H*0.08}" text-anchor="middle" font-size="${12*s}" fill="white">🔥</text>` : ''}
+    ${key === 'extra_trainer' ? `<text x="${cx}" y="${cy+H*0.08}" text-anchor="middle" font-size="${12*s}" fill="white">📋</text>` : ''}
+    ${key === 'extra_regen' ? `<text x="${cx}" y="${cy+H*0.08}" text-anchor="middle" font-size="${12*s}" fill="white">💙</text>` : ''}
+    ${key === 'extra_stretch' ? `<text x="${cx}" y="${cy+H*0.08}" text-anchor="middle" font-size="${12*s}" fill="white">🤸</text>` : ''}
+  </svg>`;
+}
+
+// ── OVERRIDE buildAvatarSVG globally ─────────────────────────────────────────
+window.buildAvatarSVGv2 = buildAvatarSVGv2;
+window.buildAccItemSVG  = buildAccItemSVG;
+
+// Override the main buildAvatarSVG to use v2 with customization
+window.buildAvatarSVG = function(levelNum, unlocked, size, animated) {
+  const custom = typeof getAvatarCustomization === 'function' ? getAvatarCustomization() : {};
+  // Also check hybrid unlocked
+  const hybridState = typeof getHybridUnlocked === 'function' ? getHybridUnlocked() : {};
+  // Auto-equip first unlocked item per slot if nothing selected
+  const autoCustom = { ...custom };
+  const SLOTS_KEYS = ['cap','goggle','suit','medal','extra'];
+  const HYBRID_ACC_LOCAL = typeof HYBRID_ACC !== 'undefined' ? HYBRID_ACC : [];
+  SLOTS_KEYS.forEach(slot => {
+    if (!autoCustom[slot]) {
+      const firstUnlocked = HYBRID_ACC_LOCAL.find(a => a.slot === slot && hybridState[a.key]);
+      if (firstUnlocked) autoCustom[slot] = firstUnlocked.key;
+    }
+  });
+  return buildAvatarSVGv2(levelNum, autoCustom, size, animated);
+};
+
+// ── OVERRIDE ACC GALLERY to show SVG item cards ───────────────────────────────
+const _origRenderHybridGallery = window.renderHybridGallery;
+window.renderHybridGallery = async function(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  const state    = getHybridUnlocked();
+  const state    = typeof getHybridUnlocked === 'function' ? getHybridUnlocked() : {};
   const activeCat = container.dataset.activeCat || 'all';
+  const HYBRID_ACC_LOCAL = typeof HYBRID_ACC !== 'undefined' ? HYBRID_ACC : [];
+  const PATHS_LOCAL = typeof PATHS !== 'undefined' ? PATHS : {};
 
-  // Progress for all
   const progress = {};
-  for (const acc of HYBRID_ACC) {
-    progress[acc.key] = await getHybridAccProgress(acc);
+  for (const acc of HYBRID_ACC_LOCAL) {
+    progress[acc.key] = typeof getHybridAccProgress === 'function'
+      ? await getHybridAccProgress(acc) : { cur:0, max:acc.req?.value||1, pct:0, done:false };
   }
 
-  // Path tabs
   const pathTabs = `<div class="acc-cat-tabs" style="margin-bottom:16px">
     <button class="acc-cat-tab ${activeCat==='all'?'active':''}" onclick="setHybridCat('all',this,'${containerId}')">Alle</button>
-    ${Object.values(PATHS).map(p=>`
+    ${Object.values(PATHS_LOCAL).map(p=>`
       <button class="acc-cat-tab ${activeCat===p.key?'active':''}" onclick="setHybridCat('${p.key}',this,'${containerId}')">
         ${p.icon} ${p.label}
       </button>`).join('')}
   </div>`;
 
-  // Filter + sort
-  let items = activeCat === 'all' ? HYBRID_ACC : HYBRID_ACC.filter(a=>a.path===activeCat);
+  let items = activeCat === 'all' ? HYBRID_ACC_LOCAL : HYBRID_ACC_LOCAL.filter(a=>a.path===activeCat);
   items = [...items].sort((a,b) => {
     const au=!!state[a.key], bu=!!state[b.key];
     if(au!==bu) return bu-au;
@@ -7390,53 +7667,54 @@ async function renderHybridGallery(containerId) {
     return (progress[b.key]?.pct||0)-(progress[a.key]?.pct||0);
   });
 
-  // Stats
   const unlocked = Object.keys(state).length;
-  const total    = HYBRID_ACC.length;
+  const total    = HYBRID_ACC_LOCAL.length;
   const pct      = Math.round((unlocked/total)*100);
 
-  // Path breakdown
-  const pathStats = Object.values(PATHS).map(p => {
-    const pathItems = HYBRID_ACC.filter(a=>a.path===p.key);
-    const pathUnlocked = pathItems.filter(a=>state[a.key]).length;
+  const pathStats = Object.values(PATHS_LOCAL).map(p => {
+    const pi = HYBRID_ACC_LOCAL.filter(a=>a.path===p.key);
+    const pu = pi.filter(a=>state[a.key]).length;
     return `<div class="hybrid-path-stat">
       <span class="hps-icon">${p.icon}</span>
       <div class="hps-info">
         <div class="hps-label">${p.label}</div>
-        <div class="hps-prog-wrap"><div class="hps-prog-fill" style="width:${Math.round((pathUnlocked/pathItems.length)*100)}%;background:${p.color}"></div></div>
+        <div class="hps-prog-wrap"><div class="hps-prog-fill" style="width:${Math.round((pu/Math.max(pi.length,1))*100)}%;background:${p.color}"></div></div>
       </div>
-      <span class="hps-count">${pathUnlocked}/${pathItems.length}</span>
+      <span class="hps-count">${pu}/${pi.length}</span>
     </div>`;
   }).join('');
 
   const cards = items.map(acc => {
-    const unlocked_item = !!state[acc.key];
-    const prog     = progress[acc.key] || {cur:0,max:acc.req.value,pct:0,done:false};
-    const path     = PATHS[acc.path];
-    const threshold = acc.revealAt || 0;
-    const isSecret  = acc.secret && !unlocked_item && prog.pct/100 < threshold;
-    const isRevealed= acc.secret && !unlocked_item && prog.pct/100 >= threshold;
+    const isUnlocked = !!state[acc.key];
+    const prog       = progress[acc.key] || {cur:0,max:acc.req?.value||1,pct:0,done:false};
+    const path       = PATHS_LOCAL[acc.path];
+    const threshold  = acc.revealAt || 0;
+    const isSecret   = acc.secret && !isUnlocked && prog.pct/100 < threshold;
+    const isRevealed = acc.secret && !isUnlocked && prog.pct/100 >= threshold;
 
     if (isSecret) return `<div class="acc-card-v2 secret">
       <div class="acc-card-mystery">
         <div class="acc-mystery-icon">🔮</div>
         <div class="acc-mystery-label">Geheimes Accessoire</div>
         <div class="acc-mystery-cat" style="color:${path?.color}">${path?.icon} ${path?.label}</div>
-        <div class="acc-mystery-hint">Noch nicht entdeckt</div>
       </div></div>`;
 
-    return `<div class="acc-card-v2 ${unlocked_item?'unlocked':isRevealed?'revealed':'locked'}">
+    // Build SVG illustration
+    const itemSVG = buildAccItemSVG(acc.key, 64);
+
+    return `<div class="acc-card-v2 svg-card ${isUnlocked?'unlocked':isRevealed?'revealed':'locked'}"
+      onclick="${isUnlocked ? `showAccDetail('${acc.key}')` : `showHybridLockedHint('${acc.key}')`}">
       <div class="acc-card-header" style="background:${path?.color}22;border-color:${path?.color}44">
         <span class="acc-card-cat-icon">${path?.icon||'🎽'}</span>
         <span class="acc-card-cat-label" style="color:${path?.color}">${path?.label||''}</span>
-        ${acc.earlyReward?'<span style="font-size:.6rem;color:var(--g5);font-weight:700">⚡ Früh</span>':''}
-        ${unlocked_item?'<span class="acc-card-check">✓</span>':''}
+        ${acc.earlyReward?'<span style="font-size:.58rem;color:var(--g5);font-weight:700">⚡</span>':''}
+        ${isUnlocked?'<span class="acc-card-check">✓</span>':''}
         ${isRevealed?'<span class="acc-card-reveal">!</span>':''}
       </div>
-      <div class="acc-card-icon-big">${acc.icon}</div>
+      <div class="acc-svg-preview">${itemSVG}</div>
       <div class="acc-card-name">${acc.name}</div>
-      ${unlocked_item
-        ?`<div class="acc-card-date">✓ ${fmtDateS(state[acc.key].unlockedAt)}</div>`
+      ${isUnlocked
+        ?`<div class="acc-card-date">✓ ${typeof fmtDateS==='function'?fmtDateS(state[acc.key].unlockedAt):state[acc.key].unlockedAt}</div>`
         :`<div class="acc-card-req">${acc.reqLabel}</div>
           <div class="acc-prog-wrap"><div class="acc-prog-fill" style="width:${prog.pct}%;background:${path?.color||'var(--b6)'}"></div></div>
           <div class="acc-prog-txt">${prog.cur} / ${prog.max} (${prog.pct}%)</div>`
@@ -7454,205 +7732,71 @@ async function renderHybridGallery(containerId) {
       <div class="hybrid-path-stats">${pathStats}</div>
     </div>
     <div class="acc-grid-v2">${cards}</div>`;
-}
-
-function setHybridCat(cat, btn, containerId) {
-  const container = document.getElementById(containerId);
-  if (container) container.dataset.activeCat = cat;
-  document.querySelectorAll(`#${containerId} .acc-cat-tab`).forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderHybridGallery(containerId);
-}
-
-// ── HYBRID CUSTOMIZER INTEGRATION ────────────────────────────────────────────
-// Override renderAvatarCustomizerPage to use hybrid items
-const _origRenderAvatarCustomizer = window.renderAvatarCustomizerPage;
-window.renderAvatarCustomizerPage = async function() {
-  const container = document.getElementById('page-avatar-custom');
-  if (!container) return;
-  const scroll = container.querySelector('.pscroll');
-  if (!scroll) return;
-
-  const stats    = await computeStats();
-  const lv       = getLvl(stats.totalPoints);
-  const state    = getHybridUnlocked();
-  const custom   = getAvatarCustomization();
-
-  // Build preview
-  const previewSVG = typeof buildCustomizedAvatarSVG === 'function'
-    ? buildCustomizedAvatarSVG(lv.num, custom, 180, true)
-    : (typeof buildAvatarSVG === 'function' ? buildAvatarSVG(lv.num, [], 180, true) : '🏊');
-
-  const lvCfg = typeof AVATAR_LEVELS !== 'undefined' ? AVATAR_LEVELS[lv.num-1] : null;
-
-  // Group by slot
-  const SLOTS = [
-    { key:'cap',    label:'Badekappe',    icon:'🧢' },
-    { key:'goggle', label:'Schwimmbrille',icon:'🥽' },
-    { key:'suit',   label:'Badeanzug',    icon:'👙' },
-    { key:'medal',  label:'Medaille',     icon:'🏅' },
-    { key:'extra',  label:'Extra',        icon:'✨' }
-  ];
-
-  const slotSections = await Promise.all(SLOTS.map(async slot => {
-    const items = HYBRID_ACC.filter(a => a.slot === slot.key);
-    const selected = custom[slot.key] || null;
-
-    const itemCards = await Promise.all(items.map(async acc => {
-      const unlocked = !!state[acc.key];
-      const isSelected = selected === acc.key;
-      const path = PATHS[acc.path];
-      const prog = unlocked ? null : await getHybridAccProgress(acc);
-
-      return `<div class="avc-item ${isSelected?'selected':''} ${!unlocked?'locked':''}"
-        onclick="${unlocked ? `selectHybridItem('${slot.key}','${acc.key}')` : `showHybridLockedHint('${acc.key}')`}"
-        id="havc-item-${acc.key}">
-        <div class="avc-item-icon">${acc.icon}</div>
-        <div class="avc-item-name">${acc.name}
-          ${!unlocked && prog ? `<div class="avc-lock-prog-wrap"><div class="avc-lock-prog-fill" style="width:${prog.pct}%;background:${path?.color}"></div></div><div class="avc-lock-hint">${prog.cur}/${prog.max}</div>` : ''}
-        </div>
-        ${isSelected ? '<div class="avc-item-check">✓</div>' : ''}
-        ${!unlocked ? '<div class="avc-item-lock">🔒</div>' : ''}
-        ${acc.earlyReward && unlocked ? '<div style="position:absolute;top:4px;left:4px;font-size:.55rem;color:var(--g5);font-weight:700">⚡</div>' : ''}
-      </div>`;
-    }));
-
-    return `<div class="avc-slot-section">
-      <div class="avc-slot-header">
-        <span class="avc-slot-icon">${slot.icon}</span>
-        <span class="avc-slot-label">${slot.label}</span>
-        ${selected ? `<button class="avc-clear-btn" onclick="clearHybridSlot('${slot.key}')">Entfernen</button>` : ''}
-      </div>
-      <div class="avc-items-grid">
-        <div class="avc-item ${!selected?'selected':''}" onclick="selectHybridItem('${slot.key}',null)">
-          <div class="avc-item-icon">✕</div>
-          <div class="avc-item-name">Keins</div>
-        </div>
-        ${itemCards.join('')}
-      </div>
-    </div>`;
-  }));
-
-  scroll.innerHTML = `
-    <div class="phdr"><h2>Avatar gestalten</h2><p class="psub">Wähle deine Ausrüstung</p></div>
-    <div class="avc-preview-card">
-      <div class="avc-preview-avatar" id="avc-preview-avatar">${previewSVG}</div>
-      <div class="avc-preview-info">
-        <div class="avc-preview-name">${lvCfg?.name||'Schwimmerin'}</div>
-        <div class="avc-preview-level">Level ${lv.num} – ${lv.name}</div>
-        <div class="avc-preview-equipped" id="avc-equipped-chips">
-          ${Object.entries(custom).filter(([,v])=>v).map(([,key])=>{
-            const acc=HYBRID_ACC.find(a=>a.key===key);
-            return acc?`<span class="avc-equipped-chip">${acc.icon} ${acc.name}</span>`:'';
-          }).join('')}
-        </div>
-      </div>
-    </div>
-    ${slotSections.join('')}
-    <div style="padding:8px 0 16px">
-      <button class="btn full lg" onclick="saveHybridAvatarAndReturn()">✓ Avatar speichern</button>
-    </div>
-    <div id="havc-locked-hint" class="avc-locked-hint hidden"></div>
-  `;
 };
 
-async function selectHybridItem(slot, accKey) {
-  setSelectedForSlot(slot, accKey);
-  haptic('light');
-  const custom = getAvatarCustomization();
+// ── ACCESSOIRE DETAIL MODAL ───────────────────────────────────────────────────
+async function showAccDetail(accKey) {
+  const HYBRID_ACC_LOCAL = typeof HYBRID_ACC !== 'undefined' ? HYBRID_ACC : [];
+  const acc = HYBRID_ACC_LOCAL.find(a => a.key === accKey);
+  if (!acc) return;
+
   const stats  = await computeStats();
   const lv     = getLvl(stats.totalPoints);
-  const previewEl = document.getElementById('avc-preview-avatar');
-  if (previewEl && typeof buildCustomizedAvatarSVG === 'function') {
-    previewEl.innerHTML = buildCustomizedAvatarSVG(lv.num, custom, 180, true);
+  const custom = typeof getAvatarCustomization === 'function' ? getAvatarCustomization() : {};
+
+  // Show avatar wearing this item
+  const previewCustom = { ...custom, [acc.slot]: accKey };
+  const avatarSVG = buildAvatarSVGv2(lv.num, previewCustom, 160, false);
+  const itemSVG   = buildAccItemSVG(accKey, 80);
+  const path      = typeof PATHS !== 'undefined' ? PATHS[acc.path] : null;
+
+  const modal = document.getElementById('macc-detail');
+  if (!modal) return;
+
+  document.getElementById('mad-avatar').innerHTML  = avatarSVG;
+  document.getElementById('mad-item-svg').innerHTML = itemSVG;
+  document.getElementById('mad-name').textContent  = acc.name;
+  document.getElementById('mad-story').textContent = acc.story;
+  document.getElementById('mad-path').textContent  = `${path?.icon||''} ${path?.label||''}`;
+  document.getElementById('mad-path').style.color  = path?.color || 'var(--b6)';
+
+  // Equip button
+  const equipBtn = document.getElementById('mad-equip-btn');
+  if (equipBtn) {
+    const isEquipped = custom[acc.slot] === accKey;
+    equipBtn.textContent = isEquipped ? '✓ Ausgerüstet' : 'Ausrüsten';
+    equipBtn.onclick = () => {
+      if (typeof setSelectedForSlot === 'function') setSelectedForSlot(acc.slot, isEquipped ? null : accKey);
+      closeM('macc-detail');
+      showToast(isEquipped ? 'Entfernt.' : `${acc.name} ausgerüstet! 🎽`);
+      if (typeof updateHeaderAvatarSVG === 'function') updateHeaderAvatarSVG();
+      if (typeof renderInteractiveAvatarCard === 'function') renderInteractiveAvatarCard();
+    };
   }
-  const equippedEl = document.getElementById('avc-equipped-chips');
-  if (equippedEl) {
-    equippedEl.innerHTML = Object.entries(custom).filter(([,v])=>v).map(([,key])=>{
-      const acc=HYBRID_ACC.find(a=>a.key===key);
-      return acc?`<span class="avc-equipped-chip">${acc.icon} ${acc.name}</span>`:'';
-    }).join('');
-  }
-  // Update selection visuals
-  document.querySelectorAll(`[id^="havc-item-"]`).forEach(el => {
+
+  modal.classList.remove('hidden');
+}
+</script>
+<script>
+
+// Patch: show SVG in customizer items
+const _origRenderAvatarCustomizerSVG = window.renderAvatarCustomizerPage;
+window.renderAvatarCustomizerPage = async function() {
+  await _origRenderAvatarCustomizerSVG();
+  // Replace emoji icons with SVG in avc-items
+  document.querySelectorAll('.avc-item[id^="havc-item-"]').forEach(el => {
     const key = el.id.replace('havc-item-','');
-    const accSlot = HYBRID_ACC.find(a=>a.key===key)?.slot;
-    if (accSlot === slot) {
-      el.classList.remove('selected');
-      el.querySelector('.avc-item-check')?.remove();
-    }
-  });
-  if (accKey) {
-    const selEl = document.getElementById(`havc-item-${accKey}`);
-    if (selEl) {
-      selEl.classList.add('selected');
-      if (!selEl.querySelector('.avc-item-check')) {
-        const ch = document.createElement('div');
-        ch.className='avc-item-check'; ch.textContent='✓';
-        selEl.appendChild(ch);
+    if (typeof buildAccItemSVG === 'function') {
+      const iconEl = el.querySelector('.avc-item-icon');
+      if (iconEl) {
+        const svg = buildAccItemSVG(key, 44);
+        iconEl.innerHTML = svg;
+        iconEl.style.fontSize = 'unset';
       }
     }
-  }
-  showToast('Ausrüstung aktualisiert!');
-}
-
-function clearHybridSlot(slot) { selectHybridItem(slot, null); }
-
-function showHybridLockedHint(accKey) {
-  const acc  = HYBRID_ACC.find(a=>a.key===accKey);
-  if (!acc) return;
-  const path = PATHS[acc.path];
-  const hint = document.getElementById('havc-locked-hint');
-  if (!hint) return;
-  hint.innerHTML = `<div class="avc-locked-hint-inner">
-    <span style="font-size:1.2rem">${acc.icon}</span>
-    <div>
-      <div style="font-weight:700;font-size:.83rem">${acc.name}</div>
-      <div style="font-size:.75rem;color:var(--tm)">${acc.reqLabel}</div>
-      <div style="font-size:.68rem;color:${path?.color};font-weight:600;margin-top:2px">${path?.icon} ${path?.label}</div>
-    </div>
-  </div>`;
-  hint.classList.remove('hidden');
-  setTimeout(()=>hint.classList.add('hidden'),3000);
-  haptic('light');
-}
-
-function saveHybridAvatarAndReturn() {
-  haptic('success');
-  showToast('Avatar gespeichert! 🏊');
-  if (typeof updateHeaderAvatarSVG === 'function') updateHeaderAvatarSVG();
-  if (typeof renderInteractiveAvatarCard === 'function') renderInteractiveAvatarCard();
-  setTimeout(()=>nav('erfolge'),600);
-}
-
-// ── OVERRIDE ERFOLGE PAGE to use hybrid gallery ───────────────────────────────
-const _origRenderErfolgeHybrid = window.renderErfolgePage;
-window.renderErfolgePage = async function() {
-  await _origRenderErfolgeHybrid();
-  // Replace acc-gallery-container with hybrid gallery
-  const container = document.getElementById('acc-gallery-container');
-  if (container) await renderHybridGallery('acc-gallery-container');
-  // Check unlocks
-  await checkHybridUnlocks();
+  });
 };
 
-// ── OVERRIDE SAVE FUNCTIONS ───────────────────────────────────────────────────
-const _origSaveTrainingHybrid = window.saveTraining;
-window.saveTraining = async function(e) {
-  await _origSaveTrainingHybrid(e);
-  await checkHybridUnlocks();
-};
-const _origSaveWettkampfHybrid = window.saveWettkampf;
-window.saveWettkampf = async function(e) {
-  await _origSaveWettkampfHybrid(e);
-  await checkHybridUnlocks();
-};
-
-// ── INIT ──────────────────────────────────────────────────────────────────────
-window.addEventListener('swimtrack-ready', async () => {
-  const entries = await dbAll('training');
-  if (entries.length > 0) await checkHybridUnlocks();
-});
 </script>
 </body></html>`);
 
