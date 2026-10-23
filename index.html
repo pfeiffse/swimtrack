@@ -2248,6 +2248,67 @@ body[data-theme=dark] {
 .unlock-screen-v2.act3{background:rgba(0,0,0,.88);opacity:1}
 .unlock-screen-v2.closing{background:rgba(0,0,0,0);opacity:0;pointer-events:none}
 </style>
+<style>
+/* CRITICAL: Opaque background - no code visible behind app */
+html, body {
+  background: #EEF2FF !important;
+  background-color: #EEF2FF !important;
+}
+[data-theme=dark] html,
+[data-theme=dark] body {
+  background: #080B18 !important;
+  background-color: #080B18 !important;
+}
+@media(prefers-color-scheme:dark) {
+  html:not([data-theme=light]),
+  body:not([data-theme=light]) {
+    background: #080B18 !important;
+    background-color: #080B18 !important;
+  }
+}
+/* App container: fully opaque */
+#app {
+  background: #EEF2FF !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+}
+[data-theme=dark] #app {
+  background: #080B18 !important;
+}
+/* Pages area: opaque */
+.pages {
+  background: #EEF2FF !important;
+}
+[data-theme=dark] .pages {
+  background: #080B18 !important;
+}
+/* Page scroll: opaque */
+.pscroll {
+  background: #EEF2FF !important;
+}
+[data-theme=dark] .pscroll {
+  background: #080B18 !important;
+}
+/* Individual pages: opaque */
+.page {
+  background: #EEF2FF !important;
+}
+[data-theme=dark] .page {
+  background: #080B18 !important;
+}
+/* Subtle gradient overlay on top of solid color */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 15%, rgba(0,68,255,.08) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 85%, rgba(0,194,224,.06) 0%, transparent 45%);
+  pointer-events: none;
+  z-index: 0;
+}
+#app { position: relative; z-index: 1; }
+</style>
 </head>
 <body>
 <div id="app">
