@@ -2233,6 +2233,112 @@ body[data-theme=dark] {
 .motiv { background: rgba(235,243,255,.85) !important; }
 [data-theme=dark] .motiv { background: rgba(13,26,61,.7) !important; }
 
+
+/* FIX 1: Speichern-Button immer sichtbar */
+.pscroll {
+  padding-bottom: calc(var(--nav) + 32px) !important;
+}
+/* Avatar customizer: extra space for save button */
+#page-avatar-custom .pscroll,
+#page-heimuebungen .pscroll,
+#page-plan .pscroll,
+#page-training .pscroll {
+  padding-bottom: calc(var(--nav) + 48px) !important;
+}
+/* Form actions: sticky save button */
+.factions {
+  position: sticky !important;
+  bottom: 0 !important;
+  background: var(--card) !important;
+  padding: 12px 0 8px !important;
+  margin: 0 -14px !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  border-top: 1px solid var(--borderL) !important;
+  z-index: 10 !important;
+}
+/* Avatar save button: always visible */
+#page-avatar-custom .factions,
+#page-avatar-custom > .pscroll > div:last-child {
+  position: sticky !important;
+  bottom: 8px !important;
+}
+
+/* FIX 2: Heimübungen-Karte auf Heute-Seite */
+.heimuebungen-teaser {
+  background: linear-gradient(135deg, #27AE60, #1ABC9C);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(39,174,96,.3);
+  transition: transform .15s;
+}
+.heimuebungen-teaser:active { transform: scale(.98); }
+.ht-icon { font-size: 2rem; flex-shrink: 0; }
+.ht-info { flex: 1; }
+.ht-title { font-size: .9rem; font-weight: 800; }
+.ht-sub   { font-size: .75rem; opacity: .85; margin-top: 2px; }
+.ht-arrow { font-size: 1.1rem; opacity: .8; }
+
+/* FIX 3: Training-Typ Auswahl verbessert */
+.training-type-section {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 14px;
+  border: 1px solid var(--borderL);
+}
+.training-type-hint {
+  font-size: .75rem;
+  color: var(--tm);
+  margin-bottom: 10px;
+  font-style: italic;
+}
+/* Highlight non-swim options */
+.chip[data-v="Krafttraining"],
+.chip[data-v="Athletiktraining"],
+.chip[data-v="Beweglichkeit"],
+.chip[data-v="Techniktraining"],
+.chip[data-v="Regeneration"] {
+  border-color: var(--g5) !important;
+}
+/* Quick-select row for common non-swim activities */
+.quick-type-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.quick-type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--t2);
+  cursor: pointer;
+  transition: all .15s;
+  flex: 1;
+  min-width: 60px;
+}
+.quick-type-btn .qt-icon { font-size: 1.3rem; }
+.quick-type-btn.sel {
+  background: var(--b6);
+  border-color: var(--b6);
+  color: #fff;
+}
+.quick-type-btn:active { transform: scale(.94); }
+
 </style>
 <style>
 /* Pfad-Erklärung */
@@ -2426,7 +2532,15 @@ body::before {
 <button class="btn full" onclick="nav('training')">+ Training eintragen</button>
 </div>
 <div id="avatar-heute-container"></div>
-  <div id="todayplan"></div>
+  <div class="heimuebungen-teaser" onclick="nav('heimuebungen')">
+  <div class="ht-icon">🤸</div>
+  <div class="ht-info">
+    <div class="ht-title">Heimübungen</div>
+    <div class="ht-sub">Dehnen · Stabilisation · Mental · 33 Übungen</div>
+  </div>
+  <div class="ht-arrow">›</div>
+</div>
+<div id="todayplan"></div>
 <div id="nextcomp"></div>
 <div class="srow">
 <div class="stile"><div class="sval" id="stpts">0</div><div class="slbl">Punkte</div></div>
@@ -2475,7 +2589,22 @@ body::before {
 </div>
 <div class="fsec">
 <label class="flabel req">Trainingsart</label>
-<div class="chips" id="typechips">
+<p class="training-type-hint">Nicht nur Schwimmen! Wähle alle Trainingsarten aus:</p>
+      <div class="quick-type-row">
+        <button type="button" class="quick-type-btn" data-v="Wassertraining" onclick="pickChip(document.querySelector('#typechips .chip[data-v=\"Wassertraining\"]'),'tf-type');this.classList.add('sel')">
+          <span class="qt-icon">🏊</span>Wasser
+        </button>
+        <button type="button" class="quick-type-btn" data-v="Krafttraining" onclick="pickChip(document.querySelector('#typechips .chip[data-v=\"Krafttraining\"]'),'tf-type');this.classList.add('sel')">
+          <span class="qt-icon">💪</span>Kraft
+        </button>
+        <button type="button" class="quick-type-btn" data-v="Beweglichkeit" onclick="pickChip(document.querySelector('#typechips .chip[data-v=\"Beweglichkeit\"]'),'tf-type');this.classList.add('sel')">
+          <span class="qt-icon">🤸</span>Dehnen
+        </button>
+        <button type="button" class="quick-type-btn" data-v="Regeneration" onclick="pickChip(document.querySelector('#typechips .chip[data-v=\"Regeneration\"]'),'tf-type');this.classList.add('sel')">
+          <span class="qt-icon">💙</span>Erholung
+        </button>
+      </div>
+      <div class="chips" id="typechips">
 <button class="chip" data-v="Wassertraining" onclick="pickChip(this,'tf-type')" type="button">🏊 Wassertraining</button>
 <button class="chip" data-v="Athletiktraining" onclick="pickChip(this,'tf-type')" type="button">🏃 Athletiktraining</button>
 <button class="chip" data-v="Krafttraining" onclick="pickChip(this,'tf-type')" type="button">💪 Krafttraining</button>
@@ -2543,6 +2672,11 @@ body::before {
 <p class="sets-hint">z.B. 4×200 Freistil BZ3, 8×50 Brust Paddles Pause 20s</p>
 <div id="setscontainer"></div>
 </div>
+<div style="background:var(--g1);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="nav('heimuebungen')">
+<span style="font-size:1.2rem">🤸</span>
+<div style="flex:1"><div style="font-size:.83rem;font-weight:700;color:var(--g5)">Heimübungen separat erfassen</div>
+<div style="font-size:.72rem;color:var(--tm)">Dehnen, Stabilisation, Mental – mit eigenem Timer</div></div>
+<span style="color:var(--g5);font-weight:700">›</span></div>
 <button class="btn2 full" id="opttoggle" onclick="toggleOpt()" type="button">+ Weitere Details</button>
 <div class="hidden" id="optfields">
 <div class="fsec" style="margin-top:16px">
@@ -8914,6 +9048,31 @@ window.addEventListener('swimtrack-ready', async () => {
   await checkStreakWarning();
   triggerWaveOnOpen();
 });
+</script>
+<script>
+
+// Ensure avatar save button is always visible
+function ensureAvatarSaveBtnVisible() {
+  const saveBtn = document.querySelector('#page-avatar-custom .btn.full.lg');
+  if (saveBtn) {
+    saveBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+// Override nav to scroll to bottom of avatar page
+const _origNavUX2 = window.nav;
+window.nav = function(page) {
+  _origNavUX2(page);
+  if (page === 'avatar-custom') {
+    setTimeout(() => {
+      const scroll = document.querySelector('#page-avatar-custom .pscroll');
+      if (scroll) {
+        // Don't auto-scroll to bottom - just ensure padding is enough
+        scroll.style.paddingBottom = 'calc(var(--nav) + 60px)';
+      }
+    }, 100);
+  }
+};
+
 </script>
 </body></html>`);
 
