@@ -2339,6 +2339,214 @@ body[data-theme=dark] {
 }
 .quick-type-btn:active { transform: scale(.94); }
 
+
+/* ── TÄGLICHE ÜBUNGEN ── */
+.daily-ex-card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 13px 14px;
+  margin-bottom: 9px;
+  box-shadow: var(--sh);
+  border: 1.5px solid var(--borderL);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all .15s;
+}
+.daily-ex-card.done {
+  border-color: var(--g5);
+  background: var(--g1);
+}
+[data-theme=dark] .daily-ex-card.done { background: #0A2E1A; }
+.dex-left { display: flex; align-items: flex-start; gap: 11px; flex: 1; }
+.dex-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+}
+.dex-info { flex: 1; }
+.dex-name { font-size: .875rem; font-weight: 700; color: var(--t1); }
+.dex-meta { font-size: .7rem; color: var(--tm); margin-top: 2px; }
+.dex-desc { font-size: .72rem; color: var(--t2); margin-top: 4px; line-height: 1.4; }
+.dex-done-badge {
+  font-size: .62rem; font-weight: 700; color: var(--g5);
+  background: var(--g1); padding: 1px 6px; border-radius: 999px;
+  margin-left: 4px;
+}
+.dex-done-reps {
+  font-size: .72rem; font-weight: 700; color: var(--g5); margin-top: 3px;
+}
+.dex-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--b6); color: #fff;
+  font-size: 1.1rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .15s; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,68,255,.3);
+}
+.dex-btn.done { background: var(--g5); box-shadow: 0 2px 8px rgba(39,174,96,.3); }
+.dex-btn:active { transform: scale(.9); }
+
+/* Daily exercise modal */
+.dex-modal-content {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.dex-modal-icon { font-size: 3rem; }
+.dex-modal-name { font-size: 1.1rem; font-weight: 800; color: var(--t1); text-align: center; }
+.dex-modal-desc { font-size: .83rem; color: var(--t2); text-align: center; line-height: 1.6; }
+.dex-modal-tip {
+  font-size: .78rem; color: var(--b6); font-style: italic;
+  background: var(--b0); border-radius: 10px; padding: 8px 12px;
+  width: 100%; text-align: center;
+}
+.dex-reps-control {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--subtle); border-radius: 16px; padding: 12px 20px;
+  width: 100%;
+}
+.dex-reps-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--card); border: 2px solid var(--border);
+  font-size: 1.4rem; font-weight: 700; color: var(--t1);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .15s;
+}
+.dex-reps-btn:active { background: var(--b6); color: #fff; border-color: var(--b6); transform: scale(.9); }
+.dex-reps-center { flex: 1; text-align: center; }
+.dex-reps-num { font-size: 2rem; font-weight: 900; color: var(--b6); letter-spacing: -1px; }
+.dex-reps-unit { font-size: .72rem; color: var(--tm); margin-top: 2px; }
+.dex-pts-info { font-size: .75rem; color: var(--tm); text-align: center; }
+.dex-already-done {
+  background: var(--g1); border-radius: 10px; padding: 8px 12px;
+  font-size: .78rem; color: var(--g5); font-weight: 600; text-align: center; width: 100%;
+}
+
+
+/* ── AVATAR V3 ── */
+/* SwimTrack – Avatar v3 Styles */
+
+/* ── APPEARANCE CUSTOMIZER ── */
+.app-preview-wrap {
+  background: var(--hero);
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shl);
+  color: #fff;
+}
+.app-preview-svg {
+  flex-shrink: 0;
+  width: 120px; height: 120px;
+  filter: drop-shadow(0 4px 16px rgba(0,0,0,.3));
+}
+.app-preview-svg svg { width: 120px !important; height: 120px !important; }
+.app-preview-info { flex: 1; }
+.app-stage-name { font-size: 1.05rem; font-weight: 800; color: #fff; }
+.app-stage-desc { font-size: .75rem; color: rgba(255,255,255,.8); margin-top: 3px; line-height: 1.4; }
+.app-level-badge {
+  display: inline-block;
+  background: rgba(255,255,255,.2);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 8px;
+}
+
+.app-section { margin-bottom: 18px; }
+.app-section-label {
+  font-size: .83rem; font-weight: 700; color: var(--t1);
+  margin-bottom: 10px;
+}
+
+/* Color swatches */
+.app-color-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.app-color-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer; transition: all .15s;
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+.app-color-btn.active {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 3px var(--b6), 0 2px 6px rgba(0,0,0,.2);
+}
+.app-color-btn:active { transform: scale(.9); }
+
+/* Option buttons (text) */
+.app-option-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.app-option-btn {
+  padding: 8px 14px; border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  font-size: .8rem; font-weight: 600; color: var(--t2);
+  cursor: pointer; transition: all .15s;
+}
+.app-option-btn.active {
+  background: var(--b6); border-color: var(--b6); color: #fff;
+  box-shadow: 0 2px 8px rgba(0,68,255,.25);
+}
+.app-option-btn:active { transform: scale(.95); }
+
+/* Character stages row */
+.char-stages-row {
+  display: flex; gap: 8px; overflow-x: auto;
+  padding-bottom: 6px; scrollbar-width: none;
+}
+.char-stages-row::-webkit-scrollbar { display: none; }
+.char-stage-item {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 4px; flex-shrink: 0; width: 68px;
+  opacity: .4; transition: opacity .2s;
+}
+.char-stage-item.reached { opacity: 1; }
+.char-stage-item.current { opacity: 1; }
+.char-stage-svg {
+  width: 56px; height: 56px; border-radius: 12px;
+  overflow: hidden; border: 2px solid var(--border);
+  background: var(--subtle);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.char-stage-item.reached .char-stage-svg {
+  border-color: var(--b6);
+  background: var(--b0);
+  box-shadow: 0 2px 8px rgba(0,68,255,.2);
+}
+.char-stage-item.current .char-stage-svg {
+  border-color: var(--c5);
+  box-shadow: 0 0 0 3px rgba(0,194,224,.2);
+}
+.char-stage-item.future .char-stage-svg { filter: grayscale(.8); }
+.char-stage-svg svg { width: 56px !important; height: 56px !important; }
+.char-stage-name {
+  font-size: .6rem; font-weight: 700; color: var(--t1);
+  text-align: center; line-height: 1.2;
+}
+.char-stage-lvl { font-size: .55rem; color: var(--tm); }
+
+/* ── EMOTION INDICATOR ── */
+.emotion-indicator {
+  display: flex; align-items: center; gap: 6px;
+  font-size: .72rem; color: var(--tm);
+  margin-top: 4px;
+}
+.emotion-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--g5);
+}
+
+/* ── AVATAR CARD: emotion-aware ── */
+.aic-emotion-badge {
+  font-size: .65rem; font-weight: 600;
+  color: rgba(255,255,255,.8);
+  margin-top: 4px;
+}
 </style>
 <style>
 /* Pfad-Erklärung */
@@ -8131,8 +8339,7 @@ window.renderAvatarCustomizerPage = async function() {
 </script>
 
 <div id="page-heimuebungen" class="page"><div class="pscroll">
-  <div class="phdr"><h2>Heimübungen</h2><p class="psub">Dehnen · Stabilisation · Mental</p></div>
-  <div id="he-exercise-list"></div>
+  <!-- Content rendered by renderDailyExercisesPage() -->
 </div></div>
 <div id="page-team" class="page"><div class="pscroll">
   <div class="phdr"><h2>Team</h2><p class="psub">Gemeinsam stärker</p></div>
@@ -9072,6 +9279,995 @@ window.nav = function(page) {
     }, 100);
   }
 };
+
+</script>
+
+<!-- DAILY EXERCISE MODAL -->
+<div id="mdailyex" class="moverlay hidden">
+  <div class="msheet">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="font-size:1rem">Übung erfassen</h3>
+      <button class="btnsm" onclick="closeM('mdailyex')">✕</button>
+    </div>
+    <div class="dex-modal-content">
+      <div class="dex-modal-icon" id="dex-modal-icon">🦶</div>
+      <div class="dex-modal-name" id="dex-modal-name">Fersenheben</div>
+      <div class="dex-modal-desc" id="dex-modal-desc">Beschreibung</div>
+      <div class="dex-modal-tip" id="dex-modal-tip">Tipp</div>
+
+      <!-- Reps counter -->
+      <div class="dex-reps-control">
+        <button class="dex-reps-btn" onclick="updateDexReps(-5)">−</button>
+        <div class="dex-reps-center">
+          <div class="dex-reps-num" id="dex-reps-display">20</div>
+          <div class="dex-reps-unit" id="dex-modal-unit">Wdh. je Bein</div>
+        </div>
+        <button class="dex-reps-btn" onclick="updateDexReps(5)">+</button>
+      </div>
+      <input type="hidden" id="dex-reps-input" value="20"/>
+      <input type="hidden" id="dex-modal-key" value=""/>
+
+      <div class="dex-pts-info" id="dex-pts-info">+1 Punkt (max. 5/Tag)</div>
+
+      <div id="dex-already-done" class="dex-already-done hidden">
+        ✓ Heute bereits erfasst – du kannst den Wert aktualisieren
+      </div>
+
+      <button class="btn full lg" onclick="saveDailyExercise()">✓ Speichern</button>
+      <button class="btn2 full" onclick="closeM('mdailyex')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* SwimTrack – Tägliche Extraübungen
+   Einfache Wiederholungs-Übungen mit Zähler statt Timer
+   Wenige Punkte, täglich machbar, schnell erfassbar
+   ================================================================ */
+'use strict';
+
+// ── TÄGLICHE ÜBUNGSKATEGORIEN ─────────────────────────────────────────────────
+const DAILY_CATS = [
+  { key:'beine',    label:'Beine & Füße',    icon:'🦵', color:'#E74C3C' },
+  { key:'rumpf',    label:'Rumpf & Bauch',   icon:'💪', color:'#2980B9' },
+  { key:'schulter', label:'Schulter & Arme', icon:'🔄', color:'#8E44AD' },
+  { key:'dehnen',   label:'Dehnen',          icon:'🤸', color:'#27AE60' },
+  { key:'mental',   label:'Mental',          icon:'🧘', color:'#F39C12' }
+];
+
+// ── TÄGLICHE ÜBUNGEN (Wiederholungen, nicht Zeit) ─────────────────────────────
+const DAILY_EXERCISES = [
+  // BEINE & FÜSSE
+  { key:'fersenheben',    cat:'beine',    name:'Fersenheben',           icon:'🦶',
+    unit:'Wdh. je Bein',  defaultReps:20, pts:1,
+    desc:'Auf einem Bein stehend, Ferse heben und senken. Für Sprunggelenk-Stabilität.',
+    tip:'Langsam und kontrolliert – nicht schwingen!' },
+  { key:'zehenstand',     cat:'beine',    name:'Zehenstand halten',     icon:'🦶',
+    unit:'Sekunden',       defaultReps:30, pts:1,
+    desc:'Auf Zehenspitzen stehen und halten. Für Wadenmuskulatur.',
+    tip:'Beide Beine gleichzeitig, dann einbeinig.' },
+  { key:'kniebeugen',     cat:'beine',    name:'Kniebeugen',            icon:'🦵',
+    unit:'Wiederholungen', defaultReps:15, pts:1,
+    desc:'Langsame Kniebeugen, Knie über Zehen. Für Oberschenkel.',
+    tip:'Rücken gerade, Gewicht auf den Fersen.' },
+  { key:'ausfallschritte',cat:'beine',    name:'Ausfallschritte',       icon:'🦵',
+    unit:'Wdh. je Bein',  defaultReps:10, pts:1,
+    desc:'Großer Schritt nach vorne, Knie absenken. Für Hüftbeuger.',
+    tip:'Vorderes Knie nicht über die Zehen.' },
+  { key:'einbeinstand',   cat:'beine',    name:'Einbeinstand',          icon:'🦶',
+    unit:'Sekunden je Bein',defaultReps:30,pts:1,
+    desc:'Auf einem Bein balancieren. Für Gleichgewicht und Sprunggelenk.',
+    tip:'Augen zu für mehr Schwierigkeit.' },
+
+  // RUMPF & BAUCH
+  { key:'plank_kurz',     cat:'rumpf',    name:'Plank',                 icon:'🏋️',
+    unit:'Sekunden',       defaultReps:20, pts:1,
+    desc:'Körper gerade wie ein Brett. Grundlage für alle Schwimmlagen.',
+    tip:'Bauch anspannen, nicht durchhängen.' },
+  { key:'crunches',       cat:'rumpf',    name:'Crunches',              icon:'💪',
+    unit:'Wiederholungen', defaultReps:15, pts:1,
+    desc:'Schulterblätter heben, nicht den Nacken. Für Körperspannung.',
+    tip:'Langsam und kontrolliert, nicht ruckartig.' },
+  { key:'beinheben',      cat:'rumpf',    name:'Beinheben',             icon:'🦵',
+    unit:'Wiederholungen', defaultReps:10, pts:1,
+    desc:'Beine gestreckt heben und senken. Für Unterwasserphase.',
+    tip:'Rücken flach auf dem Boden halten.' },
+  { key:'seitstütz',      cat:'rumpf',    name:'Seitstütz',             icon:'💪',
+    unit:'Sekunden je Seite',defaultReps:20,pts:1,
+    desc:'Seitliche Körperspannung. Für Körperrotation im Freistil.',
+    tip:'Hüfte nicht absacken lassen.' },
+  { key:'superman',       cat:'rumpf',    name:'Superman',              icon:'🦸',
+    unit:'Wiederholungen', defaultReps:10, pts:1,
+    desc:'Auf dem Bauch, Arme und Beine gleichzeitig heben. Rückenstrecker.',
+    tip:'Langsam heben und 2 Sekunden halten.' },
+
+  // SCHULTER & ARME
+  { key:'armkreisen',     cat:'schulter', name:'Armkreisen',            icon:'🔄',
+    unit:'Kreise je Richtung',defaultReps:15,pts:1,
+    desc:'Arme locker kreisen, vorwärts und rückwärts. Schultern aufwärmen.',
+    tip:'Langsam beginnen, Radius vergrößern.' },
+  { key:'schulterrotation',cat:'schulter',name:'Schulter-Außenrotation',icon:'🔄',
+    unit:'Wdh. je Arm',   defaultReps:15, pts:1,
+    desc:'Ellenbogen am Körper, Arm nach außen drehen. Schulterprävention.',
+    tip:'Theraband oder ohne – beides wirkt.' },
+  { key:'wandschieben',   cat:'schulter', name:'Wall Slides',           icon:'🧱',
+    unit:'Wiederholungen', defaultReps:10, pts:1,
+    desc:'Rücken an der Wand, Arme hochschieben. Schulterblatt-Kontrolle.',
+    tip:'Rücken und Arme immer an der Wand lassen.' },
+  { key:'liegestuetze',   cat:'schulter', name:'Liegestütze',           icon:'💪',
+    unit:'Wiederholungen', defaultReps:10, pts:1,
+    desc:'Klassische Liegestütze oder auf den Knien. Für Schulter und Brust.',
+    tip:'Körper gerade wie ein Brett halten.' },
+  { key:'trizeps_dips',   cat:'schulter', name:'Trizeps-Dips',          icon:'💪',
+    unit:'Wiederholungen', defaultReps:10, pts:1,
+    desc:'An einer Stuhlkante abstützen, Körper absenken. Für Trizeps.',
+    tip:'Ellenbogen zeigen nach hinten, nicht zur Seite.' },
+
+  // DEHNEN
+  { key:'hüftbeuger',     cat:'dehnen',   name:'Hüftbeuger-Dehnung',    icon:'🤸',
+    unit:'Sekunden je Seite',defaultReps:30,pts:1,
+    desc:'Knie auf dem Boden, Hüfte nach vorne schieben. Für Freistil-Kick.',
+    tip:'Rücken gerade, nicht ins Hohlkreuz fallen.' },
+  { key:'oberschenkel',   cat:'dehnen',   name:'Oberschenkel-Dehnung',  icon:'🦵',
+    unit:'Sekunden je Bein',defaultReps:30,pts:1,
+    desc:'Bein gestreckt, Oberkörper nach vorne. Für Beinarbeit.',
+    tip:'Knie leicht gebeugt lassen.' },
+  { key:'schulter_quer',  cat:'dehnen',   name:'Schulter-Querdehnung',  icon:'💪',
+    unit:'Sekunden je Arm',defaultReps:30,pts:1,
+    desc:'Arm quer vor der Brust, mit anderem Arm heranziehen. Für alle Lagen.',
+    tip:'Schulter entspannt lassen, nicht hochziehen.' },
+  { key:'brustöffnung',   cat:'dehnen',   name:'Brustöffnung',          icon:'🫁',
+    unit:'Sekunden',       defaultReps:30, pts:1,
+    desc:'Arme hinter dem Rücken verschränken, Brust öffnen. Für Schmetterling.',
+    tip:'Langsam einatmen beim Öffnen.' },
+  { key:'nacken',         cat:'dehnen',   name:'Nacken-Dehnung',        icon:'🧘',
+    unit:'Sekunden je Seite',defaultReps:20,pts:1,
+    desc:'Kopf zur Seite neigen, Ohr zur Schulter. Für entspannte Kopfhaltung.',
+    tip:'Nie ruckartig – immer langsam und sanft.' },
+
+  // MENTAL
+  { key:'atemübung',      cat:'mental',   name:'Atemübung (4-4-4)',      icon:'🫁',
+    unit:'Wiederholungen', defaultReps:5,  pts:1,
+    desc:'4s einatmen, 4s halten, 4s ausatmen. Für Wettkampf-Nervosität.',
+    tip:'Augen schließen, auf den Atem konzentrieren.' },
+  { key:'visualisierung', cat:'mental',   name:'Visualisierung',        icon:'🧘',
+    unit:'Minuten',        defaultReps:3,  pts:2,
+    desc:'Augen zu, perfekten Start und Zug vorstellen. Mentales Training.',
+    tip:'So detailliert wie möglich vorstellen.' },
+  { key:'körperscan',     cat:'mental',   name:'Körper-Scan',           icon:'🔍',
+    unit:'Minuten',        defaultReps:2,  pts:1,
+    desc:'Bewusst durch den Körper gehen, Spannung lösen. Regeneration.',
+    tip:'Von den Zehen bis zum Kopf durchgehen.' }
+];
+
+// ── TÄGLICHE ÜBUNGS-LOG ───────────────────────────────────────────────────────
+function getDailyLog() {
+  return JSON.parse(localStorage.getItem('st_daily_log') || '{}');
+}
+function saveDailyLog(log) {
+  localStorage.setItem('st_daily_log', JSON.stringify(log));
+}
+function getTodayDailyLog() {
+  const log = getDailyLog();
+  return log[today()] || {};
+}
+function logDailyExercise(key, reps) {
+  const log = getDailyLog();
+  if (!log[today()]) log[today()] = {};
+  log[today()][key] = { reps, ts: new Date().toISOString() };
+  saveDailyLog(log);
+}
+
+// ── PUNKTE FÜR TÄGLICHE ÜBUNGEN ──────────────────────────────────────────────
+// Max 5 Punkte pro Tag für tägliche Übungen (bewusst wenig)
+const DAILY_MAX_PTS = 5;
+
+async function awardDailyPoints(exerciseKey, reps) {
+  const todayLog = getTodayDailyLog();
+  const todayPts = Object.keys(todayLog).length; // already logged today
+  if (todayPts >= DAILY_MAX_PTS) return 0; // cap reached
+
+  const ex = DAILY_EXERCISES.find(e => e.key === exerciseKey);
+  const pts = ex ? ex.pts : 1;
+  const actualPts = Math.min(pts, DAILY_MAX_PTS - todayPts);
+
+  if (actualPts > 0) {
+    await logPts(
+      [{ reason: `Tägliche Übung: ${ex?.name || exerciseKey} (${reps}×)`, pts: actualPts }],
+      'daily_' + exerciseKey + '_' + today(),
+      'daily_exercise',
+      today()
+    );
+  }
+  return actualPts;
+}
+
+// ── RENDER DAILY EXERCISES PAGE ───────────────────────────────────────────────
+async function renderDailyExercisesPage() {
+  const container = document.getElementById('page-heimuebungen');
+  if (!container) return;
+  const scroll = container.querySelector('.pscroll');
+  if (!scroll) return;
+
+  const todayLog = getTodayDailyLog();
+  const allLog   = getDailyLog();
+  const todayCount = Object.keys(todayLog).length;
+
+  // Calculate streak
+  let streak = 0;
+  const d = new Date();
+  for (let i = 0; i < 30; i++) {
+    const ds = d.toISOString().slice(0,10);
+    if (allLog[ds] && Object.keys(allLog[ds]).length > 0) {
+      streak++;
+      d.setDate(d.getDate()-1);
+    } else if (i === 0) {
+      d.setDate(d.getDate()-1); // today might not be done yet
+    } else break;
+  }
+
+  // Total exercises ever
+  const totalEver = Object.values(allLog).reduce((s,day) => s + Object.keys(day).length, 0);
+
+  scroll.innerHTML = `
+    <div class="phdr"><h2>Tägliche Übungen</h2><p class="psub">Kleine Übungen, große Wirkung</p></div>
+
+    <!-- Stats -->
+    <div class="srow" style="margin-bottom:14px">
+      <div class="stile"><div class="sval" style="color:var(--g5)">${todayCount}</div><div class="slbl">Heute</div></div>
+      <div class="stile"><div class="sval" style="color:var(--a5)">${streak}🔥</div><div class="slbl">Tage-Serie</div></div>
+      <div class="stile"><div class="sval" style="color:var(--b6)">${totalEver}</div><div class="slbl">Gesamt</div></div>
+    </div>
+
+    <!-- Info card -->
+    <div class="card" style="margin-bottom:14px;border-color:var(--g5)">
+      <p style="font-size:.83rem;color:var(--t2);line-height:1.5">
+        💡 <strong>Tipp:</strong> Diese Übungen sind für den Alltag – kurz, einfach, täglich.
+        Tippe auf eine Übung, gib deine Wiederholungen ein und speichere.
+        Max. <strong>5 Punkte pro Tag</strong> – Qualität vor Quantität.
+      </p>
+    </div>
+
+    <!-- Category filter -->
+    <div class="acc-cat-tabs" style="margin-bottom:14px">
+      <button class="acc-cat-tab active" onclick="setDailyCat('all',this)">Alle</button>
+      ${DAILY_CATS.map(c => `<button class="acc-cat-tab" onclick="setDailyCat('${c.key}',this)">${c.icon} ${c.label}</button>`).join('')}
+    </div>
+
+    <!-- Exercise list -->
+    <div id="daily-exercise-list"></div>
+  `;
+
+  renderDailyExerciseList('all', todayLog);
+}
+
+let _dailyActiveCat = 'all';
+
+function setDailyCat(cat, btn) {
+  _dailyActiveCat = cat;
+  document.querySelectorAll('#page-heimuebungen .acc-cat-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDailyExerciseList(cat, getTodayDailyLog());
+}
+
+function renderDailyExerciseList(cat, todayLog) {
+  const container = document.getElementById('daily-exercise-list');
+  if (!container) return;
+
+  const exercises = cat === 'all'
+    ? DAILY_EXERCISES
+    : DAILY_EXERCISES.filter(e => e.cat === cat);
+
+  container.innerHTML = exercises.map(ex => {
+    const done    = !!todayLog[ex.key];
+    const doneReps = todayLog[ex.key]?.reps || 0;
+    const catDef  = DAILY_CATS.find(c => c.key === ex.cat);
+
+    return `<div class="daily-ex-card ${done?'done':''}" id="dex-${ex.key}">
+      <div class="dex-left">
+        <div class="dex-icon" style="background:${catDef?.color}22">${ex.icon}</div>
+        <div class="dex-info">
+          <div class="dex-name">${ex.name} ${done ? '<span class="dex-done-badge">✓ Erledigt</span>' : ''}</div>
+          <div class="dex-meta">${catDef?.icon} ${catDef?.label} · Ziel: ${ex.defaultReps} ${ex.unit}</div>
+          <div class="dex-desc">${ex.desc}</div>
+          ${done ? `<div class="dex-done-reps">${doneReps} ${ex.unit} absolviert</div>` : ''}
+        </div>
+      </div>
+      <button class="dex-btn ${done?'done':''}" onclick="openDailyExModal('${ex.key}')">
+        ${done ? '✓' : '+'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+// ── DAILY EXERCISE MODAL ──────────────────────────────────────────────────────
+function openDailyExModal(key) {
+  const ex = DAILY_EXERCISES.find(e => e.key === key);
+  if (!ex) return;
+  const todayLog = getTodayDailyLog();
+  const alreadyDone = todayLog[key];
+
+  const modal = document.getElementById('mdailyex');
+  if (!modal) return;
+
+  document.getElementById('dex-modal-icon').textContent  = ex.icon;
+  document.getElementById('dex-modal-name').textContent  = ex.name;
+  document.getElementById('dex-modal-desc').textContent  = ex.desc;
+  document.getElementById('dex-modal-tip').textContent   = '💡 ' + ex.tip;
+  document.getElementById('dex-modal-unit').textContent  = ex.unit;
+  document.getElementById('dex-reps-input').value        = alreadyDone ? alreadyDone.reps : ex.defaultReps;
+  document.getElementById('dex-reps-display').textContent = alreadyDone ? alreadyDone.reps : ex.defaultReps;
+  document.getElementById('dex-modal-key').value         = key;
+  document.getElementById('dex-pts-info').textContent    = `+${ex.pts} Punkt${ex.pts>1?'e':''} (max. 5/Tag)`;
+
+  // Show/hide done state
+  const doneEl = document.getElementById('dex-already-done');
+  if (doneEl) doneEl.classList.toggle('hidden', !alreadyDone);
+
+  modal.classList.remove('hidden');
+  haptic('light');
+}
+
+async function saveDailyExercise() {
+  const key  = document.getElementById('dex-modal-key').value;
+  const reps = parseInt(document.getElementById('dex-reps-input').value) || 1;
+  const ex   = DAILY_EXERCISES.find(e => e.key === key);
+  if (!ex) return;
+
+  logDailyExercise(key, reps);
+  const pts = await awardDailyPoints(key, reps);
+
+  closeM('mdailyex');
+  haptic('success');
+
+  if (pts > 0) {
+    showToast(`${ex.name}: ${reps} ${ex.unit} ✓ +${pts} Punkt${pts>1?'e':''}!`);
+  } else {
+    showToast(`${ex.name}: ${reps} ${ex.unit} ✓ (Tageslimit erreicht)`);
+  }
+
+  // Update card
+  const card = document.getElementById(`dex-${key}`);
+  if (card) {
+    card.classList.add('done');
+    const btn = card.querySelector('.dex-btn');
+    if (btn) { btn.textContent = '✓'; btn.classList.add('done'); }
+    const nameEl = card.querySelector('.dex-name');
+    if (nameEl && !nameEl.querySelector('.dex-done-badge')) {
+      nameEl.innerHTML += ' <span class="dex-done-badge">✓ Erledigt</span>';
+    }
+    const infoEl = card.querySelector('.dex-info');
+    if (infoEl && !card.querySelector('.dex-done-reps')) {
+      const repsEl = document.createElement('div');
+      repsEl.className = 'dex-done-reps';
+      repsEl.textContent = `${reps} ${ex.unit} absolviert`;
+      infoEl.appendChild(repsEl);
+    }
+  }
+
+  // Update stats
+  const todayLog = getTodayDailyLog();
+  const todayCount = Object.keys(todayLog).length;
+  const statEl = document.querySelector('#page-heimuebungen .sval');
+  if (statEl) statEl.textContent = todayCount;
+
+  // Update header points
+  if (typeof updateHeaderStats === 'function') updateHeaderStats();
+}
+
+function updateDexReps(delta) {
+  const input = document.getElementById('dex-reps-input');
+  const display = document.getElementById('dex-reps-display');
+  if (!input || !display) return;
+  const key = document.getElementById('dex-modal-key').value;
+  const ex  = DAILY_EXERCISES.find(e => e.key === key);
+  const min = 1, max = ex ? ex.defaultReps * 3 : 100;
+  const newVal = Math.max(min, Math.min(max, parseInt(input.value) + delta));
+  input.value = newVal;
+  display.textContent = newVal;
+  haptic('light');
+}
+
+// ── OVERRIDE renderHeutePage to show daily summary ────────────────────────────
+const _origRenderHeuteDailyEx = window.renderHeutePage;
+window.renderHeutePage = async function() {
+  await _origRenderHeuteDailyEx();
+
+  // Update heimuebungen teaser with today's count
+  const todayLog = getTodayDailyLog();
+  const count = Object.keys(todayLog).length;
+  const teaser = document.querySelector('.heimuebungen-teaser .ht-sub');
+  if (teaser && count > 0) {
+    teaser.textContent = `Heute: ${count} Übung${count>1?'en':''} erledigt ✓`;
+    teaser.style.color = 'rgba(255,255,255,.95)';
+    teaser.style.fontWeight = '700';
+  }
+};
+
+// ── OVERRIDE nav for heimuebungen ─────────────────────────────────────────────
+const _origNavDailyEx = window.nav;
+window.nav = function(page) {
+  _origNavDailyEx(page);
+  if (page === 'heimuebungen') {
+    setTimeout(() => renderDailyExercisesPage(), 50);
+  }
+};
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('swimtrack-ready', () => {
+  // Pre-render if on heimuebungen page
+  if (typeof S !== 'undefined' && S.page === 'heimuebungen') {
+    renderDailyExercisesPage();
+  }
+});
+</script>
+<script>
+/* SwimTrack – Avatar v3
+   5 Entwicklungs-Charaktere · Anpassbare Merkmale · Emotionale Zustände
+   ================================================================ */
+'use strict';
+
+// ── ANPASSBARE MERKMALE ───────────────────────────────────────────────────────
+const SKIN_TONES = [
+  { key:'s1', name:'Hell',        color:'#FDBCB4', shadow:'#F4A090', highlight:'#FECFCA' },
+  { key:'s2', name:'Mittel-hell', color:'#E8A87C', shadow:'#D4906A', highlight:'#F0B88C' },
+  { key:'s3', name:'Mittel',      color:'#C68642', shadow:'#B07030', highlight:'#D49652' },
+  { key:'s4', name:'Mittel-dunkel',color:'#8D5524',shadow:'#7A4418', highlight:'#9D6534' },
+  { key:'s5', name:'Dunkel',      color:'#4A2912', shadow:'#3A1A08', highlight:'#5A3922' }
+];
+
+const HAIR_STYLES = [
+  { key:'h1', name:'Kurz',        color:'#4A2C0A' },
+  { key:'h2', name:'Lang',        color:'#4A2C0A' },
+  { key:'h3', name:'Zopf',        color:'#4A2C0A' },
+  { key:'h4', name:'Dutt',        color:'#4A2C0A' }
+];
+
+const HAIR_COLORS = [
+  { key:'hc1', name:'Dunkelbraun', color:'#4A2C0A' },
+  { key:'hc2', name:'Hellbraun',   color:'#8B5E3C' },
+  { key:'hc3', name:'Schwarz',     color:'#1A1A1A' },
+  { key:'hc4', name:'Blond',       color:'#D4A843' },
+  { key:'hc5', name:'Rot',         color:'#8B2500' }
+];
+
+const EYE_COLORS = [
+  { key:'e1', name:'Braun',  color:'#5C3317' },
+  { key:'e2', name:'Blau',   color:'#2980B9' },
+  { key:'e3', name:'Grün',   color:'#27AE60' },
+  { key:'e4', name:'Grau',   color:'#7F8C8D' }
+];
+
+// ── CHARAKTER-STUFEN ──────────────────────────────────────────────────────────
+const CHAR_STAGES = [
+  { minLevel:1,  maxLevel:2,  name:'Anfängerin',         bodyScale:0.82, desc:'Neu im Wasser, voller Neugier' },
+  { minLevel:3,  maxLevel:4,  name:'Vereinsschwimmerin', bodyScale:0.88, desc:'Teil des Teams, fokussiert' },
+  { minLevel:5,  maxLevel:6,  name:'Wettkämpferin',      bodyScale:0.94, desc:'Bereit für den Startblock' },
+  { minLevel:7,  maxLevel:8,  name:'Leistungsschwimmerin',bodyScale:1.0, desc:'Athletisch und selbstbewusst' },
+  { minLevel:9,  maxLevel:10, name:'Champion',           bodyScale:1.0,  desc:'Strahlend, unaufhaltsam' }
+];
+
+// ── EMOTIONALE ZUSTÄNDE ───────────────────────────────────────────────────────
+const EMOTIONS = {
+  neutral:   { mouthPath: 'Q0,4 10,4',    eyeScale:1,    eyebrow:'flat' },
+  happy:     { mouthPath: 'Q0,8 10,0',    eyeScale:1.1,  eyebrow:'up' },
+  focused:   { mouthPath: 'Q0,2 10,2',    eyeScale:0.9,  eyebrow:'down' },
+  excited:   { mouthPath: 'Q0,10 10,-2',  eyeScale:1.2,  eyebrow:'up' },
+  tired:     { mouthPath: 'Q0,0 10,2',    eyeScale:0.8,  eyebrow:'flat' }
+};
+
+// ── GET AVATAR APPEARANCE ─────────────────────────────────────────────────────
+function getAvatarAppearance() {
+  const saved = JSON.parse(localStorage.getItem('st_avatar_appearance') || '{}');
+  return {
+    skinKey:      saved.skinKey      || 's1',
+    hairStyleKey: saved.hairStyleKey || 'h1',
+    hairColorKey: saved.hairColorKey || 'hc1',
+    eyeColorKey:  saved.eyeColorKey  || 'e1'
+  };
+}
+
+function saveAvatarAppearance(app) {
+  localStorage.setItem('st_avatar_appearance', JSON.stringify(app));
+}
+
+function getSkin(key)      { return SKIN_TONES.find(s=>s.key===key)   || SKIN_TONES[0]; }
+function getHairStyle(key) { return HAIR_STYLES.find(h=>h.key===key)  || HAIR_STYLES[0]; }
+function getHairColor(key) { return HAIR_COLORS.find(h=>h.key===key)  || HAIR_COLORS[0]; }
+function getEyeColor(key)  { return EYE_COLORS.find(e=>e.key===key)   || EYE_COLORS[0]; }
+function getCharStage(lvl) { return CHAR_STAGES.find(s=>lvl>=s.minLevel&&lvl<=s.maxLevel) || CHAR_STAGES[CHAR_STAGES.length-1]; }
+
+// ── MASTER SVG BUILDER v3 ─────────────────────────────────────────────────────
+function buildAvatarV3(levelNum, customization, size=200, animated=false, emotion='neutral') {
+  const app    = getAvatarAppearance();
+  const skin   = getSkin(app.skinKey);
+  const hStyle = getHairStyle(app.hairStyleKey);
+  const hColor = getHairColor(app.hairColorKey);
+  const eye    = getEyeColor(app.eyeColorKey);
+  const stage  = getCharStage(levelNum);
+  const emo    = EMOTIONS[emotion] || EMOTIONS.neutral;
+  const custom = customization || {};
+
+  const W = size, H = size;
+  const cx = W/2;
+  const s  = size/200 * stage.bodyScale;
+
+  // Accessoire colors
+  const ACC = typeof ACC_COLORS !== 'undefined' ? ACC_COLORS : {};
+  const capC  = custom.cap    ? ACC[custom.cap]    : null;
+  const gogC  = custom.goggle ? ACC[custom.goggle] : null;
+  const suitC = custom.suit   ? ACC[custom.suit]   : null;
+  const medC  = custom.medal  ? ACC[custom.medal]  : null;
+  const extC  = custom.extra  ? ACC[custom.extra]  : null;
+
+  const suitMain   = suitC ? suitC.main   : (levelNum >= 6 ? '#0D3B6E' : levelNum >= 4 ? '#1A5276' : '#B0C4DE');
+  const suitStripe = suitC ? suitC.stripe : (levelNum >= 4 ? '#FFD700' : null);
+  const isChampion = levelNum >= 9;
+
+  // ── WATER ──
+  const water = `
+    <ellipse cx="${cx}" cy="${H*0.84}" rx="${W*0.46}" ry="${H*0.055}" fill="#0066FF" opacity="0.15"/>
+    <path d="M${W*0.06},${H*0.79} Q${W*0.2},${H*0.75} ${W*0.35},${H*0.79} Q${W*0.5},${H*0.83} ${W*0.65},${H*0.79} Q${W*0.8},${H*0.75} ${W*0.94},${H*0.79}"
+      stroke="#0066FF" stroke-width="${2.5*s}" fill="none" opacity="0.45" stroke-linecap="round"/>
+    <path d="M${W*0.06},${H*0.84} Q${W*0.2},${H*0.80} ${W*0.35},${H*0.84} Q${W*0.5},${H*0.88} ${W*0.65},${H*0.84} Q${W*0.8},${H*0.80} ${W*0.94},${H*0.84}"
+      stroke="#00C2E0" stroke-width="${1.8*s}" fill="none" opacity="0.35" stroke-linecap="round"/>
+  `;
+
+  // ── CHAMPION AURA ──
+  const aura = isChampion ? `
+    <ellipse cx="${cx}" cy="${H*0.55}" rx="${W*0.44}" ry="${H*0.4}"
+      fill="none" stroke="#FFD700" stroke-width="${2*s}" opacity="0.25"
+      stroke-dasharray="${5*s} ${4*s}">
+      <animateTransform attributeName="transform" type="rotate"
+        values="0 ${cx} ${H*0.55};360 ${cx} ${H*0.55}" dur="10s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="${cx}" cy="${H*0.55}" rx="${W*0.36}" ry="${H*0.32}"
+      fill="rgba(255,215,0,.04)"/>
+  ` : '';
+
+  // ── BODY ──
+  const body = `
+    <ellipse cx="${cx}" cy="${H*0.62}" rx="${W*0.17*stage.bodyScale}" ry="${H*0.21}" fill="${suitMain}"/>
+    ${suitStripe ? `<path d="M${cx-W*0.05},${H*0.42} L${cx-W*0.05},${H*0.82} Q${cx},${H*0.84} ${cx+W*0.05},${H*0.82} L${cx+W*0.05},${H*0.42}" fill="${suitStripe}" opacity="0.3"/>` : ''}
+    ${suitC?.key === 'suit_rainbow' ? `
+      <path d="M${cx-W*0.17},${H*0.55} L${cx+W*0.17},${H*0.55}" stroke="#E74C3C" stroke-width="${4*s}" opacity="0.5"/>
+      <path d="M${cx-W*0.17},${H*0.62} L${cx+W*0.17},${H*0.62}" stroke="#FFD700" stroke-width="${4*s}" opacity="0.5"/>
+      <path d="M${cx-W*0.17},${H*0.69} L${cx+W*0.17},${H*0.69}" stroke="#27AE60" stroke-width="${4*s}" opacity="0.5"/>
+    ` : ''}
+    ${levelNum >= 7 ? `<ellipse cx="${cx}" cy="${H*0.62}" rx="${W*0.17*stage.bodyScale}" ry="${H*0.21}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="${2*s}"/>` : ''}
+  `;
+
+  // ── ARMS (pose varies by stage) ──
+  const armPose = levelNum >= 7
+    ? `M${cx-W*0.17},${H*0.52} Q${cx-W*0.38},${H*0.42} ${cx-W*0.48},${H*0.54}`
+    : `M${cx-W*0.17},${H*0.52} Q${cx-W*0.36},${H*0.44} ${cx-W*0.46},${H*0.56}`;
+  const armPoseR = levelNum >= 7
+    ? `M${cx+W*0.17},${H*0.52} Q${cx+W*0.38},${H*0.42} ${cx+W*0.48},${H*0.54}`
+    : `M${cx+W*0.17},${H*0.52} Q${cx+W*0.36},${H*0.44} ${cx+W*0.46},${H*0.56}`;
+
+  const arms = `
+    <path d="${armPose}" stroke="${skin.color}" stroke-width="${11*s}" fill="none" stroke-linecap="round"/>
+    <path d="${armPoseR}" stroke="${skin.color}" stroke-width="${11*s}" fill="none" stroke-linecap="round"/>
+    <ellipse cx="${cx-W*0.46}" cy="${H*0.56}" rx="${6*s}" ry="${5*s}" fill="${skin.color}"/>
+    <ellipse cx="${cx+W*0.46}" cy="${H*0.56}" rx="${6*s}" ry="${5*s}" fill="${skin.color}"/>
+    <path d="${armPose.replace('M','M').split('Q')[0]}Q${cx-W*0.28},${H*0.46} ${cx-W*0.36},${H*0.50}"
+      stroke="${suitMain}" stroke-width="${8*s}" fill="none" stroke-linecap="round" opacity="0.7"/>
+    <path d="${armPoseR.replace('M','M').split('Q')[0]}Q${cx+W*0.28},${H*0.46} ${cx+W*0.36},${H*0.50}"
+      stroke="${suitMain}" stroke-width="${8*s}" fill="none" stroke-linecap="round" opacity="0.7"/>
+  `;
+
+  // ── LEGS ──
+  const legs = `
+    <path d="M${cx-W*0.09},${H*0.82} Q${cx-W*0.13},${H*0.91} ${cx-W*0.07},${H*0.96}"
+      stroke="${suitMain}" stroke-width="${10*s}" fill="none" stroke-linecap="round"/>
+    <path d="M${cx+W*0.09},${H*0.82} Q${cx+W*0.13},${H*0.89} ${cx+W*0.07},${H*0.94}"
+      stroke="${suitMain}" stroke-width="${10*s}" fill="none" stroke-linecap="round"/>
+    <ellipse cx="${cx-W*0.07}" cy="${H*0.96}" rx="${5*s}" ry="${4*s}" fill="${skin.color}"/>
+    <ellipse cx="${cx+W*0.07}" cy="${H*0.94}" rx="${5*s}" ry="${4*s}" fill="${skin.color}"/>
+  `;
+
+  // ── NECK ──
+  const neck = `<rect x="${cx-W*0.055}" y="${H*0.38}" width="${W*0.11}" height="${H*0.09}" rx="${4*s}" fill="${skin.color}"/>`;
+
+  // ── HEAD ──
+  const head = `
+    <defs>
+      <radialGradient id="skinG${levelNum}${size}" cx="38%" cy="32%" r="65%">
+        <stop offset="0%" stop-color="${skin.highlight}"/>
+        <stop offset="100%" stop-color="${skin.shadow}"/>
+      </radialGradient>
+    </defs>
+    <ellipse cx="${cx}" cy="${H*0.29}" rx="${W*0.145}" ry="${H*0.135}" fill="url(#skinG${levelNum}${size})"/>
+  `;
+
+  // ── HAIR ──
+  const hairCol = hColor.color;
+  let hairLayer = '';
+  if (!capC) {
+    if (app.hairStyleKey === 'h1') { // Kurz
+      hairLayer = `
+        <ellipse cx="${cx}" cy="${H*0.20}" rx="${W*0.145}" ry="${H*0.075}" fill="${hairCol}"/>
+        <ellipse cx="${cx}" cy="${H*0.185}" rx="${W*0.13}" ry="${H*0.055}" fill="${hairCol}"/>
+      `;
+    } else if (app.hairStyleKey === 'h2') { // Lang
+      hairLayer = `
+        <ellipse cx="${cx}" cy="${H*0.20}" rx="${W*0.145}" ry="${H*0.075}" fill="${hairCol}"/>
+        <path d="M${cx-W*0.145},${H*0.27} Q${cx-W*0.22},${H*0.45} ${cx-W*0.18},${H*0.58}" stroke="${hairCol}" stroke-width="${8*s}" fill="none" stroke-linecap="round"/>
+        <path d="M${cx+W*0.145},${H*0.27} Q${cx+W*0.22},${H*0.45} ${cx+W*0.18},${H*0.58}" stroke="${hairCol}" stroke-width="${8*s}" fill="none" stroke-linecap="round"/>
+        <path d="M${cx-W*0.14},${H*0.27} Q${cx},${H*0.52} ${cx+W*0.14},${H*0.27}" stroke="${hairCol}" stroke-width="${6*s}" fill="none"/>
+      `;
+    } else if (app.hairStyleKey === 'h3') { // Zopf
+      hairLayer = `
+        <ellipse cx="${cx}" cy="${H*0.20}" rx="${W*0.145}" ry="${H*0.075}" fill="${hairCol}"/>
+        <path d="M${cx},${H*0.165} Q${cx+W*0.05},${H*0.28} ${cx},${H*0.42} Q${cx-W*0.02},${H*0.52} ${cx},${H*0.62}" stroke="${hairCol}" stroke-width="${7*s}" fill="none" stroke-linecap="round"/>
+        <ellipse cx="${cx}" cy="${H*0.63}" rx="${5*s}" ry="${4*s}" fill="${hairCol}"/>
+      `;
+    } else { // Dutt
+      hairLayer = `
+        <ellipse cx="${cx}" cy="${H*0.20}" rx="${W*0.145}" ry="${H*0.075}" fill="${hairCol}"/>
+        <circle cx="${cx}" cy="${H*0.155}" r="${12*s}" fill="${hairCol}"/>
+        <circle cx="${cx}" cy="${H*0.155}" r="${8*s}" fill="${hairCol}" opacity="0.7"/>
+      `;
+    }
+  } else {
+    // Hair peek under cap
+    hairLayer = `<path d="M${cx-W*0.06},${H*0.38} Q${cx},${H*0.41} ${cx+W*0.06},${H*0.38}" stroke="${hairCol}" stroke-width="${3*s}" fill="none" stroke-linecap="round"/>`;
+  }
+
+  // ── CAP ──
+  let capLayer = '';
+  if (capC) {
+    const isGlitter = custom.cap === 'cap_glitter';
+    const isFire    = custom.cap === 'cap_fire';
+    const isGold    = custom.cap === 'cap_gold';
+    capLayer = `
+      <ellipse cx="${cx}" cy="${H*0.24}" rx="${W*0.148}" ry="${H*0.105}" fill="${capC.main}"/>
+      <ellipse cx="${cx}" cy="${H*0.185}" rx="${W*0.135}" ry="${H*0.065}" fill="${capC.main}"/>
+      <ellipse cx="${cx-W*0.04}" cy="${H*0.175}" rx="${W*0.04}" ry="${H*0.025}" fill="${capC.shine}" opacity="0.5"/>
+      ${capC.stripe ? `<path d="M${cx-W*0.14},${H*0.245} Q${cx},${H*0.22} ${cx+W*0.14},${H*0.245}" stroke="${capC.stripe}" stroke-width="${3*s}" fill="none" opacity="0.7"/>` : ''}
+      ${isGlitter ? `<text x="${cx-W*0.06}" y="${H*0.19}" font-size="${7*s}" fill="white" opacity="0.9">✦</text><text x="${cx+W*0.02}" y="${H*0.22}" font-size="${5*s}" fill="white" opacity="0.7">✦</text>` : ''}
+      ${isFire ? `<path d="M${cx-W*0.06},${H*0.16} Q${cx-W*0.04},${H*0.10} ${cx},${H*0.13} Q${cx+W*0.04},${H*0.08} ${cx+W*0.06},${H*0.16}" fill="#FF6B00" opacity="0.85"/><path d="M${cx-W*0.03},${H*0.16} Q${cx},${H*0.12} ${cx+W*0.03},${H*0.16}" fill="#FFD700" opacity="0.9"/>` : ''}
+      ${isGold ? `<text x="${cx}" y="${H*0.215}" text-anchor="middle" font-size="${10*s}" fill="white" opacity="0.8">★</text>` : ''}
+    `;
+  }
+
+  // ── GOGGLES ──
+  let gogLayer = '';
+  if (gogC) {
+    const isRace = custom.goggle === 'goggle_race' || custom.goggle === 'goggle_gold';
+    const lensH  = isRace ? H*0.032 : H*0.042;
+    gogLayer = `
+      <ellipse cx="${cx-W*0.065}" cy="${H*0.305}" rx="${W*0.058}" ry="${lensH}" fill="${gogC.lens}" stroke="${gogC.frame}" stroke-width="${2.5*s}"/>
+      <ellipse cx="${cx+W*0.065}" cy="${H*0.305}" rx="${W*0.058}" ry="${lensH}" fill="${gogC.lens}" stroke="${gogC.frame}" stroke-width="${2.5*s}"/>
+      <line x1="${cx-W*0.007}" y1="${H*0.305}" x2="${cx+W*0.007}" y2="${H*0.305}" stroke="${gogC.frame}" stroke-width="${2.5*s}"/>
+      <path d="M${cx-W*0.123},${H*0.305} Q${cx-W*0.145},${H*0.29} ${cx-W*0.145},${H*0.27}" stroke="${gogC.strap}" stroke-width="${2*s}" fill="none"/>
+      <path d="M${cx+W*0.123},${H*0.305} Q${cx+W*0.145},${H*0.29} ${cx+W*0.145},${H*0.27}" stroke="${gogC.strap}" stroke-width="${2*s}" fill="none"/>
+      <ellipse cx="${cx-W*0.075}" cy="${H*0.298}" rx="${W*0.018}" ry="${H*0.012}" fill="white" opacity="0.35"/>
+      <ellipse cx="${cx+W*0.055}" cy="${H*0.298}" rx="${W*0.018}" ry="${H*0.012}" fill="white" opacity="0.35"/>
+    `;
+  }
+
+  // ── FACE (emotion-aware) ──
+  const eyeCol = eye.color;
+  const eyeY   = H*0.295;
+  const mouthY = H*0.345;
+  const eyeScaleVal = emo.eyeScale;
+
+  // Eyebrows
+  const browL = emo.eyebrow === 'up'
+    ? `M${cx-W*0.09},${H*0.265} Q${cx-W*0.055},${H*0.255} ${cx-W*0.02},${H*0.265}`
+    : emo.eyebrow === 'down'
+    ? `M${cx-W*0.09},${H*0.275} Q${cx-W*0.055},${H*0.268} ${cx-W*0.02},${H*0.275}`
+    : `M${cx-W*0.09},${H*0.27} Q${cx-W*0.055},${H*0.265} ${cx-W*0.02},${H*0.27}`;
+  const browR = browL.replace(/cx-W/g,'cx+W').replace(/cx\+W\*0\.09/g,`cx+W*0.02`).replace(/cx\+W\*0\.02/g,`cx+W*0.09`);
+
+  const face = `
+    ${!gogC ? `
+    <!-- Eyes -->
+    <ellipse cx="${cx-W*0.055}" cy="${eyeY}" rx="${3.5*s*eyeScaleVal}" ry="${3.5*s*eyeScaleVal}" fill="${eyeCol}"/>
+    <ellipse cx="${cx+W*0.055}" cy="${eyeY}" rx="${3.5*s*eyeScaleVal}" ry="${3.5*s*eyeScaleVal}" fill="${eyeCol}"/>
+    <ellipse cx="${cx-W*0.055}" cy="${eyeY}" rx="${2*s*eyeScaleVal}" ry="${2*s*eyeScaleVal}" fill="#1A1A1A"/>
+    <ellipse cx="${cx+W*0.055}" cy="${eyeY}" rx="${2*s*eyeScaleVal}" ry="${2*s*eyeScaleVal}" fill="#1A1A1A"/>
+    <circle cx="${cx-W*0.048}" cy="${eyeY-H*0.008}" r="${1.2*s}" fill="white" opacity="0.7"/>
+    <circle cx="${cx+W*0.062}" cy="${eyeY-H*0.008}" r="${1.2*s}" fill="white" opacity="0.7"/>
+    ` : `
+    <circle cx="${cx-W*0.065}" cy="${H*0.305}" r="${2*s}" fill="${eyeCol}" opacity="0.7"/>
+    <circle cx="${cx+W*0.065}" cy="${H*0.305}" r="${2*s}" fill="${eyeCol}" opacity="0.7"/>
+    `}
+    <!-- Eyebrows -->
+    <path d="${browL}" stroke="#3A2010" stroke-width="${2*s}" fill="none" stroke-linecap="round"/>
+    <path d="${browR}" stroke="#3A2010" stroke-width="${2*s}" fill="none" stroke-linecap="round"/>
+    <!-- Mouth -->
+    <path d="M${cx-W*0.055},${mouthY} ${emo.mouthPath.replace('Q','Q'+cx+','+(mouthY+H*0.02)+' ').replace('10,',''+cx+W*0.055+',').replace(',4','').replace(',8','').replace(',0','').replace(',2','').replace(',-2','')}" stroke="#3A2010" stroke-width="${1.8*s}" fill="none" stroke-linecap="round"/>
+    <!-- Cheeks -->
+    <circle cx="${cx-W*0.095}" cy="${H*0.325}" r="${4*s}" fill="#FFB6C1" opacity="${emotion==='happy'||emotion==='excited'?0.6:0.3}"/>
+    <circle cx="${cx+W*0.095}" cy="${H*0.325}" r="${4*s}" fill="#FFB6C1" opacity="${emotion==='happy'||emotion==='excited'?0.6:0.3}"/>
+  `;
+
+  // ── MEDAL ──
+  let medalLayer = '';
+  if (medC) {
+    const isTrophy = custom.medal === 'medal_trophy';
+    if (isTrophy) {
+      medalLayer = `
+        <rect x="${cx+W*0.18}" y="${H*0.48}" width="${W*0.1}" height="${H*0.08}" rx="${3*s}" fill="${medC.main}"/>
+        <ellipse cx="${cx+W*0.23}" cy="${H*0.48}" rx="${W*0.06}" ry="${H*0.04}" fill="${medC.main}"/>
+        <rect x="${cx+W*0.205}" y="${H*0.56}" width="${W*0.05}" height="${H*0.03}" rx="${2*s}" fill="${medC.main}"/>
+        <text x="${cx+W*0.23}" y="${H*0.535}" text-anchor="middle" font-size="${8*s}" fill="white">★</text>
+      `;
+    } else {
+      medalLayer = `
+        <rect x="${cx+W*0.205}" y="${H*0.44}" width="${W*0.03}" height="${H*0.07}" rx="${2*s}" fill="${medC.ribbon}"/>
+        <circle cx="${cx+W*0.22}" cy="${H*0.52}" r="${11*s}" fill="${medC.main}" stroke="rgba(255,255,255,0.3)" stroke-width="${1.5*s}"/>
+        <text x="${cx+W*0.22}" y="${H*0.527}" text-anchor="middle" font-size="${9*s}" fill="white" font-weight="bold">★</text>
+        <ellipse cx="${cx+W*0.215}" cy="${H*0.508}" rx="${4*s}" ry="${3*s}" fill="white" opacity="0.25"/>
+      `;
+    }
+  }
+
+  // ── EXTRA ──
+  let extraLayer = '';
+  if (extC) {
+    if (custom.extra === 'extra_aura' || custom.extra === 'extra_streak') {
+      extraLayer = `<rect x="${cx-W*0.42}" y="${H*0.535}" width="${W*0.08}" height="${H*0.04}" rx="${4*s}" fill="${extC.main}" stroke="${extC.accent}" stroke-width="${1.5*s}"/>`;
+    } else if (custom.extra === 'extra_regen' || custom.extra === 'extra_stretch') {
+      extraLayer = `<rect x="${cx-W*0.42}" y="${H*0.535}" width="${W*0.08}" height="${H*0.035}" rx="${3*s}" fill="${extC.main}" opacity="0.9"/>`;
+    }
+  }
+
+  // ── LEVEL BADGE ──
+  const badgeColor = levelNum >= 9 ? '#FFD700' : levelNum >= 7 ? '#E74C3C' : levelNum >= 5 ? '#8E44AD' : '#0044FF';
+  const levelBadge = `
+    <circle cx="${W*0.84}" cy="${H*0.14}" r="${13*s}" fill="${badgeColor}" stroke="white" stroke-width="${2*s}"/>
+    <text x="${W*0.84}" y="${H*0.148}" text-anchor="middle" dominant-baseline="middle"
+      font-size="${9*s}" fill="white" font-weight="bold" font-family="Inter,sans-serif">${levelNum}</text>
+  `;
+
+  // ── SWIM ANIMATION ──
+  const swimAnim = animated
+    ? `<animateTransform attributeName="transform" type="translate" values="0,0;2,1;0,0;-2,1;0,0" dur="2.5s" repeatCount="indefinite"/>`
+    : '';
+
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" style="overflow:visible">
+    ${aura}
+    <g>${swimAnim}
+      ${water}
+      ${body}
+      ${legs}
+      ${arms}
+      ${neck}
+      ${head}
+      ${hairLayer}
+      ${capLayer}
+      ${gogLayer}
+      ${face}
+      ${medalLayer}
+      ${extraLayer}
+    </g>
+    ${levelBadge}
+  </svg>`;
+}
+
+// ── APPEARANCE CUSTOMIZER PAGE ────────────────────────────────────────────────
+async function renderAppearanceCustomizer() {
+  const container = document.getElementById('appearance-customizer');
+  if (!container) return;
+
+  const app    = getAvatarAppearance();
+  const stats  = await computeStats();
+  const lv     = getLvl(stats.totalPoints);
+  const custom = typeof getAvatarCustomization === 'function' ? getAvatarCustomization() : {};
+
+  const previewSVG = buildAvatarV3(lv.num, custom, 160, true, 'happy');
+
+  container.innerHTML = `
+    <div class="app-preview-wrap">
+      <div class="app-preview-svg">${previewSVG}</div>
+      <div class="app-preview-info">
+        <div class="app-stage-name">${getCharStage(lv.num).name}</div>
+        <div class="app-stage-desc">${getCharStage(lv.num).desc}</div>
+        <div class="app-level-badge">Level ${lv.num}</div>
+      </div>
+    </div>
+
+    <!-- Skin tone -->
+    <div class="app-section">
+      <div class="app-section-label">Hautfarbe</div>
+      <div class="app-color-row">
+        ${SKIN_TONES.map(s => `
+          <button class="app-color-btn ${app.skinKey===s.key?'active':''}"
+            style="background:${s.color};border-color:${app.skinKey===s.key?'var(--b6)':'transparent'}"
+            onclick="setAppearance('skinKey','${s.key}')" title="${s.name}"></button>`).join('')}
+      </div>
+    </div>
+
+    <!-- Hair style -->
+    <div class="app-section">
+      <div class="app-section-label">Frisur</div>
+      <div class="app-option-row">
+        ${HAIR_STYLES.map(h => `
+          <button class="app-option-btn ${app.hairStyleKey===h.key?'active':''}"
+            onclick="setAppearance('hairStyleKey','${h.key}')">${h.name}</button>`).join('')}
+      </div>
+    </div>
+
+    <!-- Hair color -->
+    <div class="app-section">
+      <div class="app-section-label">Haarfarbe</div>
+      <div class="app-color-row">
+        ${HAIR_COLORS.map(h => `
+          <button class="app-color-btn ${app.hairColorKey===h.key?'active':''}"
+            style="background:${h.color};border-color:${app.hairColorKey===h.key?'var(--b6)':'transparent'}"
+            onclick="setAppearance('hairColorKey','${h.key}')" title="${h.name}"></button>`).join('')}
+      </div>
+    </div>
+
+    <!-- Eye color -->
+    <div class="app-section">
+      <div class="app-section-label">Augenfarbe</div>
+      <div class="app-color-row">
+        ${EYE_COLORS.map(e => `
+          <button class="app-color-btn ${app.eyeColorKey===e.key?'active':''}"
+            style="background:${e.color};border-color:${app.eyeColorKey===e.key?'var(--b6)':'transparent'}"
+            onclick="setAppearance('eyeColorKey','${e.key}')" title="${e.name}"></button>`).join('')}
+      </div>
+    </div>
+
+    <!-- Character stages -->
+    <div class="app-section">
+      <div class="app-section-label">Entwicklungsweg</div>
+      <div class="char-stages-row">
+        ${CHAR_STAGES.map((stage,i) => {
+          const reached = lv.num >= stage.minLevel;
+          const isCur   = lv.num >= stage.minLevel && lv.num <= stage.maxLevel;
+          const miniSVG = buildAvatarV3(stage.minLevel, custom, 56, false, 'neutral');
+          return `<div class="char-stage-item ${reached?'reached':''} ${isCur?'current':''}">
+            <div class="char-stage-svg">${miniSVG}</div>
+            <div class="char-stage-name">${stage.name}</div>
+            <div class="char-stage-lvl">Lv.${stage.minLevel}–${stage.maxLevel}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <button class="btn full lg" onclick="saveAppearanceAndUpdate()" style="margin-top:8px">✓ Aussehen speichern</button>
+  `;
+}
+
+function setAppearance(key, value) {
+  const app = getAvatarAppearance();
+  app[key] = value;
+  saveAvatarAppearance(app);
+  haptic('light');
+  renderAppearanceCustomizer();
+  updateHeaderAvatarV3();
+}
+
+function saveAppearanceAndUpdate() {
+  haptic('success');
+  showToast('Aussehen gespeichert! 🏊');
+  updateHeaderAvatarV3();
+  if (typeof renderInteractiveAvatarCard === 'function') renderInteractiveAvatarCard();
+}
+
+async function updateHeaderAvatarV3() {
+  const av = document.getElementById('havatar');
+  if (!av) return;
+  const img = localStorage.getItem('st_avatar_img');
+  if (img) {
+    av.innerHTML = `<img src="${img}" style="width:36px;height:36px;object-fit:cover;border-radius:50%"/>`;
+    return;
+  }
+  const stats  = await computeStats();
+  const lv     = getLvl(stats.totalPoints);
+  const custom = typeof getAvatarCustomization === 'function' ? getAvatarCustomization() : {};
+  av.innerHTML = buildAvatarV3(lv.num, custom, 36, false, 'neutral');
+  av.style.background = 'transparent';
+}
+
+// ── EMOTION BASED ON TODAY'S DATA ─────────────────────────────────────────────
+async function getTodayEmotion() {
+  const entries = await dbAll('training');
+  const todayE  = entries.filter(e => e.date === today());
+  if (todayE.length === 0) return 'neutral';
+  const avgLoad = todayE.reduce((s,e)=>s+e.load,0)/todayE.length;
+  const avgWell = todayE.reduce((s,e)=>s+e.wellbeing,0)/todayE.length;
+  if (avgWell >= 4) return 'happy';
+  if (avgLoad >= 8) return 'focused';
+  if (avgWell <= 2) return 'tired';
+  return 'happy';
+}
+
+// ── OVERRIDE buildAvatarSVG ───────────────────────────────────────────────────
+window.buildAvatarSVG = async function(levelNum, unlocked, size, animated) {
+  const custom = typeof getAvatarCustomization === 'function' ? getAvatarCustomization() : {};
+  const hybridState = typeof getHybridUnlocked === 'function' ? getHybridUnlocked() : {};
+  const HYBRID_LOCAL = typeof HYBRID_ACC !== 'undefined' ? HYBRID_ACC : [];
+  const SLOTS_KEYS = ['cap','goggle','suit','medal','extra'];
+  const autoCustom = { ...custom };
+  SLOTS_KEYS.forEach(slot => {
+    if (!autoCustom[slot]) {
+      const first = HYBRID_LOCAL.find(a => a.slot === slot && hybridState[a.key]);
+      if (first) autoCustom[slot] = first.key;
+    }
+  });
+  const emotion = animated ? (await getTodayEmotion()) : 'neutral';
+  return buildAvatarV3(levelNum, autoCustom, size, animated, emotion);
+};
+
+// Sync version for places that can't await
+window.buildAvatarSVGSync = function(levelNum, customization, size, animated, emotion) {
+  return buildAvatarV3(levelNum, customization || {}, size, animated, emotion || 'neutral');
+};
+
+// ── OVERRIDE renderHeutePage ──────────────────────────────────────────────────
+const _origRenderHeuteV3 = window.renderHeutePage;
+window.renderHeutePage = async function() {
+  await _origRenderHeuteV3();
+  await updateHeaderAvatarV3();
+  // Update avatar container with emotion
+  const container = document.getElementById('avatar-heute-container');
+  if (container && typeof buildInteractiveAvatarCard === 'function') {
+    const card = await buildInteractiveAvatarCard();
+    container.innerHTML = card;
+    if (typeof animateAvatarCardProgress === 'function') animateAvatarCardProgress();
+  }
+};
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('swimtrack-ready', async () => {
+  await updateHeaderAvatarV3();
+  // Inject appearance customizer into avatar page
+  const avatarPage = document.getElementById('page-avatar-custom');
+  if (avatarPage) {
+    const scroll = avatarPage.querySelector('.pscroll');
+    if (scroll) {
+      // Add appearance section at top
+      const appDiv = document.createElement('div');
+      appDiv.id = 'appearance-customizer';
+      const phdr = scroll.querySelector('.phdr');
+      if (phdr) phdr.after(appDiv);
+      else scroll.prepend(appDiv);
+      await renderAppearanceCustomizer();
+    }
+  }
+});
+
+// Override nav to render appearance on avatar page
+const _origNavV3 = window.nav;
+window.nav = function(page) {
+  _origNavV3(page);
+  if (page === 'avatar-custom') {
+    setTimeout(async () => {
+      await renderAppearanceCustomizer();
+    }, 100);
+  }
+};
+</script>
+<script>
+
+// Sync wrapper for avatar rendering in non-async contexts
+(function() {
+  // Cache last rendered avatar for sync use
+  let _lastAvatarCache = {};
+  const _origBuildAvatarSVG = window.buildAvatarSVG;
+  window.buildAvatarSVG = function(levelNum, unlocked, size, animated) {
+    const cacheKey = levelNum + '_' + size + '_' + animated;
+    // Return cached or placeholder while async loads
+    if (_lastAvatarCache[cacheKey]) return _lastAvatarCache[cacheKey];
+    // Start async load and cache result
+    const custom = typeof getAvatarCustomization === 'function' ? getAvatarCustomization() : {};
+    const result = buildAvatarSVGSync(levelNum, custom, size, animated, 'neutral');
+    _lastAvatarCache[cacheKey] = result;
+    // Also update async version in background
+    if (typeof _origBuildAvatarSVG === 'function') {
+      Promise.resolve(_origBuildAvatarSVG(levelNum, unlocked, size, animated)).then(svg => {
+        if (svg && svg !== result) _lastAvatarCache[cacheKey] = svg;
+      }).catch(()=>{});
+    }
+    return result;
+  };
+})();
 
 </script>
 </body></html>`);
