@@ -9,7 +9,8 @@
 <meta name="apple-mobile-web-app-title" content="SwimTrack"/>
 <link rel="manifest" id="pwa-manifest"/>
 <title>SwimTrack</title>
-<style>:root{
+<style>
+:root{
   --blue:#0044FF;--blue-d:#0033CC;--blue-l:#EBF3FF;--blue-m:#CCE0FF;
   --cyan:#00C2E0;--green:#00C853;--green-l:#E0F9EC;
   --amber:#FF8F00;--amber-l:#FFF3E0;--red:#F44336;--red-l:#FFEBEE;
@@ -314,6 +315,7 @@ input,select,textarea{font-family:inherit;font-size:16px}
 }
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
 </style>
 </head>
 <body>
@@ -357,13 +359,10 @@ input,select,textarea{font-family:inherit;font-size:16px}
   </div>
   <div id="lvt-container"></div>
   <div id="physio-container"></div>
-  <div class="card" style="display:flex;align-items:center;gap:12px;cursor:pointer;background:linear-gradient(135deg,#1A1A2E,#0D3B6E);color:#fff" onclick="closeMehr();goTo('uebungen');setTimeout(()=>uebTab('ue-athletik',document.querySelector('#page-uebungen .tabbtn:nth-child(3)')),100)">
-    <span style="font-size:1.8rem">⚡</span>
-    <div style="flex:1">
-      <div style="font-size:.875rem;font-weight:800">Athletik-Training Generator</div>
-      <div style="font-size:.72rem;color:rgba(255,255,255,.75)">15–60 min · LVT-Vorbereitung · Strukturiert mit Pausen</div>
-    </div>
-    <span style="color:rgba(255,255,255,.6);font-size:1.1rem">›</span>
+  <div class="card" style="display:flex;align-items:center;gap:12px;cursor:pointer;background:linear-gradient(135deg,#1A1A2E,#0D3B6E);color:#fff" onclick="goTo('uebungen');setTimeout(function(){var b=document.querySelector('#page-uebungen .tabbtn:nth-child(3)');if(b)uebTab('ue-athletik',b);},150)">
+    <span style="font-size:1.8rem">&#9889;</span>
+    <div style="flex:1"><div style="font-size:.875rem;font-weight:800">Athletik-Training Generator</div><div style="font-size:.72rem;color:rgba(255,255,255,.75)">15-60 min &#183; LVT-Vorbereitung &#183; Strukturiert mit Pausen</div></div>
+    <span style="color:rgba(255,255,255,.6);font-size:1.1rem">&#8250;</span>
   </div>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
     <span class="section-title" style="margin-bottom:0">Letzte Einträge</span>
@@ -588,7 +587,7 @@ input,select,textarea{font-family:inherit;font-size:16px}
   <div class="tabbar">
     <button class="tabbtn active" onclick="uebTab('ue-lvt',this)">LVT-Vorbereitung</button>
     <button class="tabbtn" onclick="uebTab('ue-physio',this)">Knie-Physiotherapie</button>
-    <button class="tabbtn" onclick="uebTab('ue-athletik',this)">⚡ Athletik-Generator</button>
+    <button class="tabbtn" onclick="uebTab('ue-athletik',this)">Athletik-Generator</button>
   </div>
   <div id="ue-lvt" class="tabpane active"><div id="lvt-detail"></div></div>
   <div id="ue-physio" class="tabpane"><div id="physio-detail"></div></div>
@@ -755,7 +754,8 @@ input,select,textarea{font-family:inherit;font-size:16px}
 <div id="toast" class="toast hidden"><span id="toast-txt"></span></div>
 </div>
 
-<script>'use strict';
+<script>
+'use strict';
 // ── CONSTANTS ─────────────────────────────────────────────────────────────────
 const LEVELS=[{num:1,name:'Einstieg',min:0},{num:2,name:'Rhythmus',min:50},{num:3,name:'Technik',min:150},{num:4,name:'Ausdauer',min:300},{num:5,name:'Fokus',min:500},{num:6,name:'Entwicklung',min:750},{num:7,name:'Wettkampfstärke',min:1050},{num:8,name:'Leistungsweg',min:1400},{num:9,name:'Bestform',min:1800},{num:10,name:'Champion',min:2300}];
 const BADGE_DEFS=[
@@ -1611,115 +1611,7 @@ async function renderErfolgePage(){
 }
 
 // ── AVATAR CUSTOMIZER ─────────────────────────────────────────────────────────
-function renderAvatarCustomizer(){
-  const container=document.getElementById('avatar-customizer');if(!container)return;
-  const app=getAvApp();
-  const SKINS=[{k:'s1',n:'Hell',c:'#FDBCB4'},{k:'s2',n:'Mittel-hell',c:'#E8A87C'},{k:'s3',n:'Mittel',c:'#C68642'},{k:'s4',n:'Mittel-dunkel',c:'#8D5524'},{k:'s5',n:'Dunkel',c:'#4A2912'}];
-  const HSTYLES=[{k:'h1',n:'Kurz'},{k:'h2',n:'Lang'},{k:'h3',n:'Zopf'},{k:'h4',n:'Dutt'}];
-  const HCOLORS=[{k:'hc1',n:'Dunkelbraun',c:'#4A2C0A'},{k:'hc2',n:'Hellbraun',c:'#8B5E3C'},{k:'hc3',n:'Schwarz',c:'#1A1A1A'},{k:'hc4',n:'Blond',c:'#D4A843'},{k:'hc5',n:'Rot',c:'#8B2500'}];
-  const ECOLORS=[{k:'e1',n:'Braun',c:'#5C3317'},{k:'e2',n:'Blau',c:'#2980B9'},{k:'e3',n:'Grün',c:'#27AE60'},{k:'e4',n:'Grau',c:'#7F8C8D'}];
 
-  // Get current level for preview
-  computeStats().then(stats=>{
-    const lv=getLvl(stats.totalPoints);
-    const previewSVG=buildAvatar(lv.num,120,false);
-    const previewEl=document.getElementById('av-preview');
-    if(previewEl)previewEl.innerHTML=previewSVG;
-    // Also update header
-    updateHeaderAvatar();
-  }).catch(()=>{
-    const previewEl=document.getElementById('av-preview');
-    if(previewEl)previewEl.innerHTML=buildAvatar(1,120,false);
-  });
-
-  container.innerHTML=
-    // Live preview
-    '<div style="text-align:center;margin-bottom:16px;background:var(--hero);border-radius:var(--r-xl);padding:20px">'+
-      '<div id="av-preview" style="display:inline-block">'+buildAvatar(1,120,false)+'</div>'+
-      '<p style="font-size:.72rem;color:rgba(255,255,255,.75);margin-top:8px">Vorschau – aktualisiert sich sofort</p>'+
-    '</div>'+
-    // Skin
-    '<div class="fsec"><label class="label">Hautfarbe</label><div class="color-row">'+
-    SKINS.map(s=>'<button class="color-btn '+(app.skinKey===s.k?'active':'')+'" style="background:'+s.c+'" onclick="setAvAppLive('skinKey',''+s.k+'')" title="'+s.n+'"></button>').join('')+
-    '</div></div>'+
-    // Hair style
-    '<div class="fsec"><label class="label">Frisur</label><div class="opt-row">'+
-    HSTYLES.map(h=>'<button class="opt-btn '+(app.hairStyleKey===h.k?'active':'')+'" onclick="setAvAppLive('hairStyleKey',''+h.k+'')">'+h.n+'</button>').join('')+
-    '</div></div>'+
-    // Hair color
-    '<div class="fsec"><label class="label">Haarfarbe</label><div class="color-row">'+
-    HCOLORS.map(h=>'<button class="color-btn '+(app.hairColorKey===h.k?'active':'')+'" style="background:'+h.c+'" onclick="setAvAppLive('hairColorKey',''+h.k+'')" title="'+h.n+'"></button>').join('')+
-    '</div></div>'+
-    // Eye color
-    '<div class="fsec"><label class="label">Augenfarbe</label><div class="color-row">'+
-    ECOLORS.map(e=>'<button class="color-btn '+(app.eyeColorKey===e.k?'active':'')+'" style="background:'+e.c+'" onclick="setAvAppLive('eyeColorKey',''+e.k+'')" title="'+e.n+'"></button>').join('')+
-    '</div></div>'+
-    // Photo upload
-    '<div class="fsec"><label class="label">Eigenes Foto</label>'+
-    '<label class="btn2 full" style="cursor:pointer;text-align:center">📷 Foto auswählen<input type="file" accept="image/*" onchange="uploadAvPhoto(this)" style="display:none"/></label>'+
-    (localStorage.getItem('st_avatar_img')?'<button class="btn2 full" onclick="removeAvPhoto()" style="margin-top:6px;color:var(--red)">✕ Foto entfernen</button>':'')+
-    '</div>'+
-    '<button class="btn full" onclick="saveAvApp()">✓ Avatar speichern</button>';
-
-  // Now update preview with correct level
-  computeStats().then(stats=>{
-    const lv=getLvl(stats.totalPoints);
-    const previewEl=document.getElementById('av-preview');
-    if(previewEl)previewEl.innerHTML=buildAvatar(lv.num,120,false);
-  }).catch(()=>{});
-}
-
-function setAvAppLive(key,val){
-  // Save immediately
-  const app=getAvApp();app[key]=val;saveAvApp(app);
-  // Update active state on buttons
-  document.querySelectorAll('.color-btn, .opt-btn').forEach(b=>{
-    if(b.onclick&&b.onclick.toString().includes(key)){
-      b.classList.remove('active');
-    }
-  });
-  // Find and activate the clicked button
-  const allBtns=document.querySelectorAll('.color-btn, .opt-btn');
-  allBtns.forEach(b=>{
-    const oc=b.getAttribute('onclick')||'';
-    if(oc.includes(key)&&oc.includes(val))b.classList.add('active');
-    else if(oc.includes(key))b.classList.remove('active');
-  });
-  // Update live preview
-  computeStats().then(stats=>{
-    const lv=getLvl(stats.totalPoints);
-    const previewEl=document.getElementById('av-preview');
-    if(previewEl){
-      previewEl.innerHTML=buildAvatar(lv.num,120,false);
-      // Animate
-      previewEl.style.transform='scale(1.05)';
-      setTimeout(()=>{previewEl.style.transform='scale(1)';previewEl.style.transition='transform .2s ease';},100);
-    }
-    // Update header avatar too
-    updateHeaderAvatar();
-    // Update erfolge avatar card
-    const avC=document.getElementById('erfolge-av-card');
-    if(avC){const svg=buildAvatar(lv.num,90,false);const avSvg=avC.querySelector('.av-svg');if(avSvg)avSvg.innerHTML=svg;}
-    // Update heute avatar card
-    const heuteAvC=document.getElementById('av-card-container');
-    if(heuteAvC){const svg=buildAvatar(lv.num,90,true);const avSvg=heuteAvC.querySelector('.av-svg');if(avSvg)avSvg.innerHTML=svg;}
-  }).catch(()=>{
-    const previewEl=document.getElementById('av-preview');
-    if(previewEl)previewEl.innerHTML=buildAvatar(1,120,false);
-  });
-  haptic();
-}
-
-function removeAvPhoto(){
-  localStorage.removeItem('st_avatar_img');
-  showToast('Foto entfernt.');
-  renderAvatarCustomizer();
-  updateHeaderAvatar();
-}
-
-
-function setAvApp(key,val){setAvAppLive(key,val);}
-function saveAvApp(){haptic();showToast('Avatar gespeichert! 🏊');updateHeaderAvatar();}
 function uploadAvPhoto(input){
   const file=input.files[0];if(!file)return;
   const reader=new FileReader();
@@ -1767,6 +1659,89 @@ function confirmReset(){
 
 // ── RESIZE ────────────────────────────────────────────────────────────────────
 let _rt;window.addEventListener('resize',()=>{clearTimeout(_rt);_rt=setTimeout(()=>{if(S.page==='fortschritt')renderFortschrittPage();},200);});
+function renderAvatarCustomizer(){
+  var container=document.getElementById('avatar-customizer');
+  if(!container)return;
+  var app=getAvApp();
+  var SKINS=[{k:'s1',n:'Hell',c:'#FDBCB4'},{k:'s2',n:'Mittel-hell',c:'#E8A87C'},{k:'s3',n:'Mittel',c:'#C68642'},{k:'s4',n:'Mittel-dunkel',c:'#8D5524'},{k:'s5',n:'Dunkel',c:'#4A2912'}];
+  var HSTYLES=[{k:'h1',n:'Kurz'},{k:'h2',n:'Lang'},{k:'h3',n:'Zopf'},{k:'h4',n:'Dutt'}];
+  var HCOLORS=[{k:'hc1',n:'Dunkelbraun',c:'#4A2C0A'},{k:'hc2',n:'Hellbraun',c:'#8B5E3C'},{k:'hc3',n:'Schwarz',c:'#1A1A1A'},{k:'hc4',n:'Blond',c:'#D4A843'},{k:'hc5',n:'Rot',c:'#8B2500'}];
+  var ECOLORS=[{k:'e1',n:'Braun',c:'#5C3317'},{k:'e2',n:'Blau',c:'#2980B9'},{k:'e3',n:'Gruen',c:'#27AE60'},{k:'e4',n:'Grau',c:'#7F8C8D'}];
+  function mkColor(arr,propKey){
+    var s='';
+    arr.forEach(function(x){
+      var active=app[propKey]===x.k?'active':'';
+      s+='<button class="color-btn '+active+'" style="background:'+x.c+'" onclick="setAvAppLive(\''+propKey+'\',\''+x.k+'\')" title="'+x.n+'"></button>';
+    });
+    return s;
+  }
+  function mkOpt(arr,propKey){
+    var s='';
+    arr.forEach(function(x){
+      var active=app[propKey]===x.k?'active':'';
+      s+='<button class="opt-btn '+active+'" onclick="setAvAppLive(\''+propKey+'\',\''+x.k+'\')">'+x.n+'</button>';
+    });
+    return s;
+  }
+  var hasPhoto=!!localStorage.getItem('st_avatar_img');
+  var photoBtn=hasPhoto?'<button class="btn2 full" onclick="removeAvPhoto()" style="margin-top:6px;color:var(--red)">Foto entfernen</button>':'';
+  container.innerHTML=
+    '<div style="text-align:center;margin-bottom:16px;background:var(--hero);border-radius:var(--r-xl);padding:20px">'+
+      '<div id="av-preview" style="display:inline-block"></div>'+
+      '<p style="font-size:.72rem;color:rgba(255,255,255,.75);margin-top:8px">Vorschau aktualisiert sich sofort</p>'+
+    '</div>'+
+    '<div class="fsec"><label class="label">Hautfarbe</label><div class="color-row">'+mkColor(SKINS,'skinKey')+'</div></div>'+
+    '<div class="fsec"><label class="label">Frisur</label><div class="opt-row">'+mkOpt(HSTYLES,'hairStyleKey')+'</div></div>'+
+    '<div class="fsec"><label class="label">Haarfarbe</label><div class="color-row">'+mkColor(HCOLORS,'hairColorKey')+'</div></div>'+
+    '<div class="fsec"><label class="label">Augenfarbe</label><div class="color-row">'+mkColor(ECOLORS,'eyeColorKey')+'</div></div>'+
+    '<div class="fsec"><label class="label">Eigenes Foto</label>'+
+      '<label class="btn2 full" style="cursor:pointer;text-align:center">Foto auswaehlen'+
+        '<input type="file" accept="image/*" onchange="uploadAvPhoto(this)" style="display:none"/>'+
+      '</label>'+photoBtn+
+    '</div>'+
+    '<button class="btn full" onclick="saveAvApp()">Avatar speichern</button>';
+  computeStats().then(function(stats){
+    var lv=getLvl(stats.totalPoints);
+    var el=document.getElementById('av-preview');
+    if(el)el.innerHTML=buildAvatar(lv.num,120,false);
+  }).catch(function(){
+    var el=document.getElementById('av-preview');
+    if(el)el.innerHTML=buildAvatar(1,120,false);
+  });
+}
+
+function setAvAppLive(key,val){
+  var app=getAvApp();app[key]=val;saveAvApp(app);
+  document.querySelectorAll('.color-btn,.opt-btn').forEach(function(b){
+    var oc=b.getAttribute('onclick')||'';
+    if(oc.indexOf(key)>=0)b.classList.toggle('active',oc.indexOf(val)>=0);
+  });
+  computeStats().then(function(stats){
+    var lv=getLvl(stats.totalPoints);
+    var el=document.getElementById('av-preview');
+    if(el){
+      el.innerHTML=buildAvatar(lv.num,120,false);
+      el.style.transition='transform .2s';
+      el.style.transform='scale(1.05)';
+      setTimeout(function(){el.style.transform='scale(1)';},150);
+    }
+    updateHeaderAvatar();
+    var hc=document.getElementById('av-card-container');
+    if(hc){var svg=hc.querySelector('.av-svg');if(svg)svg.innerHTML=buildAvatar(lv.num,90,true);}
+  }).catch(function(){
+    var el=document.getElementById('av-preview');
+    if(el)el.innerHTML=buildAvatar(1,120,false);
+  });
+  haptic();
+}
+
+function removeAvPhoto(){
+  localStorage.removeItem('st_avatar_img');
+  showToast('Foto entfernt.');
+  renderAvatarCustomizer();
+  updateHeaderAvatar();
+}
+
 // ── ÜBUNGEN PAGE ─────────────────────────────────────────────────────────────
 function uebTab(id,btn){
   document.querySelectorAll('#page-uebungen .tabpane').forEach(p=>p.classList.remove('active'));
@@ -1791,135 +1766,36 @@ const LVT_EXERCISES={
 };
 
 const LVT_CHALLENGES=[
-  // WOCHE 1: Grundlagen
-  {day:1,focus:'Einstieg: Liegestütze + Hüftbeuger',
-   kraft:[{k:'liegestuetze',s:3,r:8,rest:60}],
-   beweg:[{k:'huefte_dehnen',s:2,r:30,rest:15}],
-   pts:5,tip:'Körper gerade wie ein Brett beim Liegestütz. Beim Dehnen tief einatmen.'},
-  {day:2,focus:'Klimmzüge + Schulter-Querdehnung',
-   kraft:[{k:'klimmzuege',s:3,r:2,rest:90}],
-   beweg:[{k:'schulter_quer',s:2,r:30,rest:15}],
-   pts:5,tip:'Auch 1 Klimmzug ist ein Klimmzug. Arme vollständig strecken!'},
-  {day:3,focus:'Bauchmuskel + Rumpfbeugen',
-   kraft:[{k:'bauchmuskel',s:3,r:1,rest:30}],
-   beweg:[{k:'rumpfbeugen',s:3,r:1,rest:20}],
-   pts:5,tip:'Langsam aufrichten – kein Schwung! Knie beim Rumpfbeugen gestreckt.'},
-  {day:4,focus:'Schlussdreisprung + Oberschenkel-Dehnung',
-   kraft:[{k:'schlussdreisprung',s:3,r:1,rest:60}],
-   beweg:[{k:'oberschenkel',s:2,r:30,rest:15}],
-   pts:5,tip:'Arme schwingen mit! Drei Sprünge fließend ohne Pause.'},
-  {day:5,focus:'Rückenhaltetest + Fußstreckung',
-   kraft:[{k:'rueckenhaltetest',s:2,r:30,rest:60}],
-   beweg:[{k:'fussstreckung',s:2,r:1,rest:20}],
-   pts:5,tip:'Eintauchhaltung – Arme nach vorn, Blick nach unten.'},
-  {day:6,focus:'Liegestütze + Schulterbeweglichkeit',
-   kraft:[{k:'liegestuetze',s:3,r:10,rest:60}],
-   beweg:[{k:'schulterbeweglichkeit',s:3,r:1,rest:30}],
-   pts:5,tip:'Schulterblätter zusammenziehen beim Stab-Anheben.'},
-  {day:7,focus:'Aktive Erholung: Klimmzüge + Dehnen',
-   kraft:[{k:'klimmzuege',s:2,r:2,rest:90}],
-   beweg:[{k:'huefte_dehnen',s:3,r:30,rest:15}],
-   pts:4,tip:'Heute locker – Erholung ist Teil des Trainings.'},
-
-  // WOCHE 2: Aufbau
-  {day:8,focus:'Liegestütze Aufbau + Rumpfbeugen',
-   kraft:[{k:'liegestuetze',s:4,r:10,rest:60}],
-   beweg:[{k:'rumpfbeugen',s:3,r:1,rest:20}],
-   pts:6,tip:'Takt halten: 1 Sekunde runter, 1 Sekunde hoch.'},
-  {day:9,focus:'Klimmzüge Aufbau + Schulter-Querdehnung',
-   kraft:[{k:'klimmzuege',s:4,r:3,rest:90}],
-   beweg:[{k:'schulter_quer',s:3,r:30,rest:15}],
-   pts:6,tip:'Kontrolliert absenken – das stärkt genauso wie hochziehen.'},
-  {day:10,focus:'Bauchmuskel + Schulterbeweglichkeit',
-   kraft:[{k:'bauchmuskel',s:3,r:1,rest:30}],
-   beweg:[{k:'schulterbeweglichkeit',s:3,r:1,rest:30}],
-   pts:6,tip:'Stufe 3 beim Bauchmuskeltest anstreben: Stab hinter dem Kopf.'},
-  {day:11,focus:'Schlussdreisprung + Fußstreckung',
-   kraft:[{k:'schlussdreisprung',s:4,r:1,rest:60}],
-   beweg:[{k:'fussstreckung',s:3,r:1,rest:20}],
-   pts:6,tip:'Bester von 3 Versuchen zählt beim LVT. Heute 4 Versuche!'},
-  {day:12,focus:'Rückenhaltetest + Oberschenkel-Dehnung',
-   kraft:[{k:'rueckenhaltetest',s:2,r:45,rest:60}],
-   beweg:[{k:'oberschenkel',s:3,r:30,rest:15}],
-   pts:6,tip:'Ruhige Haltung – kein Hohlkreuz. Max. 1:20 min.'},
-  {day:13,focus:'Liegestütze + Klimmzüge + Dehnen',
-   kraft:[{k:'liegestuetze',s:3,r:12,rest:60},{k:'klimmzuege',s:3,r:3,rest:90}],
-   beweg:[{k:'huefte_dehnen',s:2,r:30,rest:15}],
-   pts:7,tip:'Kombination aus zwei Kraftübungen – das ist echter LVT-Stil!'},
-  {day:14,focus:'Aktive Erholung: Bauch + Beweglichkeit',
-   kraft:[{k:'bauchmuskel',s:2,r:1,rest:30}],
-   beweg:[{k:'rumpfbeugen',s:3,r:1,rest:20},{k:'schulter_quer',s:2,r:30,rest:15}],
-   pts:4,tip:'Erholung ist Teil des Trainings. Heute locker bleiben.'},
-
-  // WOCHE 3: Intensivierung
-  {day:15,focus:'Liegestütze Intensiv + Schulterbeweglichkeit',
-   kraft:[{k:'liegestuetze',s:4,r:12,rest:60}],
-   beweg:[{k:'schulterbeweglichkeit',s:4,r:1,rest:30}],
-   pts:7,tip:'Wenn du den Takt nicht mehr halten kannst, ist Schluss.'},
-  {day:16,focus:'Klimmzüge Intensiv + Rumpfbeugen',
-   kraft:[{k:'klimmzuege',s:4,r:4,rest:90}],
-   beweg:[{k:'rumpfbeugen',s:4,r:1,rest:20}],
-   pts:7,tip:'Ristgriff, schulterbreit. Kein Schwingen! Ziel: Handfläche beim Rumpfbeugen.'},
-  {day:17,focus:'Bauch + Rücken + Fußstreckung',
-   kraft:[{k:'bauchmuskel',s:3,r:1,rest:30},{k:'rueckenhaltetest',s:2,r:50,rest:60}],
-   beweg:[{k:'fussstreckung',s:3,r:1,rest:20}],
-   pts:7,tip:'Bauch und Rücken zusammen – das ist dein Kraftzentrum.'},
-  {day:18,focus:'Schlussdreisprung Intensiv + Oberschenkel',
-   kraft:[{k:'schlussdreisprung',s:5,r:1,rest:60}],
-   beweg:[{k:'oberschenkel',s:3,r:30,rest:15}],
-   pts:7,tip:'5 Versuche – bester zählt. Arme maximal einsetzen!'},
-  {day:19,focus:'Liegestütze + Klimmzüge + Schulter',
-   kraft:[{k:'liegestuetze',s:4,r:12,rest:60},{k:'klimmzuege',s:3,r:4,rest:90}],
-   beweg:[{k:'schulter_quer',s:3,r:30,rest:15}],
-   pts:8,tip:'Schultergesundheit ist das A und O im Schwimmen.'},
-  {day:20,focus:'Bauchmuskel + Beweglichkeit komplett',
-   kraft:[{k:'bauchmuskel',s:3,r:1,rest:30}],
-   beweg:[{k:'rumpfbeugen',s:3,r:1,rest:20},{k:'fussstreckung',s:2,r:1,rest:20},{k:'schulterbeweglichkeit',s:2,r:1,rest:30}],
-   pts:7,tip:'Alle drei Beweglichkeitstests des LVT in einer Einheit.'},
-  {day:21,focus:'Aktive Erholung: Rücken + Dehnen',
-   kraft:[{k:'rueckenhaltetest',s:2,r:40,rest:60}],
-   beweg:[{k:'huefte_dehnen',s:3,r:30,rest:15},{k:'schulter_quer',s:2,r:30,rest:15}],
-   pts:5,tip:'Letzte Ruhewoche vor dem Endspurt.'},
-
-  // WOCHE 4: LVT-Simulation
-  {day:22,focus:'LVT-Sim: Liegestütze + Klimmzüge + Schulter',
-   kraft:[{k:'liegestuetze',s:1,r:20,rest:120},{k:'klimmzuege',s:1,r:5,rest:120}],
-   beweg:[{k:'schulterbeweglichkeit',s:1,r:1,rest:60}],
-   pts:8,tip:'Wie beim echten LVT: Ein Versuch, maximale Leistung.'},
-  {day:23,focus:'LVT-Sim: Bauch + Rücken + Rumpfbeugen',
-   kraft:[{k:'bauchmuskel',s:1,r:1,rest:60},{k:'rueckenhaltetest',s:1,r:60,rest:60}],
-   beweg:[{k:'rumpfbeugen',s:1,r:1,rest:60}],
-   pts:8,tip:'Bauch und Rücken wie beim echten LVT – ein Versuch, volle Konzentration.'},
-  {day:24,focus:'LVT-Sim: Schlussdreisprung + Fußstreckung',
-   kraft:[{k:'schlussdreisprung',s:3,r:1,rest:60}],
-   beweg:[{k:'fussstreckung',s:1,r:1,rest:60}],
-   pts:8,tip:'Schlussdreisprung: 3 Versuche, bester zählt. Dann Fußbeweglichkeit messen.'},
-  {day:25,focus:'Kompletteinheit Kraft + Beweglichkeit',
-   kraft:[{k:'liegestuetze',s:3,r:12,rest:60},{k:'klimmzuege',s:3,r:4,rest:90},{k:'bauchmuskel',s:2,r:1,rest:30}],
-   beweg:[{k:'schulterbeweglichkeit',s:2,r:1,rest:30},{k:'rumpfbeugen',s:2,r:1,rest:20}],
-   pts:9,tip:'Alle LVT-Übungen in einer Einheit – das ist die finale Vorbereitung!'},
-  {day:26,focus:'Rücken + Sprung + Dehnen komplett',
-   kraft:[{k:'rueckenhaltetest',s:2,r:60,rest:60},{k:'schlussdreisprung',s:3,r:1,rest:60}],
-   beweg:[{k:'fussstreckung',s:2,r:1,rest:20},{k:'schulter_quer',s:2,r:30,rest:15}],
-   pts:9,tip:'Rücken und Sprungkraft – zwei wichtige LVT-Disziplinen.'},
-  {day:27,focus:'Letzte Vorbereitung: Kraft + Beweglichkeit',
-   kraft:[{k:'liegestuetze',s:3,r:10,rest:60},{k:'klimmzuege',s:3,r:3,rest:90}],
-   beweg:[{k:'rumpfbeugen',s:3,r:1,rest:20},{k:'schulterbeweglichkeit',s:2,r:1,rest:30}],
-   pts:8,tip:'Letzte Vorbereitung – locker und konzentriert. Morgen bist du bereit!'},
-  {day:28,focus:'Ruhetag: Nur Dehnen',
-   kraft:[],
-   beweg:[{k:'huefte_dehnen',s:2,r:30,rest:15},{k:'schulter_quer',s:2,r:30,rest:15},{k:'fussstreckung',s:1,r:1,rest:20}],
-   pts:3,tip:'Heute nur locker dehnen. Kein Kraft! Morgen bist du bereit für den LVT!'}
+  {day:1,focus:'Einstieg – Gesäß aktivieren',exs:[{k:'liegestuetze',s:2,r:8,rest:60}],pts:4,tip:'Heute lernst du die wichtigsten Übungen kennen. Qualität vor Quantität!'},
+  {day:2,focus:'Schulterbeweglichkeit',exs:[{k:'schulterbeweglichkeit',s:3,r:1,rest:30}],pts:4,tip:'Langsam und kontrolliert – Qualität vor Quantität.'},
+  {day:3,focus:'Rumpfbeugen & Dehnen',exs:[{k:'rumpfbeugen',s:3,r:1,rest:20}],pts:4,tip:'Knie gestreckt lassen – das ist die Herausforderung!'},
+  {day:4,focus:'Klimmzüge',exs:[{k:'klimmzuege',s:3,r:2,rest:90}],pts:5,tip:'Auch 1 Klimmzug ist ein Klimmzug. Arme vollständig strecken!'},
+  {day:5,focus:'Fußbeweglichkeit',exs:[{k:'fussstreckung',s:2,r:1,rest:20}],pts:4,tip:'Fuß ohne Drehung bewegen – gerade strecken und anziehen.'},
+  {day:6,focus:'Bauchmuskeltest',exs:[{k:'bauchmuskel',s:3,r:1,rest:30}],pts:4,tip:'Langsam aufrichten – kein Schwung!'},
+  {day:7,focus:'Aktive Erholung',exs:[{k:'schulterbeweglichkeit',s:2,r:1,rest:30}],pts:3,tip:'Heute locker bleiben – Erholung ist Training.'},
+  {day:8,focus:'Liegestütze Aufbau',exs:[{k:'liegestuetze',s:4,r:10,rest:60}],pts:5,tip:'Takt halten: 1 Sekunde runter, 1 Sekunde hoch.'},
+  {day:9,focus:'Rückenhaltetest',exs:[{k:'rueckenhaltetest',s:2,r:30,rest:60}],pts:5,tip:'Eintauchhaltung – Arme nach vorn, Blick nach unten.'},
+  {day:10,focus:'Klimmzüge Aufbau',exs:[{k:'klimmzuege',s:4,r:3,rest:90}],pts:5,tip:'Kontrolliert absenken – das stärkt genauso wie hochziehen.'},
+  {day:11,focus:'Sprungkraft',exs:[{k:'schlussdreisprung',s:3,r:1,rest:60}],pts:5,tip:'Arme schwingen mit! Drei Sprünge fließend ohne Pause.'},
+  {day:12,focus:'Beweglichkeit komplett',exs:[{k:'rumpfbeugen',s:2,r:1,rest:20},{k:'fussstreckung',s:2,r:1,rest:20},{k:'schulterbeweglichkeit',s:2,r:1,rest:30}],pts:6,tip:'Alle drei Beweglichkeitstests des LVT in einer Einheit.'},
+  {day:13,focus:'Kraft & Aktivierung',exs:[{k:'liegestuetze',s:4,r:12,rest:60},{k:'klimmzuege',s:3,r:3,rest:90}],pts:6,tip:'Heute die längste Einheit bisher. Du bist auf dem richtigen Weg!'},
+  {day:14,focus:'Aktive Erholung',exs:[{k:'schulterbeweglichkeit',s:2,r:1,rest:30}],pts:2,tip:'Erholung ist Teil des Trainings. Heute locker bleiben.'},
+  {day:15,focus:'Liegestütze Intensiv',exs:[{k:'liegestuetze',s:4,r:12,rest:60}],pts:6,tip:'Wenn du den Takt nicht mehr halten kannst, ist Schluss.'},
+  {day:16,focus:'Klimmzüge Intensiv',exs:[{k:'klimmzuege',s:4,r:4,rest:90}],pts:6,tip:'Ristgriff, schulterbreit. Kein Schwingen!'},
+  {day:17,focus:'Bauch & Rücken',exs:[{k:'bauchmuskel',s:3,r:1,rest:30},{k:'rueckenhaltetest',s:2,r:40,rest:60}],pts:6,tip:'Bauch und Rücken zusammen – das ist dein Kraftzentrum.'},
+  {day:18,focus:'Sprungkraft Intensiv',exs:[{k:'schlussdreisprung',s:5,r:1,rest:60}],pts:6,tip:'Bester von 3 Versuchen zählt beim LVT. Heute 5 Versuche!'},
+  {day:19,focus:'Schulter Intensiv',exs:[{k:'schulterbeweglichkeit',s:4,r:1,rest:30}],pts:7,tip:'Schultergesundheit ist das A und O im Schwimmen.'},
+  {day:20,focus:'Beweglichkeit Intensiv',exs:[{k:'rumpfbeugen',s:3,r:1,rest:20},{k:'fussstreckung',s:3,r:1,rest:20}],pts:6,tip:'Ziel: Handfläche beim Rumpfbeugen. Knie gestreckt!'},
+  {day:21,focus:'Aktive Erholung',exs:[{k:'schulterbeweglichkeit',s:2,r:1,rest:30}],pts:3,tip:'Letzte Ruhewoche vor dem Endspurt.'},
+  {day:22,focus:'LVT-Simulation Athletik 1',exs:[{k:'liegestuetze',s:1,r:20,rest:120},{k:'klimmzuege',s:1,r:5,rest:120}],pts:8,tip:'Wie beim echten LVT: Ein Versuch, maximale Leistung.'},
+  {day:23,focus:'LVT-Simulation Beweglichkeit',exs:[{k:'schulterbeweglichkeit',s:1,r:1,rest:60},{k:'rumpfbeugen',s:1,r:1,rest:60},{k:'fussstreckung',s:1,r:1,rest:60}],pts:7,tip:'Alle drei Beweglichkeitstests – wie beim echten LVT.'},
+  {day:24,focus:'LVT-Simulation Athletik 2',exs:[{k:'schlussdreisprung',s:3,r:1,rest:60},{k:'bauchmuskel',s:1,r:1,rest:60}],pts:8,tip:'Schlussdreisprung: 3 Versuche, bester zählt.'},
+  {day:25,focus:'Rücken & Stabilität',exs:[{k:'rueckenhaltetest',s:3,r:60,rest:60}],pts:7,tip:'1 Minute und 20 Sekunden ist das Maximum beim LVT.'},
+  {day:26,focus:'Kompletteinheit',exs:[{k:'liegestuetze',s:3,r:10,rest:60},{k:'klimmzuege',s:3,r:3,rest:90},{k:'bauchmuskel',s:2,r:1,rest:30}],pts:8,tip:'Alle Athletik-Tests in einer Einheit.'},
+  {day:27,focus:'Letzte Beweglichkeit',exs:[{k:'schulterbeweglichkeit',s:3,r:1,rest:30},{k:'rumpfbeugen',s:3,r:1,rest:20},{k:'fussstreckung',s:2,r:1,rest:20}],pts:6,tip:'Letzte Vorbereitung – locker und konzentriert.'},
+  {day:28,focus:'Ruhetag vor LVT',exs:[{k:'schulterbeweglichkeit',s:2,r:1,rest:30}],pts:3,tip:'Heute nur locker dehnen. Morgen bist du bereit!'}
 ];
 
-// Additional exercises for enhanced LVT program
-const LVT_EXTRA_EXERCISES={
-  huefte_dehnen:{name:'Hüftbeuger-Dehnung',ico:'🤸',desc:'Knie auf dem Boden, Hüfte nach vorne schieben. Für Rumpfbeweglichkeit.',tech:'Rücken gerade, nicht ins Hohlkreuz. Langsam einatmen beim Dehnen.',unit:'Sekunden je Seite',def:30,sets:2,rest:15},
-  schulter_quer:{name:'Schulter-Querdehnung',ico:'💪',desc:'Arm quer vor der Brust, mit anderem Arm heranziehen. Für alle Lagen.',tech:'Schulter entspannt lassen, nicht hochziehen. 30 Sekunden halten.',unit:'Sekunden je Arm',def:30,sets:2,rest:15},
-  oberschenkel:{name:'Oberschenkel-Dehnung',ico:'🦵',desc:'Bein gestreckt, Oberkörper nach vorne. Für Beinarbeit.',tech:'Knie leicht gebeugt lassen. Langsam nach vorne beugen.',unit:'Sekunden je Bein',def:30,sets:2,rest:15}
-};
-// Merge with main exercises
-Object.assign(LVT_EXERCISES, LVT_EXTRA_EXERCISES);
 
 
 // ── PHYSIO DATA ───────────────────────────────────────────────────────────────
@@ -1988,16 +1864,7 @@ function renderLVTCard(){
   const container=document.getElementById('lvt-container');if(!container)return;
   const ch=getTodayLVT();const done=isLVTDoneToday();const day=getLVTDay();
   const pct=Math.round((day/28)*100);
-  // Support both old format (exs) and new format (kraft + beweg)
-  const allExs = ch.exs || [...(ch.kraft||[]), ...(ch.beweg||[])];
-  const kraftExs = ch.kraft || ch.exs || [];
-  const bewegExs = ch.beweg || [];
-  const exList = (kraftExs.length > 0 || bewegExs.length > 0)
-    ? (kraftExs.length > 0 ? '<div style="font-size:.65rem;font-weight:800;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">💪 Kraft</div>' +
-        kraftExs.map(ex=>{const def=LVT_EXERCISES[ex.k];if(!def)return'';return'<div class="ch-ex"><span class="ch-ex-ico">'+def.ico+'</span><div><div class="ch-ex-name">'+def.name+'</div><div class="ch-ex-reps">'+(ex.s>1?ex.s+'×':'')+ex.r+' '+def.unit+(ex.rest?' · Pause '+ex.rest+'s':'')+'</div></div></div>';}).join('') : '') +
-      (bewegExs.length > 0 ? '<div style="font-size:.65rem;font-weight:800;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin:6px 0 4px">🤸 Beweglichkeit</div>' +
-        bewegExs.map(ex=>{const def=LVT_EXERCISES[ex.k];if(!def)return'';return'<div class="ch-ex"><span class="ch-ex-ico">'+def.ico+'</span><div><div class="ch-ex-name">'+def.name+'</div><div class="ch-ex-reps">'+(ex.s>1?ex.s+'×':'')+ex.r+' '+def.unit+(ex.rest?' · Pause '+ex.rest+'s':'')+'</div></div></div>';}).join('') : '')
-    : allExs.map(ex=>{const def=LVT_EXERCISES[ex.k];if(!def)return'';return'<div class="ch-ex"><span class="ch-ex-ico">'+def.ico+'</span><div><div class="ch-ex-name">'+def.name+'</div><div class="ch-ex-reps">'+(ex.s>1?ex.s+'×':'')+ex.r+' '+def.unit+(ex.rest?' · Pause '+ex.rest+'s':'')+'</div></div></div>';}).join('');
+  const exList=ch.exs.map(ex=>{const def=LVT_EXERCISES[ex.k];if(!def)return'';return'<div class="ch-ex"><span class="ch-ex-ico">'+def.ico+'</span><div><div class="ch-ex-name">'+def.name+'</div><div class="ch-ex-reps">'+(ex.s>1?ex.s+'×':'')+ex.r+' '+def.unit+(ex.rest?' · Pause '+ex.rest+'s':'')+'</div></div></div>';}).join('');
   container.innerHTML='<div class="ch-card lvt '+(done?'done':'')+'" onclick="showChDetail(\'lvt\')">'+
     '<div class="ch-hdr"><div><div class="ch-badge">LVT Tag '+day+'/28</div><div class="ch-focus">'+ch.focus+'</div></div><div class="ch-pts">+'+ch.pts+' Pkt.</div></div>'+
     '<div class="ch-prog-wrap"><div class="ch-prog-fill" style="width:'+pct+'%"></div></div>'+
@@ -2167,7 +2034,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   getLVTStartDate();getPhysioStartDate();
   await renderHeutePage();
 });
-/* js_challenges missing */
+
 // ══════════════════════════════════════════════════════════════════
 // ATHLETIK-TRAINING GENERATOR
 // Generates structured workouts based on duration + focus
