@@ -11697,6 +11697,194 @@ function closeMehrMenu() {
 }
 
 </script>
+<script>
+
+// ══ COMPLETE AVATAR OVERRIDE - replaces ALL broken avatar functions ══
+(function() {
+  'use strict';
+
+  // Safe avatar builder - no template literals, no complex math
+  function safeAvatar(lvl, custom, size, animated) {
+    custom = custom || {};
+    size = size || 120;
+    var W = size, H = size, cx = W/2, s = W/200;
+    var app = {};
+    try { app = JSON.parse(localStorage.getItem('st_avatar_appearance') || '{}'); } catch(e) {}
+    var skins = {s1:'#FDBCB4',s2:'#E8A87C',s3:'#C68642',s4:'#8D5524',s5:'#4A2912'};
+    var hairs  = {hc1:'#4A2C0A',hc2:'#8B5E3C',hc3:'#1A1A1A',hc4:'#D4A843',hc5:'#8B2500'};
+    var eyes   = {e1:'#5C3317',e2:'#2980B9',e3:'#27AE60',e4:'#7F8C8D'};
+    var skin = skins[app.skinKey] || '#FDBCB4';
+    var hair = hairs[app.hairColorKey] || '#4A2C0A';
+    var eye  = eyes[app.eyeColorKey]  || '#5C3317';
+    var ACC = (typeof ACC_COLORS !== 'undefined') ? ACC_COLORS : {};
+    var suitC = custom.suit   ? ACC[custom.suit]   : null;
+    var capC  = custom.cap    ? ACC[custom.cap]    : null;
+    var gogC  = custom.goggle ? ACC[custom.goggle] : null;
+    var medC  = custom.medal  ? ACC[custom.medal]  : null;
+    var suit  = suitC ? suitC.main : (lvl >= 6 ? '#0D3B6E' : lvl >= 4 ? '#1A5276' : '#B0C4DE');
+    var bc    = lvl >= 9 ? '#FFD700' : lvl >= 7 ? '#E74C3C' : lvl >= 5 ? '#8E44AD' : '#0044FF';
+    var anim  = animated ? '<animateTransform attributeName="transform" type="translate" values="0,0;2,1;0,0;-2,1;0,0" dur="2.5s" repeatCount="indefinite" additive="sum"/>' : '';
+
+    var parts = [];
+    parts.push('<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" style="overflow:visible">');
+    parts.push('<g>' + anim);
+    // Water
+    parts.push('<ellipse cx="' + cx + '" cy="' + (H*0.84) + '" rx="' + (W*0.46) + '" ry="' + (H*0.055) + '" fill="#0066FF" opacity="0.15"/>');
+    // Body
+    parts.push('<ellipse cx="' + cx + '" cy="' + (H*0.62) + '" rx="' + (W*0.17) + '" ry="' + (H*0.21) + '" fill="' + suit + '"/>');
+    // Arms
+    parts.push('<line x1="' + (cx-W*0.17) + '" y1="' + (H*0.52) + '" x2="' + (cx-W*0.46) + '" y2="' + (H*0.56) + '" stroke="' + skin + '" stroke-width="' + (11*s) + '" stroke-linecap="round"/>');
+    parts.push('<line x1="' + (cx+W*0.17) + '" y1="' + (H*0.52) + '" x2="' + (cx+W*0.46) + '" y2="' + (H*0.56) + '" stroke="' + skin + '" stroke-width="' + (11*s) + '" stroke-linecap="round"/>');
+    // Legs
+    parts.push('<line x1="' + (cx-W*0.09) + '" y1="' + (H*0.82) + '" x2="' + (cx-W*0.07) + '" y2="' + (H*0.96) + '" stroke="' + suit + '" stroke-width="' + (10*s) + '" stroke-linecap="round"/>');
+    parts.push('<line x1="' + (cx+W*0.09) + '" y1="' + (H*0.82) + '" x2="' + (cx+W*0.07) + '" y2="' + (H*0.94) + '" stroke="' + suit + '" stroke-width="' + (10*s) + '" stroke-linecap="round"/>');
+    // Neck
+    parts.push('<rect x="' + (cx-W*0.055) + '" y="' + (H*0.38) + '" width="' + (W*0.11) + '" height="' + (H*0.09) + '" rx="' + (4*s) + '" fill="' + skin + '"/>');
+    // Head
+    parts.push('<ellipse cx="' + cx + '" cy="' + (H*0.29) + '" rx="' + (W*0.145) + '" ry="' + (H*0.135) + '" fill="' + skin + '"/>');
+    // Hair
+    if (!capC) parts.push('<ellipse cx="' + cx + '" cy="' + (H*0.20) + '" rx="' + (W*0.145) + '" ry="' + (H*0.075) + '" fill="' + hair + '"/>');
+    // Cap
+    if (capC) {
+      parts.push('<ellipse cx="' + cx + '" cy="' + (H*0.24) + '" rx="' + (W*0.148) + '" ry="' + (H*0.105) + '" fill="' + capC.main + '"/>');
+      parts.push('<ellipse cx="' + cx + '" cy="' + (H*0.185) + '" rx="' + (W*0.135) + '" ry="' + (H*0.065) + '" fill="' + capC.main + '"/>');
+    }
+    // Goggles
+    if (gogC) {
+      parts.push('<ellipse cx="' + (cx-W*0.065) + '" cy="' + (H*0.305) + '" rx="' + (W*0.055) + '" ry="' + (H*0.038) + '" fill="' + gogC.lens + '" stroke="' + gogC.frame + '" stroke-width="' + (2.5*s) + '"/>');
+      parts.push('<ellipse cx="' + (cx+W*0.065) + '" cy="' + (H*0.305) + '" rx="' + (W*0.055) + '" ry="' + (H*0.038) + '" fill="' + gogC.lens + '" stroke="' + gogC.frame + '" stroke-width="' + (2.5*s) + '"/>');
+      parts.push('<line x1="' + (cx-W*0.01) + '" y1="' + (H*0.305) + '" x2="' + (cx+W*0.01) + '" y2="' + (H*0.305) + '" stroke="' + gogC.frame + '" stroke-width="' + (2.5*s) + '"/>');
+    }
+    // Eyes
+    parts.push('<circle cx="' + (cx-W*0.055) + '" cy="' + (H*0.295) + '" r="' + (3*s) + '" fill="' + eye + '"/>');
+    parts.push('<circle cx="' + (cx+W*0.055) + '" cy="' + (H*0.295) + '" r="' + (3*s) + '" fill="' + eye + '"/>');
+    parts.push('<circle cx="' + (cx-W*0.048) + '" cy="' + (H*0.29) + '" r="' + (1.2*s) + '" fill="white" opacity="0.6"/>');
+    parts.push('<circle cx="' + (cx+W*0.062) + '" cy="' + (H*0.29) + '" r="' + (1.2*s) + '" fill="white" opacity="0.6"/>');
+    // Smile
+    parts.push('<ellipse cx="' + cx + '" cy="' + (H*0.35) + '" rx="' + (W*0.04) + '" ry="' + (H*0.015) + '" fill="#3A2010" opacity="0.6"/>');
+    // Cheeks
+    parts.push('<circle cx="' + (cx-W*0.095) + '" cy="' + (H*0.325) + '" r="' + (4*s) + '" fill="#FFB6C1" opacity="0.45"/>');
+    parts.push('<circle cx="' + (cx+W*0.095) + '" cy="' + (H*0.325) + '" r="' + (4*s) + '" fill="#FFB6C1" opacity="0.45"/>');
+    // Medal
+    if (medC) {
+      parts.push('<circle cx="' + (cx+W*0.22) + '" cy="' + (H*0.52) + '" r="' + (11*s) + '" fill="' + medC.main + '"/>');
+      parts.push('<text x="' + (cx+W*0.22) + '" y="' + (H*0.527) + '" text-anchor="middle" font-size="' + (9*s) + '" fill="white" font-weight="bold">★</text>');
+    }
+    parts.push('</g>');
+    // Level badge
+    parts.push('<circle cx="' + (W*0.84) + '" cy="' + (H*0.14) + '" r="' + (13*s) + '" fill="' + bc + '" stroke="white" stroke-width="' + (2*s) + '"/>');
+    parts.push('<text x="' + (W*0.84) + '" y="' + (H*0.148) + '" text-anchor="middle" dominant-baseline="middle" font-size="' + (9*s) + '" fill="white" font-weight="bold" font-family="Inter,sans-serif">' + lvl + '</text>');
+    parts.push('</svg>');
+    return parts.join('');
+  }
+
+  function getCustom() {
+    var c = {};
+    try { c = JSON.parse(localStorage.getItem('st_avatar_custom') || '{}'); } catch(e) {}
+    var h = {};
+    try { h = JSON.parse(localStorage.getItem('st_hybrid_acc') || '{}'); } catch(e) {}
+    var HYBRID = (typeof HYBRID_ACC !== 'undefined') ? HYBRID_ACC : [];
+    ['cap','goggle','suit','medal','extra'].forEach(function(slot) {
+      if (!c[slot]) {
+        var first = HYBRID.find(function(a) { return a.slot === slot && h[a.key]; });
+        if (first) c[slot] = first.key;
+      }
+    });
+    return c;
+  }
+
+  function getLvl() {
+    var LEVELS = (typeof window.LEVELS !== 'undefined') ? window.LEVELS : [{num:1,name:'Einstieg',min:0}];
+    var pts = 0;
+    try {
+      var log = JSON.parse(localStorage.getItem('SwimTrackDB') || '{}');
+    } catch(e) {}
+    // Simple: read from points_log via IndexedDB async - use cached value
+    var cached = parseInt(localStorage.getItem('st_cached_level') || '1');
+    return cached;
+  }
+
+  // Override ALL avatar functions
+  window.buildAvatarSVG = function(lvl, unlocked, size, animated) {
+    return safeAvatar(lvl || 1, getCustom(), size || 120, animated);
+  };
+  window.buildAvatarSVGSync = function(lvl, custom, size, animated, emotion) {
+    return safeAvatar(lvl || 1, custom || getCustom(), size || 120, animated);
+  };
+  window.buildAvatarV3 = function(lvl, custom, size, animated, emotion) {
+    return safeAvatar(lvl || 1, custom || getCustom(), size || 120, animated);
+  };
+  window.buildSafeAvatarSVG = function(lvl, custom, size, animated, emotion) {
+    return safeAvatar(lvl || 1, custom || getCustom(), size || 120, animated);
+  };
+
+  // Override header update functions
+  window.updateHeaderAvatarSVG = async function() {
+    var av = document.getElementById('havatar');
+    if (!av) return;
+    var img = localStorage.getItem('st_avatar_img');
+    if (img) { av.innerHTML = '<img src="' + img + '" style="width:36px;height:36px;object-fit:cover;border-radius:50%"/>'; return; }
+    try {
+      var stats = await computeStats();
+      var lv = getLvl ? getLvl(stats.totalPoints) : {num:1};
+      var lvNum = lv ? lv.num : 1;
+      localStorage.setItem('st_cached_level', lvNum);
+      av.innerHTML = safeAvatar(lvNum, getCustom(), 36, false);
+      av.style.background = 'transparent';
+    } catch(e) {
+      av.textContent = '🏊';
+    }
+  };
+  window.updateHeaderAvatarV3 = window.updateHeaderAvatarSVG;
+
+  // Override renderAppearanceCustomizer to use safe avatar
+  var _origRenderApp = window.renderAppearanceCustomizer;
+  window.renderAppearanceCustomizer = async function() {
+    var container = document.getElementById('appearance-customizer');
+    if (!container) return;
+    try {
+      var stats = await computeStats();
+      var lv = getLvl ? getLvl(stats.totalPoints) : {num:1};
+      var lvNum = lv ? lv.num : 1;
+      var custom = getCustom();
+      var previewSVG = safeAvatar(lvNum, custom, 160, true);
+      var app = {};
+      try { app = JSON.parse(localStorage.getItem('st_avatar_appearance') || '{}'); } catch(e) {}
+      var SKIN_TONES = (typeof window.SKIN_TONES !== 'undefined') ? window.SKIN_TONES : [{key:'s1',name:'Hell',color:'#FDBCB4'},{key:'s2',name:'Mittel-hell',color:'#E8A87C'},{key:'s3',name:'Mittel',color:'#C68642'},{key:'s4',name:'Mittel-dunkel',color:'#8D5524'},{key:'s5',name:'Dunkel',color:'#4A2912'}];
+      var HAIR_STYLES = (typeof window.HAIR_STYLES !== 'undefined') ? window.HAIR_STYLES : [{key:'h1',name:'Kurz'},{key:'h2',name:'Lang'},{key:'h3',name:'Zopf'},{key:'h4',name:'Dutt'}];
+      var HAIR_COLORS = (typeof window.HAIR_COLORS !== 'undefined') ? window.HAIR_COLORS : [{key:'hc1',name:'Dunkelbraun',color:'#4A2C0A'},{key:'hc2',name:'Hellbraun',color:'#8B5E3C'},{key:'hc3',name:'Schwarz',color:'#1A1A1A'},{key:'hc4',name:'Blond',color:'#D4A843'},{key:'hc5',name:'Rot',color:'#8B2500'}];
+      var EYE_COLORS = (typeof window.EYE_COLORS !== 'undefined') ? window.EYE_COLORS : [{key:'e1',name:'Braun',color:'#5C3317'},{key:'e2',name:'Blau',color:'#2980B9'},{key:'e3',name:'Grün',color:'#27AE60'},{key:'e4',name:'Grau',color:'#7F8C8D'}];
+
+      container.innerHTML =
+        '<div class="app-preview-wrap">' +
+          '<div class="app-preview-svg">' + previewSVG + '</div>' +
+          '<div class="app-preview-info">' +
+            '<div class="app-stage-name">Level ' + lvNum + '</div>' +
+            '<div class="app-stage-desc">Dein Avatar</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="app-section"><div class="app-section-label">Hautfarbe</div><div class="app-color-row">' +
+        SKIN_TONES.map(function(s) { return '<button class="app-color-btn ' + (app.skinKey===s.key?'active':'') + '" style="background:' + s.color + '" onclick="setAppearance('skinKey','' + s.key + '')" title="' + s.name + '"></button>'; }).join('') +
+        '</div></div>' +
+        '<div class="app-section"><div class="app-section-label">Frisur</div><div class="app-option-row">' +
+        HAIR_STYLES.map(function(h) { return '<button class="app-option-btn ' + (app.hairStyleKey===h.key?'active':'') + '" onclick="setAppearance('hairStyleKey','' + h.key + '')">' + h.name + '</button>'; }).join('') +
+        '</div></div>' +
+        '<div class="app-section"><div class="app-section-label">Haarfarbe</div><div class="app-color-row">' +
+        HAIR_COLORS.map(function(h) { return '<button class="app-color-btn ' + (app.hairColorKey===h.key?'active':'') + '" style="background:' + h.color + '" onclick="setAppearance('hairColorKey','' + h.key + '')" title="' + h.name + '"></button>'; }).join('') +
+        '</div></div>' +
+        '<div class="app-section"><div class="app-section-label">Augenfarbe</div><div class="app-color-row">' +
+        EYE_COLORS.map(function(e) { return '<button class="app-color-btn ' + (app.eyeColorKey===e.key?'active':'') + '" style="background:' + e.color + '" onclick="setAppearance('eyeColorKey','' + e.key + '')" title="' + e.name + '"></button>'; }).join('') +
+        '</div></div>' +
+        '<button class="btn full lg" onclick="saveAppearanceAndUpdate()" style="margin-top:8px">✓ Aussehen speichern</button>';
+    } catch(e) {
+      container.innerHTML = '<p style="color:var(--tm);font-size:.83rem">Avatar-Anpassung wird geladen…</p>';
+    }
+  };
+
+  console.log('[SwimTrack] Safe avatar override loaded.');
+})();
+
+</script>
 </body></html>`);
 
   printWin.document.close();
