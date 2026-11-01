@@ -2162,6 +2162,669 @@ html, body {
   .acc-svg-preview svg { width: 72px !important; height: 72px !important; }
   .acc-svg-preview { min-height: 80px; }
 }
+
+/* ════ SWIMTRACK BACKGROUND + NAV FIX ════ */
+:root { --bg-app:#EEF2FF; }
+[data-theme=dark] { --bg-app:#080B18; }
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg-app:#080B18;}}
+
+body {
+  background:
+    radial-gradient(ellipse at 15% 15%, rgba(0,68,255,.07) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 85%, rgba(0,194,224,.06) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 0%, rgba(0,68,255,.04) 0%, transparent 60%),
+    var(--bg-app) !important;
+  background-attachment: fixed !important;
+}
+[data-theme=dark] body,
+body[data-theme=dark] {
+  background:
+    radial-gradient(ellipse at 15% 15%, rgba(0,68,255,.15) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 85%, rgba(0,194,224,.10) 0%, transparent 45%),
+    #080B18 !important;
+}
+
+/* Cards: glass effect */
+.card,.ecard,.scard,.chartcard,.pbcard,.stile,.sbox {
+  background: var(--card) !important;
+}
+
+/* Nav: glass + scrollable for many items */
+.botnav {
+  background: var(--card) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none !important;
+}
+.botnav::-webkit-scrollbar { display: none !important; }
+[data-theme=dark] .botnav { background: rgba(26,26,46,.92) !important; }
+
+/* Nav buttons: fit 8 items */
+.nb {
+  min-width: 52px !important;
+  flex-shrink: 0 !important;
+  padding: 5px 2px !important;
+}
+.nb svg { width: 20px !important; height: 20px !important; }
+.nb span { font-size: .58rem !important; font-weight: 700 !important; white-space: nowrap !important; }
+
+@media(max-width:360px) {
+  .nb { min-width: 44px !important; }
+  .nb span { font-size: .52rem !important; }
+  .nb svg { width: 18px !important; height: 18px !important; }
+}
+
+/* Topbar: glass */
+.topbar {
+  background: var(--grad) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+/* Modals: blur backdrop */
+.moverlay {
+  background: rgba(0,0,0,.65) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* Motivation card */
+.motiv { background: rgba(235,243,255,.85) !important; }
+[data-theme=dark] .motiv { background: rgba(13,26,61,.7) !important; }
+
+
+/* FIX 1: Speichern-Button immer sichtbar */
+.pscroll {
+  padding-bottom: calc(var(--nav) + 32px) !important;
+}
+/* Avatar customizer: extra space for save button */
+#page-avatar-custom .pscroll,
+#page-heimuebungen .pscroll,
+#page-plan .pscroll,
+#page-training .pscroll {
+  padding-bottom: calc(var(--nav) + 48px) !important;
+}
+/* Form actions: sticky save button */
+.factions {
+  position: sticky !important;
+  bottom: 0 !important;
+  background: var(--card) !important;
+  padding: 12px 0 8px !important;
+  margin: 0 -14px !important;
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  border-top: 1px solid var(--borderL) !important;
+  z-index: 10 !important;
+}
+/* Avatar save button: always visible */
+#page-avatar-custom .factions,
+#page-avatar-custom > .pscroll > div:last-child {
+  position: sticky !important;
+  bottom: 8px !important;
+}
+
+/* FIX 2: Heimübungen-Karte auf Heute-Seite */
+.heimuebungen-teaser {
+  background: linear-gradient(135deg, #27AE60, #1ABC9C);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(39,174,96,.3);
+  transition: transform .15s;
+}
+.heimuebungen-teaser:active { transform: scale(.98); }
+.ht-icon { font-size: 2rem; flex-shrink: 0; }
+.ht-info { flex: 1; }
+.ht-title { font-size: .9rem; font-weight: 800; }
+.ht-sub   { font-size: .75rem; opacity: .85; margin-top: 2px; }
+.ht-arrow { font-size: 1.1rem; opacity: .8; }
+
+/* FIX 3: Training-Typ Auswahl verbessert */
+.training-type-section {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 14px;
+  border: 1px solid var(--borderL);
+}
+.training-type-hint {
+  font-size: .75rem;
+  color: var(--tm);
+  margin-bottom: 10px;
+  font-style: italic;
+}
+/* Highlight non-swim options */
+.chip[data-v="Krafttraining"],
+.chip[data-v="Athletiktraining"],
+.chip[data-v="Beweglichkeit"],
+.chip[data-v="Techniktraining"],
+.chip[data-v="Regeneration"] {
+  border-color: var(--g5) !important;
+}
+/* Quick-select row for common non-swim activities */
+.quick-type-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.quick-type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--t2);
+  cursor: pointer;
+  transition: all .15s;
+  flex: 1;
+  min-width: 60px;
+}
+.quick-type-btn .qt-icon { font-size: 1.3rem; }
+.quick-type-btn.sel {
+  background: var(--b6);
+  border-color: var(--b6);
+  color: #fff;
+}
+.quick-type-btn:active { transform: scale(.94); }
+
+
+/* ── TÄGLICHE ÜBUNGEN ── */
+.daily-ex-card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 13px 14px;
+  margin-bottom: 9px;
+  box-shadow: var(--sh);
+  border: 1.5px solid var(--borderL);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all .15s;
+}
+.daily-ex-card.done {
+  border-color: var(--g5);
+  background: var(--g1);
+}
+[data-theme=dark] .daily-ex-card.done { background: #0A2E1A; }
+.dex-left { display: flex; align-items: flex-start; gap: 11px; flex: 1; }
+.dex-icon {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+}
+.dex-info { flex: 1; }
+.dex-name { font-size: .875rem; font-weight: 700; color: var(--t1); }
+.dex-meta { font-size: .7rem; color: var(--tm); margin-top: 2px; }
+.dex-desc { font-size: .72rem; color: var(--t2); margin-top: 4px; line-height: 1.4; }
+.dex-done-badge {
+  font-size: .62rem; font-weight: 700; color: var(--g5);
+  background: var(--g1); padding: 1px 6px; border-radius: 999px;
+  margin-left: 4px;
+}
+.dex-done-reps {
+  font-size: .72rem; font-weight: 700; color: var(--g5); margin-top: 3px;
+}
+.dex-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--b6); color: #fff;
+  font-size: 1.1rem; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .15s; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,68,255,.3);
+}
+.dex-btn.done { background: var(--g5); box-shadow: 0 2px 8px rgba(39,174,96,.3); }
+.dex-btn:active { transform: scale(.9); }
+
+/* Daily exercise modal */
+.dex-modal-content {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.dex-modal-icon { font-size: 3rem; }
+.dex-modal-name { font-size: 1.1rem; font-weight: 800; color: var(--t1); text-align: center; }
+.dex-modal-desc { font-size: .83rem; color: var(--t2); text-align: center; line-height: 1.6; }
+.dex-modal-tip {
+  font-size: .78rem; color: var(--b6); font-style: italic;
+  background: var(--b0); border-radius: 10px; padding: 8px 12px;
+  width: 100%; text-align: center;
+}
+.dex-reps-control {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--subtle); border-radius: 16px; padding: 12px 20px;
+  width: 100%;
+}
+.dex-reps-btn {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--card); border: 2px solid var(--border);
+  font-size: 1.4rem; font-weight: 700; color: var(--t1);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .15s;
+}
+.dex-reps-btn:active { background: var(--b6); color: #fff; border-color: var(--b6); transform: scale(.9); }
+.dex-reps-center { flex: 1; text-align: center; }
+.dex-reps-num { font-size: 2rem; font-weight: 900; color: var(--b6); letter-spacing: -1px; }
+.dex-reps-unit { font-size: .72rem; color: var(--tm); margin-top: 2px; }
+.dex-pts-info { font-size: .75rem; color: var(--tm); text-align: center; }
+.dex-already-done {
+  background: var(--g1); border-radius: 10px; padding: 8px 12px;
+  font-size: .78rem; color: var(--g5); font-weight: 600; text-align: center; width: 100%;
+}
+
+
+/* ── ADAPTIVES TRAININGSFORMULAR ── */
+
+/* Type color accent */
+#tform { --type-color: var(--b6); }
+
+/* Training type chips: color-coded */
+#typechips .chip[data-v="Wassertraining"]   { border-color: rgba(0,102,255,.3); }
+#typechips .chip[data-v="Techniktraining"]  { border-color: rgba(41,128,185,.3); }
+#typechips .chip[data-v="Athletiktraining"] { border-color: rgba(231,76,60,.3); }
+#typechips .chip[data-v="Krafttraining"]    { border-color: rgba(231,76,60,.3); }
+#typechips .chip[data-v="Ausdauertraining"] { border-color: rgba(231,76,60,.3); }
+#typechips .chip[data-v="Beweglichkeit"]    { border-color: rgba(39,174,96,.3); }
+#typechips .chip[data-v="Regeneration"]     { border-color: rgba(39,174,96,.3); }
+#typechips .chip[data-v="Wettkampf"]        { border-color: rgba(243,156,18,.3); }
+
+/* Selected chip uses type color */
+#typechips .chip.sel { background: var(--type-color) !important; border-color: var(--type-color) !important; }
+
+/* Sets section: type-aware header */
+#tf-sets-section .sets-hdr .flabel {
+  color: var(--type-color);
+}
+
+/* Adaptive set row: cleaner */
+.set-row {
+  background: var(--subtle);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.set-row::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--type-color, var(--b6));
+  border-radius: 14px 0 0 14px;
+}
+
+/* Quick type buttons */
+.quick-type-row { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.quick-type-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 8px 10px; border-radius: 12px;
+  border: 1.5px solid var(--border); background: var(--card);
+  font-size: .7rem; font-weight: 600; color: var(--t2);
+  cursor: pointer; transition: all .15s; flex: 1; min-width: 60px;
+}
+.quick-type-btn .qt-icon { font-size: 1.3rem; }
+.quick-type-btn.sel { background: var(--b6); border-color: var(--b6); color: #fff; }
+.quick-type-btn:active { transform: scale(.94); }
+
+/* Type hint */
+.training-type-hint {
+  font-size: .75rem; color: var(--tm); margin-bottom: 10px; font-style: italic;
+}
+
+/* Regen card */
+#tf-regen-section .card { margin-bottom: 0; }
+
+/* Smooth show/hide */
+#tf-km-section, #tf-strokes-section, #tf-sets-section,
+#tf-location-section, #tf-recovery-section, #tf-regen-section {
+  transition: opacity .2s ease;
+}
+
+
+/* ── LVT CHALLENGE ── */
+/* SwimTrack – LVT Tagesherausforderung Styles */
+
+/* ── LVT CARD (Heute-Seite) ── */
+.lvt-card {
+  background: linear-gradient(135deg, #1A1A2E 0%, #0D3B6E 100%);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 14px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(13,59,110,.4);
+  transition: transform .15s;
+  position: relative;
+  overflow: hidden;
+}
+.lvt-card::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 100px; height: 100px;
+  background: rgba(255,255,255,.04);
+  border-radius: 50%;
+}
+.lvt-card:active { transform: scale(.98); }
+.lvt-card.done {
+  background: linear-gradient(135deg, #1A3A1A 0%, #0A2E0A 100%);
+  box-shadow: 0 6px 20px rgba(39,174,96,.3);
+}
+
+.lvt-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.lvt-header-left { display: flex; align-items: center; gap: 10px; flex: 1; }
+.lvt-badge {
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: .7rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: .5px;
+  flex-shrink: 0;
+}
+.lvt-badge.large { font-size: .85rem; padding: 6px 12px; }
+.lvt-day-label { font-size: .65rem; color: rgba(255,255,255,.7); font-weight: 600; }
+.lvt-focus { font-size: .95rem; font-weight: 800; color: #fff; margin-top: 1px; }
+.lvt-pts-badge {
+  background: rgba(255,215,0,.2);
+  border: 1px solid rgba(255,215,0,.3);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: .75rem;
+  font-weight: 800;
+  color: #FFD700;
+  flex-shrink: 0;
+}
+
+/* Progress bar */
+.lvt-progress-bar-wrap {
+  height: 4px;
+  background: rgba(255,255,255,.15);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.lvt-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00C2E0, #FFD700);
+  border-radius: 999px;
+  transition: width .8s ease;
+}
+
+/* Exercise list */
+.lvt-exercises { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+.lvt-ex-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.08);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.lvt-ex-icon { font-size: 1.2rem; flex-shrink: 0; }
+.lvt-ex-info { flex: 1; }
+.lvt-ex-name { font-size: .83rem; font-weight: 700; color: #fff; }
+.lvt-ex-reps { font-size: .72rem; color: rgba(255,255,255,.7); margin-top: 1px; }
+
+/* Tip */
+.lvt-tip {
+  font-size: .75rem;
+  color: rgba(255,255,255,.75);
+  font-style: italic;
+  padding: 8px 10px;
+  background: rgba(255,255,255,.06);
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+/* Done badge */
+.lvt-done-badge {
+  text-align: center;
+  font-size: .83rem;
+  font-weight: 700;
+  color: #00C853;
+  background: rgba(0,200,83,.15);
+  border-radius: 10px;
+  padding: 8px;
+  margin-top: 8px;
+}
+
+/* ── LVT DETAIL MODAL ── */
+.lvt-detail-header {
+  text-align: center;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.lvt-detail-header h3 { font-size: 1.1rem; font-weight: 800; }
+
+.lvt-detail-exercise {
+  background: var(--subtle);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+.lvt-detail-ex-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.lvt-detail-ex-name { font-size: .9rem; font-weight: 700; color: var(--t1); }
+.lvt-detail-ex-test { font-size: .68rem; color: var(--b6); font-weight: 600; margin-top: 2px; }
+.lvt-detail-ex-reps {
+  margin-left: auto;
+  font-size: .78rem;
+  font-weight: 800;
+  color: var(--b6);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.lvt-detail-ex-desc {
+  font-size: .8rem;
+  color: var(--t2);
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+.lvt-detail-ex-tech {
+  font-size: .75rem;
+  color: var(--tm);
+  line-height: 1.5;
+  padding: 6px 10px;
+  background: var(--card);
+  border-radius: 8px;
+  border-left: 3px solid var(--b6);
+}
+.lvt-detail-ex-rest {
+  font-size: .72rem;
+  color: var(--tm);
+  margin-top: 5px;
+  font-weight: 600;
+}
+
+.lvt-detail-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--a1);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 10px;
+}
+.lvt-detail-tip p { font-size: .83rem; color: var(--a5); font-weight: 500; line-height: 1.5; }
+
+/* ── LVT SETTINGS CARD ── */
+.lvt-settings-card {
+  background: linear-gradient(135deg, #1A1A2E, #0D3B6E);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  color: #fff;
+}
+.lvt-settings-title { font-size: .9rem; font-weight: 800; margin-bottom: 8px; }
+.lvt-settings-info { font-size: .78rem; color: rgba(255,255,255,.75); line-height: 1.5; }
+.lvt-reset-btn {
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-size: .78rem;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* ── PHYSIOTHERAPIE CARD ── */
+.physio-card {
+  background: linear-gradient(135deg, #0A2E1A 0%, #1A5276 100%);
+  border-radius: 18px; padding: 16px; margin-bottom: 14px;
+  color: #fff; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(39,174,96,.35);
+  transition: transform .15s; position: relative; overflow: hidden;
+}
+.physio-card::before {
+  content: ''; position: absolute; top: -20px; right: -20px;
+  width: 80px; height: 80px; background: rgba(255,255,255,.04); border-radius: 50%;
+}
+.physio-card:active { transform: scale(.98); }
+.physio-card.done { background: linear-gradient(135deg, #0A2E1A 0%, #0A2E0A 100%); }
+.physio-card-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px; }
+.physio-header-left { display:flex; align-items:center; gap:10px; flex:1; }
+.physio-badge {
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+  border-radius: 8px; padding: 4px 8px; font-size: .7rem; font-weight: 800;
+  color: #fff; letter-spacing: .5px; flex-shrink: 0;
+}
+.physio-badge.large { font-size: .85rem; padding: 6px 12px; }
+.physio-day-label { font-size: .65rem; color: rgba(255,255,255,.7); font-weight: 600; }
+.physio-focus { font-size: .95rem; font-weight: 800; color: #fff; margin-top: 1px; }
+.physio-pts-badge {
+  background: rgba(0,200,83,.2); border: 1px solid rgba(0,200,83,.3);
+  border-radius: 999px; padding: 4px 10px; font-size: .75rem; font-weight: 800;
+  color: #00E676; flex-shrink: 0;
+}
+.physio-prog-wrap { height: 4px; background: rgba(255,255,255,.15); border-radius: 999px; overflow: hidden; margin-bottom: 12px; }
+.physio-prog-fill { height: 100%; background: linear-gradient(90deg, #27AE60, #00C2E0); border-radius: 999px; transition: width .8s ease; }
+.physio-exercises { display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
+.physio-ex-item { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.08); border-radius:10px; padding:8px 10px; }
+.physio-ex-icon { font-size: 1.2rem; flex-shrink: 0; }
+.physio-ex-name { font-size: .83rem; font-weight: 700; color: #fff; }
+.physio-ex-reps { font-size: .72rem; color: rgba(255,255,255,.7); margin-top: 1px; }
+.physio-safety {
+  background: rgba(255,167,38,.15); border: 1px solid rgba(255,167,38,.3);
+  border-radius: 8px; padding: 6px 10px; font-size: .72rem; color: #FFA726;
+  font-weight: 600; margin-bottom: 6px;
+}
+.physio-tip { font-size: .75rem; color: rgba(255,255,255,.75); font-style: italic; padding: 8px 10px; background: rgba(255,255,255,.06); border-radius: 8px; margin-bottom: 4px; }
+.physio-done { text-align:center; font-size:.83rem; font-weight:700; color:#00E676; background:rgba(0,200,83,.15); border-radius:10px; padding:8px; margin-top:8px; }
+.physio-detail-ex { background:var(--subtle); border-radius:14px; padding:14px; margin-bottom:10px; }
+.physio-detail-ex-hdr { display:flex; align-items:flex-start; gap:10px; margin-bottom:8px; }
+
+/* ── PUNKTE-ERKLÄRUNG ── */
+.pts-explain-card {
+  background: var(--card); border-radius: 14px; padding: 14px;
+  margin-bottom: 14px; box-shadow: var(--sh); border: 1px solid var(--borderL);
+}
+.pts-explain-row { display:flex; justify-content:space-between; align-items:center; padding:5px 0; border-bottom:1px solid var(--borderL); font-size:.8rem; }
+.pts-explain-row:last-child { border-bottom:none; }
+.pts-explain-type { color:var(--t2); }
+.pts-explain-val { font-weight:700; color:var(--b6); font-size:.75rem; }
+
+</style>
+<style>
+/* Pfad-Erklärung */
+.hybrid-path-explain{background:var(--subtle);border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;flex-direction:column;gap:8px}
+.hpe-item{display:flex;align-items:flex-start;gap:8px}
+.hpe-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+.hpe-title{font-size:.78rem;font-weight:700;color:var(--t1)}
+.hpe-desc{font-size:.7rem;color:var(--tm);margin-top:1px;line-height:1.4}
+/* 3-Akt Unlock */
+.unlock-screen-v2{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;padding:20px;transition:background .4s,opacity .4s}
+.unlock-screen-v2.act1{background:rgba(0,0,0,0);opacity:0}
+.unlock-screen-v2.act2{background:rgba(0,0,0,.92);opacity:1}
+.unlock-screen-v2.act3{background:rgba(0,0,0,.88);opacity:1}
+.unlock-screen-v2.closing{background:rgba(0,0,0,0);opacity:0;pointer-events:none}
+</style>
+<style>
+/* CRITICAL: Opaque background - no code visible behind app */
+html, body {
+  background: #EEF2FF !important;
+  background-color: #EEF2FF !important;
+}
+[data-theme=dark] html,
+[data-theme=dark] body {
+  background: #080B18 !important;
+  background-color: #080B18 !important;
+}
+@media(prefers-color-scheme:dark) {
+  html:not([data-theme=light]),
+  body:not([data-theme=light]) {
+    background: #080B18 !important;
+    background-color: #080B18 !important;
+  }
+}
+/* App container: fully opaque */
+#app {
+  background: #EEF2FF !important;
+  min-height: 100vh !important;
+  min-height: 100dvh !important;
+}
+[data-theme=dark] #app {
+  background: #080B18 !important;
+}
+/* Pages area: opaque */
+.pages {
+  background: #EEF2FF !important;
+}
+[data-theme=dark] .pages {
+  background: #080B18 !important;
+}
+/* Page scroll: opaque */
+.pscroll {
+  background: #EEF2FF !important;
+}
+[data-theme=dark] .pscroll {
+  background: #080B18 !important;
+}
+/* Individual pages: opaque */
+.page {
+  background: #EEF2FF !important;
+}
+[data-theme=dark] .page {
+  background: #080B18 !important;
+}
+/* Subtle gradient overlay on top of solid color */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 15%, rgba(0,68,255,.08) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 85%, rgba(0,194,224,.06) 0%, transparent 45%);
+  pointer-events: none;
+  z-index: 0;
+}
+#app { position: relative; z-index: 1; }
 </style>
 </head>
 <body>
@@ -2280,7 +2943,15 @@ html, body {
 <button class="btn full" onclick="nav('training')">+ Training eintragen</button>
 </div>
 <div id="avatar-heute-container"></div>
-  <div id="todayplan"></div>
+  <div class="heimuebungen-teaser" onclick="nav('heimuebungen')">
+  <div class="ht-icon">🤸</div>
+  <div class="ht-info">
+    <div class="ht-title">Heimübungen</div>
+    <div class="ht-sub">Dehnen · Stabilisation · Mental · 33 Übungen</div>
+  </div>
+  <div class="ht-arrow">›</div>
+</div>
+<div id="todayplan"></div>
 <div id="nextcomp"></div>
 <div class="srow">
 <div class="stile"><div class="sval" id="stpts">0</div><div class="slbl">Punkte</div></div>
@@ -2329,7 +3000,22 @@ html, body {
 </div>
 <div class="fsec">
 <label class="flabel req">Trainingsart</label>
-<div class="chips" id="typechips">
+<p class="training-type-hint">Nicht nur Schwimmen! Wähle alle Trainingsarten aus:</p>
+      <div class="quick-type-row">
+        <button type="button" class="quick-type-btn" data-v="Wassertraining" onclick="pickChip(document.querySelector('#typechips .chip[data-v=\"Wassertraining\"]'),'tf-type');this.classList.add('sel')">
+          <span class="qt-icon">🏊</span>Wasser
+        </button>
+        <button type="button" class="quick-type-btn" data-v="Krafttraining" onclick="pickChip(document.querySelector('#typechips .chip[data-v=\"Krafttraining\"]'),'tf-type');this.classList.add('sel')">
+          <span class="qt-icon">💪</span>Kraft
+        </button>
+        <button type="button" class="quick-type-btn" data-v="Beweglichkeit" onclick="pickChip(document.querySelector('#typechips .chip[data-v=\"Beweglichkeit\"]'),'tf-type');this.classList.add('sel')">
+          <span class="qt-icon">🤸</span>Dehnen
+        </button>
+        <button type="button" class="quick-type-btn" data-v="Regeneration" onclick="pickChip(document.querySelector('#typechips .chip[data-v=\"Regeneration\"]'),'tf-type');this.classList.add('sel')">
+          <span class="qt-icon">💙</span>Erholung
+        </button>
+      </div>
+      <div class="chips" id="typechips">
 <button class="chip" data-v="Wassertraining" onclick="pickChip(this,'tf-type')" type="button">🏊 Wassertraining</button>
 <button class="chip" data-v="Athletiktraining" onclick="pickChip(this,'tf-type')" type="button">🏃 Athletiktraining</button>
 <button class="chip" data-v="Krafttraining" onclick="pickChip(this,'tf-type')" type="button">💪 Krafttraining</button>
@@ -2397,6 +3083,11 @@ html, body {
 <p class="sets-hint">z.B. 4×200 Freistil BZ3, 8×50 Brust Paddles Pause 20s</p>
 <div id="setscontainer"></div>
 </div>
+<div style="background:var(--g1);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="nav('heimuebungen')">
+<span style="font-size:1.2rem">🤸</span>
+<div style="flex:1"><div style="font-size:.83rem;font-weight:700;color:var(--g5)">Heimübungen separat erfassen</div>
+<div style="font-size:.72rem;color:var(--tm)">Dehnen, Stabilisation, Mental – mit eigenem Timer</div></div>
+<span style="color:var(--g5);font-weight:700">›</span></div>
 <button class="btn2 full" id="opttoggle" onclick="toggleOpt()" type="button">+ Weitere Details</button>
 <div class="hidden" id="optfields">
 <div class="fsec" style="margin-top:16px">
@@ -2551,7 +3242,8 @@ html, body {
 <div class="shdr"><h3>Abzeichen</h3><span class="bcnt" id="bcnt">0 / 14</span></div>
 <div class="bgrid" id="bgrid"></div>
 <div class="shdr"><h3>Punkteprotokoll</h3><button class="btnlink" onclick="toggleLog()">Anzeigen</button></div>
-<div class="hidden" id="ptslog"></div>
+<div class="hidden" id="acc-gallery-container" data-active-cat="all"></div>
+  <div id="ptslog"></div>
 </div></div>
 <!-- PLAN -->
 <div class="page" id="page-plan"><div class="pscroll">
@@ -2666,6 +3358,41 @@ html, body {
 <p class="sinfo">🤖 <strong>Android (Chrome):</strong> Menü → „App installieren"</p>
 <p class="sinfo" style="margin-top:8px">Nach der Installation startet SwimTrack wie eine echte App – ohne Browser-Leiste, im Vollbild.</p>
 </div>
+<div class="lvt-settings-card">
+<div class="lvt-settings-title">🏆 LVT-Vorbereitung</div>
+<div class="lvt-settings-info">28-Tage-Programm zur Vorbereitung auf den Landesvielseitigkeitstest (DSV). Täglich eine Herausforderung auf der Heute-Seite.</div>
+<div class="lvt-settings-info" id="lvt-day-info" style="margin-top:6px;font-weight:700"></div>
+<button class="lvt-reset-btn" onclick="resetLVT()">Programm neu starten</button>
+</div>
+<div style="background:linear-gradient(135deg,#0A2E1A,#1A5276);border-radius:16px;padding:16px;margin-bottom:14px;color:#fff">
+<div style="font-size:.9rem;font-weight:800;margin-bottom:8px">💙 Knie-Physiotherapie</div>
+<div style="font-size:.78rem;color:rgba(255,255,255,.75);line-height:1.5">28-Tage-Programm für X-Beine und Kniebeschwerden. Täglich eine Übungseinheit auf der Heute-Seite.</div>
+<div style="font-size:.78rem;font-weight:700;color:rgba(255,255,255,.9);margin-top:6px" id="physio-day-info"></div>
+<button style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:10px;padding:8px 14px;font-size:.78rem;font-weight:700;color:#fff;margin-top:10px;cursor:pointer" onclick="resetPhysio()">Programm neu starten</button>
+</div>
+<div class="scard">
+<h3 class="sttl">Punktesystem – Erklärung</h3>
+<p style="font-size:.78rem;color:var(--tm);margin-bottom:10px">Punkte basieren auf Dauer und Umfang – fair für alle Trainingsarten:</p>
+<div class="pts-explain-card">
+  <div class="pts-explain-row"><span class="pts-explain-type">🏊 Wassertraining (90 min, 3 km)</span><span class="pts-explain-val">~20 Pkt.</span></div>
+  <div class="pts-explain-row"><span class="pts-explain-type">🏊 Wassertraining (60 min, 1.9 km)</span><span class="pts-explain-val">~13 Pkt.</span></div>
+  <div class="pts-explain-row"><span class="pts-explain-type">💪 Krafttraining (60 min)</span><span class="pts-explain-val">~6 Pkt.</span></div>
+  <div class="pts-explain-row"><span class="pts-explain-type">🏃 Athletiktraining (45 min)</span><span class="pts-explain-val">~5 Pkt.</span></div>
+  <div class="pts-explain-row"><span class="pts-explain-type">🤸 Beweglichkeit (30 min)</span><span class="pts-explain-val">~2 Pkt.</span></div>
+  <div class="pts-explain-row"><span class="pts-explain-type">💙 Regeneration (30 min)</span><span class="pts-explain-val">~4 Pkt.</span></div>
+  <div class="pts-explain-row"><span class="pts-explain-type">+ Reflexion ausgefüllt</span><span class="pts-explain-val">+3 Pkt.</span></div>
+  <div class="pts-explain-row"><span class="pts-explain-type">+ Plan vollständig</span><span class="pts-explain-val">+5 Pkt.</span></div>
+</div>
+</div>
+<div class="scard">
+<h3 class="sttl">Schnellzugriff</h3>
+<div class="btnrow" style="flex-wrap:wrap;gap:8px">
+  <button class="btn2" onclick="nav('plan')">📅 Trainingsplan</button>
+  <button class="btn2" onclick="nav('kalender')">🏆 Wettkampf-Kalender</button>
+  <button class="btn2" onclick="nav('heimuebungen')">🤸 Heimübungen</button>
+  <button class="btn2" onclick="nav('team')">👥 Team</button>
+</div>
+</div>
 <div class="scard">
 <h3 class="sttl">Benutzerrollen</h3>
 <div class="rolelist">
@@ -2694,25 +3421,25 @@ html, body {
 
 <nav class="botnav">
 <button class="nb active" id="nb-heute" onclick="nav('heute')">
-<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg><span>Heute</span>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Heute</span>
 </button>
 <button class="nb" id="nb-training" onclick="nav('training')">
-<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" x2="12" y1="8" y2="16"></line><line x1="8" x2="16" y1="12" y2="12"></line></svg><span>Training</span>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg><span>Training</span>
 </button>
 <button class="nb" id="nb-wettkampf" onclick="nav('wettkampf')">
-<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"></path></svg><span>Wettkampf</span>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg><span>Wettkampf</span>
 </button>
 <button class="nb" id="nb-fortschritt" onclick="nav('fortschritt')">
-<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg><span>Fortschritt</span>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Fortschritt</span>
 </button>
 <button class="nb" id="nb-erfolge" onclick="nav('erfolge')">
-<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>Erfolge</span>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Erfolge</span>
 </button>
-<button class="nb" id="nb-plan" onclick="nav('plan')">
-<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="4"></rect><line x1="16" x2="16" y1="2" y2="6"></line><line x1="8" x2="8" y1="2" y2="6"></line><line x1="3" x2="21" y1="10" y2="10"></line></svg><span>Plan</span>
+<button class="nb" id="nb-avatar-custom" onclick="nav('avatar-custom')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M16 4c1 .8 2 2.2 2 4"/></svg><span>Avatar</span>
 </button>
 <button class="nb" id="nb-einstellungen" onclick="nav('einstellungen')">
-<svg fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path></svg><span>Einstellungen</span>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span>Einstellungen</span>
 </button>
 </nav>
 <!-- MODALS -->
@@ -7795,6 +8522,2964 @@ window.renderAvatarCustomizerPage = async function() {
       }
     }
   });
+};
+
+</script>
+<script>
+
+// Add Avatar nav button if missing
+(function() {
+  function addAvatarNav() {
+    if (document.getElementById('nb-avatar-custom')) return;
+    const nav = document.querySelector('.botnav');
+    if (!nav) return;
+    // Find Einstellungen button
+    const settingsBtn = document.getElementById('nb-einstellungen');
+    if (!settingsBtn) return;
+    // Create Avatar button
+    const btn = document.createElement('button');
+    btn.className = 'nb';
+    btn.id = 'nb-avatar-custom';
+    btn.onclick = function() { nav_fn('avatar-custom'); };
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="8" r="4"/>
+      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+      <path d="M16 4c1 .8 2 2.2 2 4"/>
+      <path d="M18.5 3l2-1.5"/>
+    </svg><span>Avatar</span>`;
+    // Insert before Einstellungen
+    nav.insertBefore(btn, settingsBtn);
+  }
+
+  function nav_fn(page) {
+    if (typeof nav === 'function') nav(page);
+  }
+
+  // Run after DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', addAvatarNav);
+  } else {
+    addAvatarNav();
+  }
+  // Also run after swimtrack-ready
+  window.addEventListener('swimtrack-ready', addAvatarNav);
+})();
+
+</script>
+
+<div id="page-heimuebungen" class="page"><div class="pscroll">
+  <!-- Content rendered by renderDailyExercisesPage() -->
+</div></div>
+<div id="page-team" class="page"><div class="pscroll">
+  <div class="phdr"><h2>Team</h2><p class="psub">Gemeinsam stärker</p></div>
+  <div id="team-challenges-content"></div>
+</div></div>
+<div id="mhesession" class="moverlay hidden">
+  <div class="he-session-modal">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h3 style="font-size:1rem">Heimübung</h3>
+      <span id="hes-progress" style="font-size:.83rem;color:var(--tm);font-weight:600">1 / 5</span>
+    </div>
+    <div class="hes-progress-bar"><div class="hes-prog-fill" id="hes-prog-fill" style="width:0%"></div></div>
+    <div class="hes-ex-icon-big" id="hes-icon">🤸</div>
+    <div class="hes-ex-name" id="hes-name">Übungsname</div>
+    <div class="hes-ex-cat" id="hes-cat">Kategorie</div>
+    <div class="hes-timer-wrap">
+      <svg class="hes-timer-svg" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--subtle)" stroke-width="6"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--b6)" stroke-width="6"
+          stroke-linecap="round" id="hes-timer-ring" class="hes-timer-ring"
+          style="stroke-dasharray:251.3;stroke-dashoffset:0"/>
+        <text x="50" y="57" text-anchor="middle" class="hes-timer-text" id="hes-timer">30s</text>
+      </svg>
+    </div>
+    <div class="hes-ex-desc" id="hes-desc">Beschreibung</div>
+    <div class="hes-pts" id="hes-pts">+3 Punkte</div>
+    <div class="hes-btn-row">
+      <button class="btn2 full" onclick="skipHEExercise()">Überspringen</button>
+      <button class="btn full" onclick="nextHEExercise()">Weiter ▶</button>
+    </div>
+  </div>
+</div>
+<div id="mheresult" class="moverlay hidden">
+  <div class="msheet">
+    <div class="he-result-content">
+      <div style="font-size:2.5rem">🎉</div>
+      <div class="her-pts-big" id="her-pts">+15</div>
+      <div class="her-pts-label">Punkte gesammelt</div>
+      <div class="her-count" id="her-count">5 Übungen absolviert</div>
+      <div class="her-streak" id="her-streak">Weiter so!</div>
+    </div>
+    <button class="btn full" onclick="closeHEResult()" style="margin-top:8px">Super! 💪</button>
+  </div>
+</div>
+<div id="mstory" class="moverlay hidden">
+  <div class="msheet story-modal-inner">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h3>📖 Deine Geschichte</h3>
+      <button class="btnsm" onclick="closeM('mstory')">✕</button>
+    </div>
+    <div id="story-modal-content"></div>
+    <button class="btn full" onclick="closeM('mstory')" style="margin-top:12px">Weiter schreiben 🏊</button>
+  </div>
+</div>
+<script>
+/* ── home_exercises ── */
+/* SwimTrack – Heimübungen: Dehnen & Stabilisation
+   Eigener Bereich mit Punkten, Kategorien, Serien-Tracking
+   ================================================================ */
+'use strict';
+
+// ── ÜBUNGSKATEGORIEN ──────────────────────────────────────────────────────────
+const HE_CATEGORIES = [
+  { key:'dehnen',      label:'Dehnen',         icon:'🤸', color:'#27AE60', desc:'Beweglichkeit & Flexibilität' },
+  { key:'stabi',       label:'Stabilisation',  icon:'💪', color:'#2980B9', desc:'Rumpf & Körperspannung' },
+  { key:'schulter',    label:'Schulter',        icon:'🔄', color:'#8E44AD', desc:'Schulterprävention & Kraft' },
+  { key:'rumpf',       label:'Rumpfkraft',      icon:'🏋️', color:'#E74C3C', desc:'Core & Bauchmuskulatur' },
+  { key:'mental',      label:'Mental',          icon:'🧘', color:'#F39C12', desc:'Entspannung & Fokus' },
+  { key:'aufwaermen',  label:'Aufwärmen',       icon:'🔥', color:'#E67E22', desc:'Aktivierung vor dem Training' }
+];
+
+// ── ÜBUNGSDEFINITIONEN ────────────────────────────────────────────────────────
+const HE_EXERCISES = [
+  // DEHNEN
+  { key:'hip_flexor',   cat:'dehnen',   name:'Hüftbeuger-Dehnung',      icon:'🦵', duration:30, desc:'Knie auf dem Boden, Hüfte nach vorne schieben. Wichtig für Freistil-Kick.',      pts:2 },
+  { key:'shoulder_str', cat:'dehnen',   name:'Schulter-Querdehnung',    icon:'💪', duration:30, desc:'Arm quer vor der Brust, mit anderem Arm heranziehen. Für alle Lagen.',           pts:2 },
+  { key:'chest_open',   cat:'dehnen',   name:'Brustöffnung',            icon:'🫁', duration:45, desc:'Arme hinter dem Rücken verschränken, Brust öffnen. Für Schmetterling.',          pts:2 },
+  { key:'hamstring',    cat:'dehnen',   name:'Oberschenkel-Dehnung',    icon:'🦵', duration:30, desc:'Bein gestreckt, Oberkörper nach vorne. Für Beinarbeit.',                         pts:2 },
+  { key:'ankle_mob',    cat:'dehnen',   name:'Sprunggelenk-Mobilisation',icon:'🦶',duration:60, desc:'Kreisen, Beugen, Strecken. Für Freistil- und Rücken-Kick.',                     pts:3 },
+  { key:'spine_twist',  cat:'dehnen',   name:'Wirbelsäulen-Rotation',   icon:'🔄', duration:45, desc:'Sitzend, Oberkörper drehen. Für Körperrotation im Freistil.',                   pts:2 },
+  { key:'lat_stretch',  cat:'dehnen',   name:'Latissimus-Dehnung',      icon:'🙆', duration:30, desc:'Arm über Kopf, zur Seite lehnen. Für langen Zug.',                              pts:2 },
+  { key:'neck_mob',     cat:'dehnen',   name:'Nacken-Mobilisation',     icon:'🧘', duration:30, desc:'Langsam kreisen, nicht ruckartig. Für entspannte Kopfhaltung.',                 pts:2 },
+
+  // STABILISATION
+  { key:'plank',        cat:'stabi',    name:'Plank',                   icon:'🏋️', duration:30, desc:'Körper gerade wie ein Brett. Grundlage für alle Schwimmlagen.',                 pts:3 },
+  { key:'side_plank',   cat:'stabi',    name:'Seitstütz',               icon:'💪', duration:20, desc:'Seitliche Körperspannung. Für Körperrotation im Freistil.',                     pts:3 },
+  { key:'dead_bug',     cat:'stabi',    name:'Dead Bug',                icon:'🐛', duration:45, desc:'Rücken flach, Arme und Beine abwechselnd strecken. Rumpfkontrolle.',             pts:3 },
+  { key:'bird_dog',     cat:'stabi',    name:'Bird Dog',                icon:'🐕', duration:45, desc:'Auf allen Vieren, Arm und Gegenleg strecken. Balance & Stabilität.',             pts:3 },
+  { key:'glute_bridge', cat:'stabi',    name:'Gesäßbrücke',             icon:'🌉', duration:30, desc:'Hüfte heben und halten. Für kraftvollen Kick.',                                 pts:2 },
+  { key:'hollow_body',  cat:'stabi',    name:'Hollow Body Hold',        icon:'🍌', duration:20, desc:'Rücken flach, Arme und Beine leicht angehoben. Für Unterwasserphase.',          pts:3 },
+
+  // SCHULTER
+  { key:'band_ext',     cat:'schulter', name:'Theraband-Außenrotation', icon:'🔄', duration:60, desc:'Ellenbogen am Körper, Band nach außen drehen. Schulterprävention.',             pts:3 },
+  { key:'wall_slide',   cat:'schulter', name:'Wall Slides',             icon:'🧱', duration:45, desc:'Rücken an der Wand, Arme hochschieben. Für Schulterblatt-Kontrolle.',           pts:3 },
+  { key:'y_t_w',        cat:'schulter', name:'Y-T-W Übung',             icon:'✈️', duration:45, desc:'Auf dem Bauch liegend, Arme in Y, T und W-Form heben. Schulterblatt-Stabilität.',pts:4 },
+  { key:'shoulder_cir', cat:'schulter', name:'Schulterkreisen',         icon:'🔄', duration:30, desc:'Langsam vorwärts und rückwärts kreisen. Aufwärmen der Schulter.',               pts:2 },
+  { key:'doorway_str',  cat:'schulter', name:'Türrahmen-Dehnung',       icon:'🚪', duration:30, desc:'Arme am Türrahmen, Körper nach vorne lehnen. Brustmuskel & Schulter.',          pts:2 },
+
+  // RUMPFKRAFT
+  { key:'crunch',       cat:'rumpf',    name:'Crunch',                  icon:'💪', duration:45, desc:'Schulterblätter heben, nicht den Nacken. Für Körperspannung.',                  pts:2 },
+  { key:'leg_raise',    cat:'rumpf',    name:'Beinheben',               icon:'🦵', duration:30, desc:'Beine gestreckt heben und senken. Für Unterwasserphase.',                       pts:3 },
+  { key:'russian_twist',cat:'rumpf',    name:'Russian Twist',           icon:'🔄', duration:45, desc:'Sitzend, Oberkörper drehen. Für Körperrotation.',                               pts:3 },
+  { key:'superman',     cat:'rumpf',    name:'Superman',                icon:'🦸', duration:30, desc:'Auf dem Bauch, Arme und Beine gleichzeitig heben. Rückenstrecker.',             pts:2 },
+  { key:'v_sit',        cat:'rumpf',    name:'V-Sit Hold',              icon:'✌️', duration:20, desc:'Sitzend, Beine und Oberkörper heben. Fortgeschrittene Rumpfkraft.',             pts:4 },
+
+  // MENTAL
+  { key:'box_breath',   cat:'mental',   name:'Box-Breathing',           icon:'🫁', duration:120, desc:'4s einatmen, 4s halten, 4s ausatmen, 4s halten. Für Wettkampf-Nervosität.',   pts:3 },
+  { key:'visualize',    cat:'mental',   name:'Visualisierung',          icon:'🧘', duration:180, desc:'Augen zu, perfekten Start und Zug vorstellen. Mentales Training.',             pts:4 },
+  { key:'body_scan',    cat:'mental',   name:'Body Scan',               icon:'🔍', duration:120, desc:'Bewusst durch den Körper gehen, Spannung lösen. Regeneration.',                pts:3 },
+  { key:'focus_breath', cat:'mental',   name:'Fokus-Atmung',            icon:'💨', duration:60,  desc:'Tief durch die Nase, langsam durch den Mund. Vor dem Start.',                 pts:2 },
+
+  // AUFWÄRMEN
+  { key:'jumping_jack', cat:'aufwaermen',name:'Jumping Jacks',          icon:'⭐', duration:60,  desc:'Klassisch aufwärmen. Kreislauf aktivieren.',                                   pts:2 },
+  { key:'arm_swing',    cat:'aufwaermen',name:'Armschwingen',           icon:'🙆', duration:30,  desc:'Arme locker schwingen. Schultern aufwärmen.',                                  pts:1 },
+  { key:'hip_circle',   cat:'aufwaermen',name:'Hüftkreisen',            icon:'🔄', duration:30,  desc:'Hüfte kreisen. Hüftgelenk mobilisieren.',                                      pts:1 },
+  { key:'high_knees',   cat:'aufwaermen',name:'High Knees',             icon:'🏃', duration:45,  desc:'Knie hochziehen beim Laufen auf der Stelle. Aktivierung.',                     pts:2 },
+  { key:'inchworm',     cat:'aufwaermen',name:'Inchworm',               icon:'🐛', duration:60,  desc:'Hände zum Boden, nach vorne laufen, zurück. Ganzkörper-Aufwärmen.',            pts:3 }
+];
+
+// ── PUNKTE-SYSTEM FÜR HEIMÜBUNGEN ────────────────────────────────────────────
+const HE_POINTS = {
+  SESSION_BASE:    5,   // Basis pro Einheit
+  PER_EXERCISE:    2,   // Pro Übung
+  FULL_CATEGORY:  10,   // Alle Übungen einer Kategorie
+  STREAK_BONUS:    3,   // 3 Tage in Folge Heimübungen
+  FIRST_TIME:      5    // Erste Heimübung überhaupt
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let HE = {
+  activeCat: 'all',
+  selectedExercises: new Set(),
+  timerInterval: null,
+  timerSeconds: 0,
+  activeExercise: null,
+  sessionStarted: false
+};
+
+// ── RENDER HOME EXERCISE PAGE ─────────────────────────────────────────────────
+async function renderHomeExercisePage() {
+  const container = document.getElementById('page-heimuebungen');
+  if (!container) return;
+
+  const scroll = container.querySelector('.pscroll');
+  if (!scroll) return;
+
+  const log = await dbAll('points_log');
+  const heLog = JSON.parse(localStorage.getItem('st_he_log') || '[]');
+  const todayHE = heLog.filter(e => e.date === today());
+  const totalHESessions = heLog.length;
+
+  // Stats
+  const totalPts = heLog.reduce((s,e) => s + (e.pts||0), 0);
+  const streak   = calcHEStreak(heLog);
+
+  scroll.innerHTML = `
+    <div class="phdr"><h2>Heimübungen</h2><p class="psub">Dehnen · Stabilisation · Mental</p></div>
+
+    <!-- Stats Row -->
+    <div class="srow" style="margin-bottom:14px">
+      <div class="stile"><div class="sval" style="color:var(--g5)">${totalHESessions}</div><div class="slbl">Einheiten</div></div>
+      <div class="stile"><div class="sval" style="color:var(--b6)">${totalPts}</div><div class="slbl">Punkte</div></div>
+      <div class="stile"><div class="sval" style="color:var(--a5)">${streak}🔥</div><div class="slbl">Tage-Serie</div></div>
+    </div>
+
+    <!-- Today status -->
+    ${todayHE.length > 0
+      ? `<div class="card" style="border-color:var(--g5);margin-bottom:14px">
+           <div style="display:flex;align-items:center;gap:10px">
+             <span style="font-size:1.4rem">✅</span>
+             <div><p style="font-size:.875rem;font-weight:700">Heute bereits ${todayHE.length} Einheit${todayHE.length>1?'en':''} absolviert!</p>
+             <p style="font-size:.72rem;color:var(--tm)">+${todayHE.reduce((s,e)=>s+(e.pts||0),0)} Punkte gesammelt</p></div>
+           </div>
+         </div>`
+      : `<div class="card" style="margin-bottom:14px">
+           <p style="font-size:.875rem;color:var(--t2);font-weight:500">Heute noch keine Heimübung. Wähle Übungen aus und starte!</p>
+         </div>`
+    }
+
+    <!-- Category Filter -->
+    <div class="acc-cat-tabs" style="margin-bottom:14px">
+      <button class="acc-cat-tab ${HE.activeCat==='all'?'active':''}" onclick="setHECat('all',this)">Alle</button>
+      ${HE_CATEGORIES.map(c => `
+        <button class="acc-cat-tab ${HE.activeCat===c.key?'active':''}" onclick="setHECat('${c.key}',this)">
+          ${c.icon} ${c.label}
+        </button>`).join('')}
+    </div>
+
+    <!-- Exercise List -->
+    <div id="he-exercise-list"></div>
+
+    <!-- Start Session Button -->
+    <div id="he-session-bar" class="he-session-bar hidden">
+      <div class="he-session-count"><span id="he-sel-count">0</span> Übungen ausgewählt</div>
+      <button class="btn" onclick="startHESession()">▶ Einheit starten</button>
+    </div>
+
+    <!-- Session History -->
+    <div class="shdr" style="margin-top:20px"><h3>Letzte Einheiten</h3></div>
+    <div id="he-history-list"></div>
+  `;
+
+  renderHEExerciseList();
+  renderHEHistory(heLog);
+}
+
+function setHECat(cat, btn) {
+  HE.activeCat = cat;
+  document.querySelectorAll('.acc-cat-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHEExerciseList();
+}
+
+function renderHEExerciseList() {
+  const container = document.getElementById('he-exercise-list');
+  if (!container) return;
+
+  const exercises = HE.activeCat === 'all'
+    ? HE_EXERCISES
+    : HE_EXERCISES.filter(e => e.cat === HE.activeCat);
+
+  container.innerHTML = exercises.map(ex => {
+    const cat = HE_CATEGORIES.find(c => c.key === ex.cat);
+    const selected = HE.selectedExercises.has(ex.key);
+    return `<div class="he-exercise-card ${selected?'selected':''}" onclick="toggleHEExercise('${ex.key}',this)">
+      <div class="he-ex-left">
+        <div class="he-ex-icon" style="background:${cat?.color}22">${ex.icon}</div>
+        <div class="he-ex-info">
+          <div class="he-ex-name">${ex.name}</div>
+          <div class="he-ex-meta">${cat?.icon} ${cat?.label} · ${ex.duration}s · +${ex.pts} Pkt.</div>
+          <div class="he-ex-desc">${ex.desc}</div>
+        </div>
+      </div>
+      <div class="he-ex-check ${selected?'checked':''}">${selected?'✓':''}</div>
+    </div>`;
+  }).join('');
+
+  updateHESessionBar();
+}
+
+function toggleHEExercise(key, card) {
+  if (HE.selectedExercises.has(key)) {
+    HE.selectedExercises.delete(key);
+    card.classList.remove('selected');
+    card.querySelector('.he-ex-check').classList.remove('checked');
+    card.querySelector('.he-ex-check').textContent = '';
+  } else {
+    HE.selectedExercises.add(key);
+    card.classList.add('selected');
+    card.querySelector('.he-ex-check').classList.add('checked');
+    card.querySelector('.he-ex-check').textContent = '✓';
+  }
+  updateHESessionBar();
+  haptic('light');
+}
+
+function updateHESessionBar() {
+  const bar = document.getElementById('he-session-bar');
+  const cnt = document.getElementById('he-sel-count');
+  if (!bar || !cnt) return;
+  const n = HE.selectedExercises.size;
+  cnt.textContent = n;
+  bar.classList.toggle('hidden', n === 0);
+}
+
+// ── SESSION FLOW ──────────────────────────────────────────────────────────────
+function startHESession() {
+  if (HE.selectedExercises.size === 0) return;
+  const exercises = [...HE.selectedExercises].map(k => HE_EXERCISES.find(e => e.key === k)).filter(Boolean);
+  showHESessionModal(exercises);
+}
+
+let heSessionExercises = [];
+let heSessionIdx = 0;
+let heTimerInterval = null;
+let heTimerSec = 0;
+
+function showHESessionModal(exercises) {
+  heSessionExercises = exercises;
+  heSessionIdx = 0;
+  showHEExercise(0);
+  document.getElementById('mhesession').classList.remove('hidden');
+}
+
+function showHEExercise(idx) {
+  const ex = heSessionExercises[idx];
+  if (!ex) { finishHESession(); return; }
+
+  const cat = HE_CATEGORIES.find(c => c.key === ex.cat);
+  const total = heSessionExercises.length;
+
+  document.getElementById('hes-progress').textContent = `${idx+1} / ${total}`;
+  document.getElementById('hes-icon').textContent = ex.icon;
+  document.getElementById('hes-name').textContent = ex.name;
+  document.getElementById('hes-cat').textContent = `${cat?.icon} ${cat?.label}`;
+  document.getElementById('hes-cat').style.color = cat?.color || 'var(--b6)';
+  document.getElementById('hes-desc').textContent = ex.desc;
+  document.getElementById('hes-pts').textContent = `+${ex.pts} Punkte`;
+
+  // Progress bar
+  const pct = Math.round((idx / total) * 100);
+  document.getElementById('hes-prog-fill').style.width = pct + '%';
+
+  // Timer
+  startHETimer(ex.duration);
+}
+
+function startHETimer(seconds) {
+  clearInterval(heTimerInterval);
+  heTimerSec = seconds;
+  updateHETimerDisplay();
+
+  heTimerInterval = setInterval(() => {
+    heTimerSec--;
+    updateHETimerDisplay();
+    if (heTimerSec <= 0) {
+      clearInterval(heTimerInterval);
+      haptic('success');
+      // Auto-advance after 1s
+      setTimeout(() => nextHEExercise(), 1000);
+    }
+    if (heTimerSec === 3) haptic('light');
+  }, 1000);
+}
+
+function updateHETimerDisplay() {
+  const el = document.getElementById('hes-timer');
+  if (el) {
+    el.textContent = heTimerSec + 's';
+    el.style.color = heTimerSec <= 5 ? 'var(--r5)' : 'var(--b6)';
+  }
+  // Timer ring
+  const ring = document.getElementById('hes-timer-ring');
+  const ex = heSessionExercises[heSessionIdx];
+  if (ring && ex) {
+    const pct = heTimerSec / ex.duration;
+    const circ = 2 * Math.PI * 40;
+    ring.style.strokeDashoffset = circ * (1 - pct);
+  }
+}
+
+function nextHEExercise() {
+  heSessionIdx++;
+  if (heSessionIdx >= heSessionExercises.length) {
+    finishHESession();
+  } else {
+    showHEExercise(heSessionIdx);
+  }
+}
+
+function skipHEExercise() {
+  clearInterval(heTimerInterval);
+  nextHEExercise();
+}
+
+async function finishHESession() {
+  clearInterval(heTimerInterval);
+  document.getElementById('mhesession').classList.add('hidden');
+
+  // Calculate points
+  const exercises = heSessionExercises;
+  let pts = HE_POINTS.SESSION_BASE;
+  exercises.forEach(ex => { pts += ex.pts; });
+
+  // Check first time bonus
+  const heLog = JSON.parse(localStorage.getItem('st_he_log') || '[]');
+  if (heLog.length === 0) pts += HE_POINTS.FIRST_TIME;
+
+  // Check streak bonus
+  const streak = calcHEStreak(heLog);
+  if (streak >= 2) pts += HE_POINTS.STREAK_BONUS;
+
+  // Check full category bonus
+  const cats = new Set(exercises.map(e => e.cat));
+  cats.forEach(cat => {
+    const catExercises = HE_EXERCISES.filter(e => e.cat === cat);
+    const doneKeys = new Set(exercises.map(e => e.key));
+    if (catExercises.every(e => doneKeys.has(e.key))) pts += HE_POINTS.FULL_CATEGORY;
+  });
+
+  // Save session
+  const session = {
+    id: genId(), date: today(),
+    exercises: exercises.map(e => e.key),
+    pts, createdAt: new Date().toISOString()
+  };
+  heLog.push(session);
+  localStorage.setItem('st_he_log', JSON.stringify(heLog));
+
+  // Log points to main system
+  await logPts([{ reason: `Heimübung: ${exercises.length} Übungen (${exercises.map(e=>e.name).slice(0,2).join(', ')}${exercises.length>2?'…':''})`, pts }],
+    session.id, 'heimuebung', today());
+
+  // Check accessory unlocks
+  if (typeof checkAndUnlockAccessories === 'function') await checkAndUnlockAccessories();
+
+  // Reset selection
+  HE.selectedExercises.clear();
+
+  // Show result
+  showHEResult(exercises, pts, streak);
+  haptic('success');
+}
+
+function showHEResult(exercises, pts, streak) {
+  const modal = document.getElementById('mheresult');
+  if (!modal) return;
+  document.getElementById('her-pts').textContent = '+' + pts;
+  document.getElementById('her-count').textContent = exercises.length + ' Übungen absolviert';
+  document.getElementById('her-streak').textContent = streak > 1 ? `🔥 ${streak} Tage in Folge!` : 'Weiter so!';
+  modal.classList.remove('hidden');
+}
+
+function closeHEResult() {
+  document.getElementById('mheresult')?.classList.add('hidden');
+  renderHomeExercisePage();
+  if (typeof renderHeutePage === 'function') renderHeutePage();
+}
+
+// ── STREAK CALCULATOR ─────────────────────────────────────────────────────────
+function calcHEStreak(log) {
+  if (!log.length) return 0;
+  const dates = [...new Set(log.map(e => e.date))].sort().reverse();
+  let streak = 0;
+  const d = new Date();
+  for (const date of dates) {
+    const ds = d.toISOString().slice(0,10);
+    if (date === ds) { streak++; d.setDate(d.getDate()-1); }
+    else break;
+  }
+  return streak;
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+function renderHEHistory(log) {
+  const container = document.getElementById('he-history-list');
+  if (!container) return;
+  const recent = log.slice().reverse().slice(0,5);
+  if (!recent.length) {
+    container.innerHTML = `<div class="empty"><div class="emptyico">🤸</div><p>Noch keine Heimübungen.</p><p class="emptysub">Wähle Übungen aus und starte!</p></div>`;
+    return;
+  }
+  container.innerHTML = recent.map(s => {
+    const exNames = (s.exercises||[]).map(k => HE_EXERCISES.find(e=>e.key===k)?.name||k).slice(0,3);
+    return `<div class="ecard">
+      <div class="eico" style="background:var(--g1)">🤸</div>
+      <div class="ebody">
+        <div class="etitle">Heimübung</div>
+        <div class="emeta">${fmtDate(s.date)} · ${s.exercises?.length||0} Übungen</div>
+        <div class="etags">${exNames.map(n=>`<span class="etag">${n}</span>`).join('')}</div>
+      </div>
+      <div class="epts">+${s.pts}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── TEAM CHALLENGES (lokal, serverbereit) ─────────────────────────────────────
+const TEAM_CHALLENGES = [
+  {
+    key:'team_100km',
+    icon:'🌊',
+    name:'100 km Team-Challenge',
+    desc:'Das Team schwimmt gemeinsam 100 km. Jede dokumentierte Einheit mit km-Angabe zählt.',
+    target: 100,
+    unit: 'km',
+    category: 'ausdauer',
+    reward: { icon:'🌊', name:'Team-Kappe', story:'Gemeinsam habt ihr 100 km zurückgelegt. Diese Kappe tragt ihr alle.' },
+    pts: 50
+  },
+  {
+    key:'team_50sessions',
+    icon:'📅',
+    name:'50 Einheiten Team-Challenge',
+    desc:'Das Team dokumentiert gemeinsam 50 Trainingseinheiten.',
+    target: 50,
+    unit: 'Einheiten',
+    category: 'ausdauer',
+    reward: { icon:'🤝', name:'Team-Armband', story:'50 Einheiten als Team. Ihr seid füreinander da.' },
+    pts: 30
+  },
+  {
+    key:'team_reflexion',
+    icon:'📝',
+    name:'Reflexions-Challenge',
+    desc:'Das Team füllt gemeinsam 20 Einträge mit vollständiger Reflexion aus.',
+    target: 20,
+    unit: 'Reflexionen',
+    category: 'reflexion',
+    reward: { icon:'📋', name:'Trainer-Aufnäher', story:'Ihr denkt nach. Das macht euch besser.' },
+    pts: 25
+  },
+  {
+    key:'team_streak',
+    icon:'🔥',
+    name:'Team-Streak-Challenge',
+    desc:'Alle Mitglieder trainieren 7 Tage in Folge.',
+    target: 7,
+    unit: 'Tage',
+    category: 'streak',
+    reward: { icon:'🔥', name:'Feuer-Team-Kappe', story:'7 Tage. Alle. Zusammen. Unaufhaltsam.' },
+    pts: 40
+  }
+];
+
+async function renderTeamChallengesPage() {
+  const container = document.getElementById('team-challenges-content');
+  if (!container) return;
+
+  // Local progress (single user simulation)
+  const entries  = await dbAll('training');
+  const extStats = typeof computeExtendedStats === 'function' ? await computeExtendedStats() : await computeStats();
+
+  const getProgress = (ch) => {
+    switch(ch.key) {
+      case 'team_100km':     return entries.reduce((s,e)=>s+(e.km||0),0);
+      case 'team_50sessions':return entries.length;
+      case 'team_reflexion': return entries.filter(e=>e.reflGood||e.reflHard||e.reflNext).length;
+      case 'team_streak':    return extStats.dayStreak || 0;
+      default: return 0;
+    }
+  };
+
+  container.innerHTML = `
+    <div class="team-info-card">
+      <div style="font-size:1.4rem;margin-bottom:6px">👥</div>
+      <p style="font-size:.875rem;font-weight:700;color:var(--t1)">Team-Challenges</p>
+      <p style="font-size:.78rem;color:var(--tm);margin-top:4px;line-height:1.5">
+        Team-Challenges werden gemeinsam mit deiner Trainingsgruppe absolviert.
+        Dein Trainer kann die Gruppe einrichten sobald die Mehrbenutzer-Funktion verfügbar ist.
+      </p>
+      <div class="team-coming-soon">🔜 Mehrbenutzer-Funktion in Vorbereitung</div>
+    </div>
+
+    <div class="shdr"><h3>Verfügbare Challenges</h3></div>
+
+    ${TEAM_CHALLENGES.map(ch => {
+      const cur = Math.min(getProgress(ch), ch.target);
+      const pct = Math.round((cur / ch.target) * 100);
+      const done = cur >= ch.target;
+      return `<div class="team-challenge-card ${done?'done':''}">
+        <div class="tc-header">
+          <div class="tc-icon">${ch.icon}</div>
+          <div class="tc-info">
+            <div class="tc-name">${ch.name}</div>
+            <div class="tc-desc">${ch.desc}</div>
+          </div>
+          <div class="tc-pts">+${ch.pts}</div>
+        </div>
+        <div class="tc-progress">
+          <div class="tc-prog-bar-wrap">
+            <div class="tc-prog-bar-fill" style="width:${pct}%"></div>
+          </div>
+          <div class="tc-prog-txt">${cur} / ${ch.target} ${ch.unit} (${pct}%)</div>
+        </div>
+        <div class="tc-reward">
+          <span class="tc-reward-icon">${ch.reward.icon}</span>
+          <span class="tc-reward-name">Belohnung: ${ch.reward.name}</span>
+        </div>
+        ${done ? '<div class="tc-done-badge">✅ Abgeschlossen!</div>' : ''}
+      </div>`;
+    }).join('')}
+
+    <div class="shdr" style="margin-top:20px"><h3>Dein Beitrag</h3></div>
+    <div class="sgrid2">
+      <div class="sbox"><div class="sbval">${entries.reduce((s,e)=>s+(e.km||0),0).toFixed(1)}</div><div class="sblbl">km geschwommen</div></div>
+      <div class="sbox"><div class="sbval">${entries.length}</div><div class="sblbl">Einheiten</div></div>
+      <div class="sbox"><div class="sbval">${entries.filter(e=>e.reflGood||e.reflHard||e.reflNext).length}</div><div class="sblbl">Reflexionen</div></div>
+      <div class="sbox"><div class="sbval">${extStats.dayStreak||0}🔥</div><div class="sblbl">Tage-Streak</div></div>
+    </div>
+  `;
+}
+</script>
+<script>
+/* ── final_polish ── */
+/* SwimTrack – Final Polish
+   1. Streak-Warnung (sanft)
+   2. Micro-Moments of Delight
+   3. Narrative Progression
+   ================================================================ */
+'use strict';
+
+// ══════════════════════════════════════════════════════════════════
+// 1. STREAK-WARNUNG (sanft, kein Druck)
+// ══════════════════════════════════════════════════════════════════
+
+async function checkStreakWarning() {
+  const extStats = typeof computeExtendedStats === 'function'
+    ? await computeExtendedStats() : await computeStats();
+  const streak = extStats.dayStreak || 0;
+  if (streak < 2) return; // Kein Streak → keine Warnung
+
+  const entries = await dbAll('training');
+  const todayE  = entries.filter(e => e.date === today());
+  if (todayE.length > 0) return; // Heute schon trainiert → keine Warnung
+
+  // Zeige Warnung nur einmal pro Tag
+  const lastWarn = localStorage.getItem('st_streak_warn_date');
+  if (lastWarn === today()) return;
+  localStorage.setItem('st_streak_warn_date', today());
+
+  // Sanfte Warnung nach 3 Sekunden
+  setTimeout(() => showStreakWarning(streak), 3000);
+}
+
+function showStreakWarning(streak) {
+  const el = document.getElementById('streak-warning-banner');
+  if (!el) return;
+
+  const msgs = [
+    `Dein ${streak}-Tage-Streak läuft heute noch. Kein Druck – aber du weißt es jetzt. 🔥`,
+    `${streak} Tage in Folge. Heute noch offen. Du entscheidest. 💪`,
+    `Dein Streak: ${streak} Tage. Heute noch kein Eintrag. Alles gut – du hast noch Zeit. 🏊`
+  ];
+  const msg = msgs[Math.floor(Math.random() * msgs.length)];
+
+  el.querySelector('.swb-text').textContent = msg;
+  el.classList.add('show');
+  haptic('light');
+
+  // Auto-hide nach 8 Sekunden
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => dismissStreakWarning(), 8000);
+}
+
+function dismissStreakWarning() {
+  const el = document.getElementById('streak-warning-banner');
+  if (el) el.classList.remove('show');
+}
+
+function streakWarnAction() {
+  dismissStreakWarning();
+  nav('training');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// 2. MICRO-MOMENTS OF DELIGHT
+// ══════════════════════════════════════════════════════════════════
+
+// Avatar-Reaktionen
+const AVATAR_REACTIONS = {
+  wave:    { frames: ['🏊‍♀️', '👋', '🏊‍♀️'], dur: 600,  msg: null },
+  cheer:   { frames: ['🎉', '🏊‍♀️', '⭐', '🏊‍♀️'], dur: 400, msg: 'Training gespeichert! 💪' },
+  swim:    { frames: ['🏊‍♀️'], dur: 0, msg: null },
+  pb:      { frames: ['🏆', '⭐', '🏆'], dur: 500, msg: 'Neue Bestzeit! 🏆' },
+  streak:  { frames: ['🔥', '🏊‍♀️', '🔥'], dur: 500, msg: 'Streak am Laufen! 🔥' }
+};
+
+let reactionTimer = null;
+
+function triggerAvatarReaction(type) {
+  const reaction = AVATAR_REACTIONS[type];
+  if (!reaction) return;
+
+  const el = document.getElementById('micro-avatar-reaction');
+  if (!el) return;
+
+  el.classList.add('show');
+  if (reaction.msg) {
+    const msgEl = el.querySelector('.mar-msg');
+    if (msgEl) msgEl.textContent = reaction.msg;
+    el.querySelector('.mar-msg')?.classList.add('show');
+  }
+
+  // Animate frames
+  const iconEl = el.querySelector('.mar-icon');
+  if (iconEl && reaction.frames.length > 1) {
+    let fi = 0;
+    const frameTimer = setInterval(() => {
+      fi = (fi + 1) % reaction.frames.length;
+      iconEl.textContent = reaction.frames[fi];
+    }, reaction.dur);
+    setTimeout(() => clearInterval(frameTimer), reaction.frames.length * reaction.dur * 2);
+  }
+
+  clearTimeout(reactionTimer);
+  reactionTimer = setTimeout(() => {
+    el.classList.remove('show');
+    const msgEl = el.querySelector('.mar-msg');
+    if (msgEl) msgEl.classList.remove('show');
+  }, 2500);
+}
+
+// Wave on app open
+function triggerWaveOnOpen() {
+  const lastOpen = localStorage.getItem('st_last_open_date');
+  const t = today();
+  if (lastOpen !== t) {
+    localStorage.setItem('st_last_open_date', t);
+    setTimeout(() => triggerAvatarReaction('wave'), 1500);
+  }
+}
+
+// Cheer on training save
+const _origShowSaveModalDelight = window.showSaveModal;
+window.showSaveModal = function(pts, newBadges, title) {
+  _origShowSaveModalDelight(pts, newBadges, title);
+  setTimeout(() => triggerAvatarReaction('cheer'), 300);
+};
+
+// PB reaction
+const _origShowPBModalDelight = window.showPBModal;
+if (typeof _origShowPBModalDelight === 'function') {
+  window.showPBModal = function(pb) {
+    _origShowPBModalDelight(pb);
+    setTimeout(() => triggerAvatarReaction('pb'), 300);
+  };
+}
+
+// Streak reaction on open if streak active
+async function triggerStreakReactionIfActive() {
+  const extStats = typeof computeExtendedStats === 'function'
+    ? await computeExtendedStats() : await computeStats();
+  if ((extStats.dayStreak || 0) >= 3) {
+    setTimeout(() => triggerAvatarReaction('streak'), 2000);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// 3. NARRATIVE PROGRESSION
+// ══════════════════════════════════════════════════════════════════
+
+const STORY_CHAPTERS = [
+  {
+    minEntries: 0,
+    title: 'Kapitel 1: Der erste Tag',
+    icon: '🌊',
+    text: 'Du bist neu im Verein. Das Wasser ist kalt, die anderen kennen sich schon lange. Aber du bist hier. Das zählt.',
+    goal: 'Ziel: Erste 5 Trainingseinheiten dokumentieren',
+    goalKey: 'entries', goalVal: 5
+  },
+  {
+    minEntries: 5,
+    title: 'Kapitel 2: Rhythmus finden',
+    icon: '📅',
+    text: 'Du kennst jetzt die Bahn, die Trainingszeiten, die Gesichter. Langsam wird es Routine. Routine ist der Anfang von allem.',
+    goal: 'Ziel: Erste vollständige Woche dokumentieren',
+    goalKey: 'weeks', goalVal: 1
+  },
+  {
+    minEntries: 10,
+    title: 'Kapitel 3: Technik ist alles',
+    icon: '🎯',
+    text: 'Die Trainerin sagt: Technik vor Tempo. Du verstehst jetzt warum. Jeder Zug, jede Wende – alles hat einen Grund.',
+    goal: 'Ziel: 5 Techniktrainings dokumentieren',
+    goalKey: 'techEntries', goalVal: 5
+  },
+  {
+    minEntries: 20,
+    title: 'Kapitel 4: Der erste Wettkampf',
+    icon: '🏊',
+    text: 'Startblock. Startschuss. Das Wasser nimmt dich auf. Egal wie es ausgeht – du bist dabei. Das ist mehr als die meisten je wagen.',
+    goal: 'Ziel: Ersten Wettkampf dokumentieren',
+    goalKey: 'comps', goalVal: 1
+  },
+  {
+    minEntries: 30,
+    title: 'Kapitel 5: Persönliche Bestzeit',
+    icon: '⏱️',
+    text: 'Die Uhr zeigt eine neue Zahl. Kleiner als vorher. Du bist schneller als gestern. Das ist alles, was zählt.',
+    goal: 'Ziel: Erste persönliche Bestzeit erzielen',
+    goalKey: 'pbs', goalVal: 1
+  },
+  {
+    minEntries: 50,
+    title: 'Kapitel 6: Leistungsschwimmerin',
+    icon: '💪',
+    text: '50 Einheiten. Du bist keine Anfängerin mehr. Du bist Leistungsschwimmerin. Der Verein weiß es. Du weißt es.',
+    goal: 'Ziel: 3 persönliche Bestzeiten erzielen',
+    goalKey: 'pbs', goalVal: 3
+  },
+  {
+    minEntries: 75,
+    title: 'Kapitel 7: Die Meisterschaften',
+    icon: '🏆',
+    text: 'Die Vereinsmeisterschaften rücken näher. Du hast trainiert, reflektiert, durchgehalten. Jetzt zeigst du, was du kannst.',
+    goal: 'Ziel: 100 Trainingseinheiten dokumentieren',
+    goalKey: 'entries', goalVal: 100
+  },
+  {
+    minEntries: 100,
+    title: 'Kapitel 8: Champion',
+    icon: '⭐',
+    text: '100 Einheiten. Ein Jahr Arbeit. Du bist nicht mehr dieselbe wie am ersten Tag. Du bist Champion – nicht weil du gewonnen hast, sondern weil du nie aufgehört hast.',
+    goal: 'Deine Geschichte geht weiter. Jeden Tag.',
+    goalKey: null, goalVal: null
+  }
+];
+
+async function getCurrentChapter(stats) {
+  const entries = await dbAll('training');
+  const n = entries.length;
+  let chapter = STORY_CHAPTERS[0];
+  for (const ch of STORY_CHAPTERS) {
+    if (n >= ch.minEntries) chapter = ch;
+  }
+  return chapter;
+}
+
+async function getChapterProgress(chapter, stats) {
+  if (!chapter.goalKey) return { cur: 1, max: 1, pct: 100 };
+  const entries  = await dbAll('training');
+  const comps    = await dbAll('competitions');
+  const pbs      = await dbAll('pbs');
+  const extStats = typeof computeExtendedStats === 'function'
+    ? await computeExtendedStats() : stats;
+
+  const map = {
+    entries:     entries.length,
+    weeks:       stats.completedWeeks || 0,
+    techEntries: entries.filter(e => e.type === 'Techniktraining').length,
+    comps:       comps.length,
+    pbs:         pbs.length
+  };
+  const cur = map[chapter.goalKey] || 0;
+  const max = chapter.goalVal;
+  return { cur, max, pct: Math.min(100, Math.round((cur/max)*100)) };
+}
+
+async function renderStoryCard() {
+  const container = document.getElementById('story-card-container');
+  if (!container) return;
+
+  const stats   = await computeStats();
+  const chapter = await getCurrentChapter(stats);
+  const prog    = await getChapterProgress(chapter, stats);
+  const done    = prog.pct >= 100;
+
+  // Find next chapter
+  const curIdx  = STORY_CHAPTERS.indexOf(chapter);
+  const nextCh  = STORY_CHAPTERS[curIdx + 1] || null;
+
+  container.innerHTML = `
+    <div class="story-card" onclick="showStoryModal()">
+      <div class="story-card-header">
+        <div class="story-chapter-icon">${chapter.icon}</div>
+        <div class="story-chapter-info">
+          <div class="story-chapter-label">Deine Geschichte</div>
+          <div class="story-chapter-title">${chapter.title}</div>
+        </div>
+        <div class="story-card-arrow">›</div>
+      </div>
+      <div class="story-card-text">${chapter.text}</div>
+      ${chapter.goalKey ? `
+      <div class="story-goal">
+        <div class="story-goal-label">${chapter.goal}</div>
+        <div class="story-goal-bar-wrap">
+          <div class="story-goal-bar-fill ${done?'done':''}" style="width:${prog.pct}%"></div>
+        </div>
+        <div class="story-goal-hint">${prog.cur} / ${prog.max} ${done ? '✓ Erreicht!' : ''}</div>
+      </div>` : `<div class="story-goal-label" style="color:var(--g5);font-weight:700">${chapter.goal}</div>`}
+      ${nextCh && done ? `<div class="story-next-hint">→ ${nextCh.title}</div>` : ''}
+    </div>`;
+}
+
+function showStoryModal() {
+  const modal = document.getElementById('mstory');
+  if (!modal) return;
+  renderFullStory();
+  modal.classList.remove('hidden');
+}
+
+async function renderFullStory() {
+  const container = document.getElementById('story-modal-content');
+  if (!container) return;
+
+  const stats   = await computeStats();
+  const entries = await dbAll('training');
+  const n       = entries.length;
+
+  container.innerHTML = STORY_CHAPTERS.map((ch, i) => {
+    const reached  = n >= ch.minEntries;
+    const isCurrent = n >= ch.minEntries && (i === STORY_CHAPTERS.length-1 || n < STORY_CHAPTERS[i+1].minEntries);
+    return `<div class="story-chapter-item ${reached?'reached':''} ${isCurrent?'current':''}">
+      <div class="sci-left">
+        <div class="sci-icon">${reached ? ch.icon : '🔒'}</div>
+        <div class="sci-line ${i < STORY_CHAPTERS.length-1 ? 'has-line' : ''}"></div>
+      </div>
+      <div class="sci-body">
+        <div class="sci-title">${ch.title}</div>
+        ${reached ? `<div class="sci-text">${ch.text}</div>` : `<div class="sci-locked">Ab ${ch.minEntries} Trainingseinheiten</div>`}
+        ${isCurrent && ch.goalKey ? `<div class="sci-current-badge">📍 Aktuelles Kapitel</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── INJECT STORY CARD INTO HEUTE PAGE ────────────────────────────────────────
+const _origRenderHeutePolish = window.renderHeutePage;
+window.renderHeutePage = async function() {
+  await _origRenderHeutePolish();
+
+  // Inject story card after motivation card
+  const motivCard = document.querySelector('.motiv');
+  if (motivCard && !document.getElementById('story-card-container')) {
+    const div = document.createElement('div');
+    div.id = 'story-card-container';
+    motivCard.after(div);
+  }
+  await renderStoryCard();
+
+  // Check streak warning
+  await checkStreakWarning();
+
+  // Trigger wave on first open of day
+  triggerWaveOnOpen();
+
+  // Trigger streak reaction
+  await triggerStreakReactionIfActive();
+};
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('swimtrack-ready', async () => {
+  await checkStreakWarning();
+  triggerWaveOnOpen();
+});
+</script>
+<script>
+
+// Ensure avatar save button is always visible
+function ensureAvatarSaveBtnVisible() {
+  const saveBtn = document.querySelector('#page-avatar-custom .btn.full.lg');
+  if (saveBtn) {
+    saveBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+// Override nav to scroll to bottom of avatar page
+const _origNavUX2 = window.nav;
+window.nav = function(page) {
+  _origNavUX2(page);
+  if (page === 'avatar-custom') {
+    setTimeout(() => {
+      const scroll = document.querySelector('#page-avatar-custom .pscroll');
+      if (scroll) {
+        // Don't auto-scroll to bottom - just ensure padding is enough
+        scroll.style.paddingBottom = 'calc(var(--nav) + 60px)';
+      }
+    }, 100);
+  }
+};
+
+</script>
+
+<!-- DAILY EXERCISE MODAL -->
+<div id="mdailyex" class="moverlay hidden">
+  <div class="msheet">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="font-size:1rem">Übung erfassen</h3>
+      <button class="btnsm" onclick="closeM('mdailyex')">✕</button>
+    </div>
+    <div class="dex-modal-content">
+      <div class="dex-modal-icon" id="dex-modal-icon">🦶</div>
+      <div class="dex-modal-name" id="dex-modal-name">Fersenheben</div>
+      <div class="dex-modal-desc" id="dex-modal-desc">Beschreibung</div>
+      <div class="dex-modal-tip" id="dex-modal-tip">Tipp</div>
+
+      <!-- Reps counter -->
+      <div class="dex-reps-control">
+        <button class="dex-reps-btn" onclick="updateDexReps(-5)">−</button>
+        <div class="dex-reps-center">
+          <div class="dex-reps-num" id="dex-reps-display">20</div>
+          <div class="dex-reps-unit" id="dex-modal-unit">Wdh. je Bein</div>
+        </div>
+        <button class="dex-reps-btn" onclick="updateDexReps(5)">+</button>
+      </div>
+      <input type="hidden" id="dex-reps-input" value="20"/>
+      <input type="hidden" id="dex-modal-key" value=""/>
+
+      <div class="dex-pts-info" id="dex-pts-info">+1 Punkt (max. 5/Tag)</div>
+
+      <div id="dex-already-done" class="dex-already-done hidden">
+        ✓ Heute bereits erfasst – du kannst den Wert aktualisieren
+      </div>
+
+      <button class="btn full lg" onclick="saveDailyExercise()">✓ Speichern</button>
+      <button class="btn2 full" onclick="closeM('mdailyex')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* SwimTrack – Tägliche Extraübungen
+   Einfache Wiederholungs-Übungen mit Zähler statt Timer
+   Wenige Punkte, täglich machbar, schnell erfassbar
+   ================================================================ */
+'use strict';
+
+// ── TÄGLICHE ÜBUNGSKATEGORIEN ─────────────────────────────────────────────────
+const DAILY_CATS = [
+  { key:'beine',    label:'Beine & Füße',    icon:'🦵', color:'#E74C3C' },
+  { key:'rumpf',    label:'Rumpf & Bauch',   icon:'💪', color:'#2980B9' },
+  { key:'schulter', label:'Schulter & Arme', icon:'🔄', color:'#8E44AD' },
+  { key:'dehnen',   label:'Dehnen',          icon:'🤸', color:'#27AE60' },
+  { key:'mental',   label:'Mental',          icon:'🧘', color:'#F39C12' }
+];
+
+// ── TÄGLICHE ÜBUNGEN (Wiederholungen, nicht Zeit) ─────────────────────────────
+const DAILY_EXERCISES = [
+  // BEINE & FÜSSE
+  { key:'fersenheben',    cat:'beine',    name:'Fersenheben',           icon:'🦶',
+    unit:'Wdh. je Bein',  defaultReps:20, pts:1,
+    desc:'Auf einem Bein stehend, Ferse heben und senken. Für Sprunggelenk-Stabilität.',
+    tip:'Langsam und kontrolliert – nicht schwingen!' },
+  { key:'zehenstand',     cat:'beine',    name:'Zehenstand halten',     icon:'🦶',
+    unit:'Sekunden',       defaultReps:30, pts:1,
+    desc:'Auf Zehenspitzen stehen und halten. Für Wadenmuskulatur.',
+    tip:'Beide Beine gleichzeitig, dann einbeinig.' },
+  { key:'kniebeugen',     cat:'beine',    name:'Kniebeugen',            icon:'🦵',
+    unit:'Wiederholungen', defaultReps:15, pts:1,
+    desc:'Langsame Kniebeugen, Knie über Zehen. Für Oberschenkel.',
+    tip:'Rücken gerade, Gewicht auf den Fersen.' },
+  { key:'ausfallschritte',cat:'beine',    name:'Ausfallschritte',       icon:'🦵',
+    unit:'Wdh. je Bein',  defaultReps:10, pts:1,
+    desc:'Großer Schritt nach vorne, Knie absenken. Für Hüftbeuger.',
+    tip:'Vorderes Knie nicht über die Zehen.' },
+  { key:'einbeinstand',   cat:'beine',    name:'Einbeinstand',          icon:'🦶',
+    unit:'Sekunden je Bein',defaultReps:30,pts:1,
+    desc:'Auf einem Bein balancieren. Für Gleichgewicht und Sprunggelenk.',
+    tip:'Augen zu für mehr Schwierigkeit.' },
+
+  // RUMPF & BAUCH
+  { key:'plank_kurz',     cat:'rumpf',    name:'Plank',                 icon:'🏋️',
+    unit:'Sekunden',       defaultReps:20, pts:1,
+    desc:'Körper gerade wie ein Brett. Grundlage für alle Schwimmlagen.',
+    tip:'Bauch anspannen, nicht durchhängen.' },
+  { key:'crunches',       cat:'rumpf',    name:'Crunches',              icon:'💪',
+    unit:'Wiederholungen', defaultReps:15, pts:1,
+    desc:'Schulterblätter heben, nicht den Nacken. Für Körperspannung.',
+    tip:'Langsam und kontrolliert, nicht ruckartig.' },
+  { key:'beinheben',      cat:'rumpf',    name:'Beinheben',             icon:'🦵',
+    unit:'Wiederholungen', defaultReps:10, pts:1,
+    desc:'Beine gestreckt heben und senken. Für Unterwasserphase.',
+    tip:'Rücken flach auf dem Boden halten.' },
+  { key:'seitstütz',      cat:'rumpf',    name:'Seitstütz',             icon:'💪',
+    unit:'Sekunden je Seite',defaultReps:20,pts:1,
+    desc:'Seitliche Körperspannung. Für Körperrotation im Freistil.',
+    tip:'Hüfte nicht absacken lassen.' },
+  { key:'superman',       cat:'rumpf',    name:'Superman',              icon:'🦸',
+    unit:'Wiederholungen', defaultReps:10, pts:1,
+    desc:'Auf dem Bauch, Arme und Beine gleichzeitig heben. Rückenstrecker.',
+    tip:'Langsam heben und 2 Sekunden halten.' },
+
+  // SCHULTER & ARME
+  { key:'armkreisen',     cat:'schulter', name:'Armkreisen',            icon:'🔄',
+    unit:'Kreise je Richtung',defaultReps:15,pts:1,
+    desc:'Arme locker kreisen, vorwärts und rückwärts. Schultern aufwärmen.',
+    tip:'Langsam beginnen, Radius vergrößern.' },
+  { key:'schulterrotation',cat:'schulter',name:'Schulter-Außenrotation',icon:'🔄',
+    unit:'Wdh. je Arm',   defaultReps:15, pts:1,
+    desc:'Ellenbogen am Körper, Arm nach außen drehen. Schulterprävention.',
+    tip:'Theraband oder ohne – beides wirkt.' },
+  { key:'wandschieben',   cat:'schulter', name:'Wall Slides',           icon:'🧱',
+    unit:'Wiederholungen', defaultReps:10, pts:1,
+    desc:'Rücken an der Wand, Arme hochschieben. Schulterblatt-Kontrolle.',
+    tip:'Rücken und Arme immer an der Wand lassen.' },
+  { key:'liegestuetze',   cat:'schulter', name:'Liegestütze',           icon:'💪',
+    unit:'Wiederholungen', defaultReps:10, pts:1,
+    desc:'Klassische Liegestütze oder auf den Knien. Für Schulter und Brust.',
+    tip:'Körper gerade wie ein Brett halten.' },
+  { key:'trizeps_dips',   cat:'schulter', name:'Trizeps-Dips',          icon:'💪',
+    unit:'Wiederholungen', defaultReps:10, pts:1,
+    desc:'An einer Stuhlkante abstützen, Körper absenken. Für Trizeps.',
+    tip:'Ellenbogen zeigen nach hinten, nicht zur Seite.' },
+
+  // DEHNEN
+  { key:'hüftbeuger',     cat:'dehnen',   name:'Hüftbeuger-Dehnung',    icon:'🤸',
+    unit:'Sekunden je Seite',defaultReps:30,pts:1,
+    desc:'Knie auf dem Boden, Hüfte nach vorne schieben. Für Freistil-Kick.',
+    tip:'Rücken gerade, nicht ins Hohlkreuz fallen.' },
+  { key:'oberschenkel',   cat:'dehnen',   name:'Oberschenkel-Dehnung',  icon:'🦵',
+    unit:'Sekunden je Bein',defaultReps:30,pts:1,
+    desc:'Bein gestreckt, Oberkörper nach vorne. Für Beinarbeit.',
+    tip:'Knie leicht gebeugt lassen.' },
+  { key:'schulter_quer',  cat:'dehnen',   name:'Schulter-Querdehnung',  icon:'💪',
+    unit:'Sekunden je Arm',defaultReps:30,pts:1,
+    desc:'Arm quer vor der Brust, mit anderem Arm heranziehen. Für alle Lagen.',
+    tip:'Schulter entspannt lassen, nicht hochziehen.' },
+  { key:'brustöffnung',   cat:'dehnen',   name:'Brustöffnung',          icon:'🫁',
+    unit:'Sekunden',       defaultReps:30, pts:1,
+    desc:'Arme hinter dem Rücken verschränken, Brust öffnen. Für Schmetterling.',
+    tip:'Langsam einatmen beim Öffnen.' },
+  { key:'nacken',         cat:'dehnen',   name:'Nacken-Dehnung',        icon:'🧘',
+    unit:'Sekunden je Seite',defaultReps:20,pts:1,
+    desc:'Kopf zur Seite neigen, Ohr zur Schulter. Für entspannte Kopfhaltung.',
+    tip:'Nie ruckartig – immer langsam und sanft.' },
+
+  // MENTAL
+  { key:'atemübung',      cat:'mental',   name:'Atemübung (4-4-4)',      icon:'🫁',
+    unit:'Wiederholungen', defaultReps:5,  pts:1,
+    desc:'4s einatmen, 4s halten, 4s ausatmen. Für Wettkampf-Nervosität.',
+    tip:'Augen schließen, auf den Atem konzentrieren.' },
+  { key:'visualisierung', cat:'mental',   name:'Visualisierung',        icon:'🧘',
+    unit:'Minuten',        defaultReps:3,  pts:2,
+    desc:'Augen zu, perfekten Start und Zug vorstellen. Mentales Training.',
+    tip:'So detailliert wie möglich vorstellen.' },
+  { key:'körperscan',     cat:'mental',   name:'Körper-Scan',           icon:'🔍',
+    unit:'Minuten',        defaultReps:2,  pts:1,
+    desc:'Bewusst durch den Körper gehen, Spannung lösen. Regeneration.',
+    tip:'Von den Zehen bis zum Kopf durchgehen.' }
+];
+
+// ── TÄGLICHE ÜBUNGS-LOG ───────────────────────────────────────────────────────
+function getDailyLog() {
+  return JSON.parse(localStorage.getItem('st_daily_log') || '{}');
+}
+function saveDailyLog(log) {
+  localStorage.setItem('st_daily_log', JSON.stringify(log));
+}
+function getTodayDailyLog() {
+  const log = getDailyLog();
+  return log[today()] || {};
+}
+function logDailyExercise(key, reps) {
+  const log = getDailyLog();
+  if (!log[today()]) log[today()] = {};
+  log[today()][key] = { reps, ts: new Date().toISOString() };
+  saveDailyLog(log);
+}
+
+// ── PUNKTE FÜR TÄGLICHE ÜBUNGEN ──────────────────────────────────────────────
+// Max 5 Punkte pro Tag für tägliche Übungen (bewusst wenig)
+const DAILY_MAX_PTS = 5;
+
+async function awardDailyPoints(exerciseKey, reps) {
+  const todayLog = getTodayDailyLog();
+  const todayPts = Object.keys(todayLog).length; // already logged today
+  if (todayPts >= DAILY_MAX_PTS) return 0; // cap reached
+
+  const ex = DAILY_EXERCISES.find(e => e.key === exerciseKey);
+  const pts = ex ? ex.pts : 1;
+  const actualPts = Math.min(pts, DAILY_MAX_PTS - todayPts);
+
+  if (actualPts > 0) {
+    await logPts(
+      [{ reason: `Tägliche Übung: ${ex?.name || exerciseKey} (${reps}×)`, pts: actualPts }],
+      'daily_' + exerciseKey + '_' + today(),
+      'daily_exercise',
+      today()
+    );
+  }
+  return actualPts;
+}
+
+// ── RENDER DAILY EXERCISES PAGE ───────────────────────────────────────────────
+async function renderDailyExercisesPage() {
+  const container = document.getElementById('page-heimuebungen');
+  if (!container) return;
+  const scroll = container.querySelector('.pscroll');
+  if (!scroll) return;
+
+  const todayLog = getTodayDailyLog();
+  const allLog   = getDailyLog();
+  const todayCount = Object.keys(todayLog).length;
+
+  // Calculate streak
+  let streak = 0;
+  const d = new Date();
+  for (let i = 0; i < 30; i++) {
+    const ds = d.toISOString().slice(0,10);
+    if (allLog[ds] && Object.keys(allLog[ds]).length > 0) {
+      streak++;
+      d.setDate(d.getDate()-1);
+    } else if (i === 0) {
+      d.setDate(d.getDate()-1); // today might not be done yet
+    } else break;
+  }
+
+  // Total exercises ever
+  const totalEver = Object.values(allLog).reduce((s,day) => s + Object.keys(day).length, 0);
+
+  scroll.innerHTML = `
+    <div class="phdr"><h2>Tägliche Übungen</h2><p class="psub">Kleine Übungen, große Wirkung</p></div>
+
+    <!-- Stats -->
+    <div class="srow" style="margin-bottom:14px">
+      <div class="stile"><div class="sval" style="color:var(--g5)">${todayCount}</div><div class="slbl">Heute</div></div>
+      <div class="stile"><div class="sval" style="color:var(--a5)">${streak}🔥</div><div class="slbl">Tage-Serie</div></div>
+      <div class="stile"><div class="sval" style="color:var(--b6)">${totalEver}</div><div class="slbl">Gesamt</div></div>
+    </div>
+
+    <!-- Info card -->
+    <div class="card" style="margin-bottom:14px;border-color:var(--g5)">
+      <p style="font-size:.83rem;color:var(--t2);line-height:1.5">
+        💡 <strong>Tipp:</strong> Diese Übungen sind für den Alltag – kurz, einfach, täglich.
+        Tippe auf eine Übung, gib deine Wiederholungen ein und speichere.
+        Max. <strong>5 Punkte pro Tag</strong> – Qualität vor Quantität.
+      </p>
+    </div>
+
+    <!-- Category filter -->
+    <div class="acc-cat-tabs" style="margin-bottom:14px">
+      <button class="acc-cat-tab active" onclick="setDailyCat('all',this)">Alle</button>
+      ${DAILY_CATS.map(c => `<button class="acc-cat-tab" onclick="setDailyCat('${c.key}',this)">${c.icon} ${c.label}</button>`).join('')}
+    </div>
+
+    <!-- Exercise list -->
+    <div id="daily-exercise-list"></div>
+  `;
+
+  renderDailyExerciseList('all', todayLog);
+}
+
+let _dailyActiveCat = 'all';
+
+function setDailyCat(cat, btn) {
+  _dailyActiveCat = cat;
+  document.querySelectorAll('#page-heimuebungen .acc-cat-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderDailyExerciseList(cat, getTodayDailyLog());
+}
+
+function renderDailyExerciseList(cat, todayLog) {
+  const container = document.getElementById('daily-exercise-list');
+  if (!container) return;
+
+  const exercises = cat === 'all'
+    ? DAILY_EXERCISES
+    : DAILY_EXERCISES.filter(e => e.cat === cat);
+
+  container.innerHTML = exercises.map(ex => {
+    const done    = !!todayLog[ex.key];
+    const doneReps = todayLog[ex.key]?.reps || 0;
+    const catDef  = DAILY_CATS.find(c => c.key === ex.cat);
+
+    return `<div class="daily-ex-card ${done?'done':''}" id="dex-${ex.key}">
+      <div class="dex-left">
+        <div class="dex-icon" style="background:${catDef?.color}22">${ex.icon}</div>
+        <div class="dex-info">
+          <div class="dex-name">${ex.name} ${done ? '<span class="dex-done-badge">✓ Erledigt</span>' : ''}</div>
+          <div class="dex-meta">${catDef?.icon} ${catDef?.label} · Ziel: ${ex.defaultReps} ${ex.unit}</div>
+          <div class="dex-desc">${ex.desc}</div>
+          ${done ? `<div class="dex-done-reps">${doneReps} ${ex.unit} absolviert</div>` : ''}
+        </div>
+      </div>
+      <button class="dex-btn ${done?'done':''}" onclick="openDailyExModal('${ex.key}')">
+        ${done ? '✓' : '+'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+// ── DAILY EXERCISE MODAL ──────────────────────────────────────────────────────
+function openDailyExModal(key) {
+  const ex = DAILY_EXERCISES.find(e => e.key === key);
+  if (!ex) return;
+  const todayLog = getTodayDailyLog();
+  const alreadyDone = todayLog[key];
+
+  const modal = document.getElementById('mdailyex');
+  if (!modal) return;
+
+  document.getElementById('dex-modal-icon').textContent  = ex.icon;
+  document.getElementById('dex-modal-name').textContent  = ex.name;
+  document.getElementById('dex-modal-desc').textContent  = ex.desc;
+  document.getElementById('dex-modal-tip').textContent   = '💡 ' + ex.tip;
+  document.getElementById('dex-modal-unit').textContent  = ex.unit;
+  document.getElementById('dex-reps-input').value        = alreadyDone ? alreadyDone.reps : ex.defaultReps;
+  document.getElementById('dex-reps-display').textContent = alreadyDone ? alreadyDone.reps : ex.defaultReps;
+  document.getElementById('dex-modal-key').value         = key;
+  document.getElementById('dex-pts-info').textContent    = `+${ex.pts} Punkt${ex.pts>1?'e':''} (max. 5/Tag)`;
+
+  // Show/hide done state
+  const doneEl = document.getElementById('dex-already-done');
+  if (doneEl) doneEl.classList.toggle('hidden', !alreadyDone);
+
+  modal.classList.remove('hidden');
+  haptic('light');
+}
+
+async function saveDailyExercise() {
+  const key  = document.getElementById('dex-modal-key').value;
+  const reps = parseInt(document.getElementById('dex-reps-input').value) || 1;
+  const ex   = DAILY_EXERCISES.find(e => e.key === key);
+  if (!ex) return;
+
+  logDailyExercise(key, reps);
+  const pts = await awardDailyPoints(key, reps);
+
+  closeM('mdailyex');
+  haptic('success');
+
+  if (pts > 0) {
+    showToast(`${ex.name}: ${reps} ${ex.unit} ✓ +${pts} Punkt${pts>1?'e':''}!`);
+  } else {
+    showToast(`${ex.name}: ${reps} ${ex.unit} ✓ (Tageslimit erreicht)`);
+  }
+
+  // Update card
+  const card = document.getElementById(`dex-${key}`);
+  if (card) {
+    card.classList.add('done');
+    const btn = card.querySelector('.dex-btn');
+    if (btn) { btn.textContent = '✓'; btn.classList.add('done'); }
+    const nameEl = card.querySelector('.dex-name');
+    if (nameEl && !nameEl.querySelector('.dex-done-badge')) {
+      nameEl.innerHTML += ' <span class="dex-done-badge">✓ Erledigt</span>';
+    }
+    const infoEl = card.querySelector('.dex-info');
+    if (infoEl && !card.querySelector('.dex-done-reps')) {
+      const repsEl = document.createElement('div');
+      repsEl.className = 'dex-done-reps';
+      repsEl.textContent = `${reps} ${ex.unit} absolviert`;
+      infoEl.appendChild(repsEl);
+    }
+  }
+
+  // Update stats
+  const todayLog = getTodayDailyLog();
+  const todayCount = Object.keys(todayLog).length;
+  const statEl = document.querySelector('#page-heimuebungen .sval');
+  if (statEl) statEl.textContent = todayCount;
+
+  // Update header points
+  if (typeof updateHeaderStats === 'function') updateHeaderStats();
+}
+
+function updateDexReps(delta) {
+  const input = document.getElementById('dex-reps-input');
+  const display = document.getElementById('dex-reps-display');
+  if (!input || !display) return;
+  const key = document.getElementById('dex-modal-key').value;
+  const ex  = DAILY_EXERCISES.find(e => e.key === key);
+  const min = 1, max = ex ? ex.defaultReps * 3 : 100;
+  const newVal = Math.max(min, Math.min(max, parseInt(input.value) + delta));
+  input.value = newVal;
+  display.textContent = newVal;
+  haptic('light');
+}
+
+// ── OVERRIDE renderHeutePage to show daily summary ────────────────────────────
+const _origRenderHeuteDailyEx = window.renderHeutePage;
+window.renderHeutePage = async function() {
+  await _origRenderHeuteDailyEx();
+
+  // Update heimuebungen teaser with today's count
+  const todayLog = getTodayDailyLog();
+  const count = Object.keys(todayLog).length;
+  const teaser = document.querySelector('.heimuebungen-teaser .ht-sub');
+  if (teaser && count > 0) {
+    teaser.textContent = `Heute: ${count} Übung${count>1?'en':''} erledigt ✓`;
+    teaser.style.color = 'rgba(255,255,255,.95)';
+    teaser.style.fontWeight = '700';
+  }
+};
+
+// ── OVERRIDE nav for heimuebungen ─────────────────────────────────────────────
+const _origNavDailyEx = window.nav;
+window.nav = function(page) {
+  _origNavDailyEx(page);
+  if (page === 'heimuebungen') {
+    setTimeout(() => renderDailyExercisesPage(), 50);
+  }
+};
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('swimtrack-ready', () => {
+  // Pre-render if on heimuebungen page
+  if (typeof S !== 'undefined' && S.page === 'heimuebungen') {
+    renderDailyExercisesPage();
+  }
+});
+</script>
+<script>
+/* SwimTrack – Adaptives Trainingsformular
+   Formular passt sich dynamisch an die Trainingsart an
+   Schwimmen → Schwimmaufgaben
+   Kraft/Athletik → Kraftübungen
+   Beweglichkeit → Dehnübungen
+   Regeneration → Erholungsaktivitäten
+   ================================================================ */
+'use strict';
+
+// ── TRAININGSART-KONFIGURATIONEN ──────────────────────────────────────────────
+const TRAINING_TYPE_CONFIG = {
+  'Wassertraining': {
+    color: '#0066FF',
+    showSets: true,
+    setType: 'swim',
+    showStrokes: true,
+    showKm: true,
+    setsLabel: 'Schwimmaufgaben',
+    setsHint: 'z.B. 4×200 Freistil BZ3, 8×50 Brust Paddles',
+    extraFields: [],
+    icon: '🏊'
+  },
+  'Techniktraining': {
+    color: '#2980B9',
+    showSets: true,
+    setType: 'swim',
+    showStrokes: true,
+    showKm: true,
+    setsLabel: 'Technikaufgaben',
+    setsHint: 'z.B. 6×50 Einarmzug, 4×25 Rollwende-Drill',
+    extraFields: [],
+    icon: '🎯'
+  },
+  'Athletiktraining': {
+    color: '#E74C3C',
+    showSets: true,
+    setType: 'athletic',
+    showStrokes: false,
+    showKm: false,
+    setsLabel: 'Athletikaufgaben',
+    setsHint: 'z.B. 3×10 Kniebeugen, 4×20m Sprint',
+    extraFields: ['location'],
+    icon: '🏃'
+  },
+  'Krafttraining': {
+    color: '#E74C3C',
+    showSets: true,
+    setType: 'strength',
+    showStrokes: false,
+    showKm: false,
+    setsLabel: 'Kraftübungen',
+    setsHint: 'z.B. 3×12 Bankdrücken, 4×10 Klimmzüge',
+    extraFields: ['location'],
+    icon: '💪'
+  },
+  'Ausdauertraining': {
+    color: '#E74C3C',
+    showSets: true,
+    setType: 'endurance',
+    showStrokes: false,
+    showKm: true,
+    setsLabel: 'Ausdaueraufgaben',
+    setsHint: 'z.B. 30 min Laufen, 20 min Radfahren',
+    extraFields: ['activity', 'location'],
+    icon: '❤️'
+  },
+  'Beweglichkeit': {
+    color: '#27AE60',
+    showSets: true,
+    setType: 'flexibility',
+    showStrokes: false,
+    showKm: false,
+    setsLabel: 'Dehnübungen',
+    setsHint: 'z.B. 3×30s Hüftbeuger, 2×45s Schulter',
+    extraFields: [],
+    icon: '🤸'
+  },
+  'Regeneration': {
+    color: '#27AE60',
+    showSets: false,
+    setType: 'recovery',
+    showStrokes: false,
+    showKm: false,
+    setsLabel: '',
+    setsHint: '',
+    extraFields: ['recovery_type'],
+    icon: '💙'
+  },
+  'Wettkampf': {
+    color: '#F39C12',
+    showSets: true,
+    setType: 'swim',
+    showStrokes: true,
+    showKm: true,
+    setsLabel: 'Wettkampfstarts',
+    setsHint: 'Wettkampf besser unter "Wettkampf" eintragen',
+    extraFields: [],
+    icon: '🏆'
+  },
+  'Sonstiges': {
+    color: '#9090A8',
+    showSets: true,
+    setType: 'general',
+    showStrokes: false,
+    showKm: false,
+    setsLabel: 'Aufgaben',
+    setsHint: 'Beschreibe deine Trainingsaufgaben',
+    extraFields: [],
+    icon: '📝'
+  }
+};
+
+// ── SET-TYPEN ─────────────────────────────────────────────────────────────────
+const SET_TYPE_CONFIGS = {
+  swim: {
+    fields: [
+      { id:'reps',     label:'Wiederholungen', type:'number', default:4,   min:1, max:99 },
+      { id:'distance', label:'Strecke',        type:'select', options:['','25 m','50 m','75 m','100 m','150 m','200 m','300 m','400 m','500 m','600 m','800 m','1000 m','1500 m'] },
+      { id:'stroke',   label:'Lage / Stil',    type:'select', options:['','F','R','B','S','L','Technik','Kick','Pull','Drill','Einarm','Beinarbeit'] },
+      { id:'zone',     label:'Zone',           type:'select', options:['','BZ1','BZ2','BZ3','BZ4','BZ5','GA1','GA2','WSA','Sprint','Technik','Locker','Max'] },
+      { id:'rest',     label:'Pause (Sek.)',   type:'number', default:30,  min:0, max:600 },
+      { id:'equip',    label:'Material',       type:'select', options:['','Pullbuoy','Paddles','Flossen','Schnorchel','Brett','Widerstandsgurt'] },
+      { id:'focus',    label:'Fokuspunkt',     type:'text',   placeholder:'z.B. Hoher Ellenbogen, Rollwende…' }
+    ]
+  },
+  strength: {
+    fields: [
+      { id:'reps',     label:'Sätze',          type:'number', default:3,   min:1, max:20 },
+      { id:'distance', label:'Wiederholungen', type:'select', options:['','5','6','8','10','12','15','20','25','30'] },
+      { id:'stroke',   label:'Übung',          type:'select', options:['','Kniebeugen','Liegestütze','Klimmzüge','Bankdrücken','Kreuzheben','Ausfallschritte','Plank','Crunches','Beinheben','Schulterdrücken','Rudern','Bizepscurl','Trizepsdips','Seitstütz','Superman','Sonstiges'] },
+      { id:'zone',     label:'Intensität',     type:'select', options:['','Leicht','Mittel','Schwer','Maximal'] },
+      { id:'rest',     label:'Pause (Sek.)',   type:'number', default:60,  min:0, max:300 },
+      { id:'equip',    label:'Equipment',      type:'select', options:['','Körpergewicht','Hanteln','Langhantel','Theraband','Kettlebell','Maschine','Sonstiges'] },
+      { id:'focus',    label:'Fokuspunkt',     type:'text',   placeholder:'z.B. Rücken gerade, langsam absenken…' }
+    ]
+  },
+  athletic: {
+    fields: [
+      { id:'reps',     label:'Sätze / Runden', type:'number', default:3,   min:1, max:20 },
+      { id:'distance', label:'Distanz / Zeit', type:'select', options:['','10 m','20 m','30 m','50 m','100 m','200 m','400 m','10 min','15 min','20 min','30 min'] },
+      { id:'stroke',   label:'Übung',          type:'select', options:['','Sprint','Laufen','Radfahren','Seilspringen','Burpees','Box Jumps','Medizinball','Koordinationsleiter','Hürden','Sonstiges'] },
+      { id:'zone',     label:'Intensität',     type:'select', options:['','Locker','Mittel','Intensiv','Sprint','Max'] },
+      { id:'rest',     label:'Pause (Sek.)',   type:'number', default:90,  min:0, max:600 },
+      { id:'equip',    label:'Equipment',      type:'select', options:['','Keins','Medizinball','Seilsprung','Hürden','Koordinationsleiter','Sonstiges'] },
+      { id:'focus',    label:'Fokuspunkt',     type:'text',   placeholder:'z.B. Explosiv abdrücken, Armeinsatz…' }
+    ]
+  },
+  endurance: {
+    fields: [
+      { id:'reps',     label:'Einheiten',      type:'number', default:1,   min:1, max:10 },
+      { id:'distance', label:'Dauer / Distanz',type:'select', options:['','10 min','15 min','20 min','30 min','45 min','60 min','5 km','10 km','15 km','20 km'] },
+      { id:'stroke',   label:'Aktivität',      type:'select', options:['','Laufen','Radfahren','Schwimmen','Rudern','Ellipsentrainer','Wandern','Sonstiges'] },
+      { id:'zone',     label:'Intensität',     type:'select', options:['','GA1 (locker)','GA2 (mittel)','WSA (intensiv)','Intervall'] },
+      { id:'rest',     label:'Pause (Sek.)',   type:'number', default:0,   min:0, max:300 },
+      { id:'equip',    label:'Equipment',      type:'select', options:['','Keins','Fahrrad','Rudergerät','Sonstiges'] },
+      { id:'focus',    label:'Fokuspunkt',     type:'text',   placeholder:'z.B. Gleichmäßiges Tempo, Atemrhythmus…' }
+    ]
+  },
+  flexibility: {
+    fields: [
+      { id:'reps',     label:'Wiederholungen', type:'number', default:3,   min:1, max:10 },
+      { id:'distance', label:'Dauer',          type:'select', options:['','10 s','15 s','20 s','30 s','45 s','60 s','90 s','2 min'] },
+      { id:'stroke',   label:'Übung',          type:'select', options:['','Hüftbeuger','Oberschenkel','Schulter-Querdehnung','Brustöffnung','Nacken','Latissimus','Hüftrotation','Wirbelsäule','Waden','Sprunggelenk','Sonstiges'] },
+      { id:'zone',     label:'Seite',          type:'select', options:['','Beide','Links','Rechts','Wechselnd'] },
+      { id:'rest',     label:'Pause (Sek.)',   type:'number', default:10,  min:0, max:60 },
+      { id:'equip',    label:'Hilfsmittel',    type:'select', options:['','Keins','Yogamatte','Foam Roller','Theraband','Massageball','Sonstiges'] },
+      { id:'focus',    label:'Fokuspunkt',     type:'text',   placeholder:'z.B. Langsam einatmen, nicht federn…' }
+    ]
+  },
+  general: {
+    fields: [
+      { id:'reps',     label:'Sätze',          type:'number', default:1,   min:1, max:20 },
+      { id:'distance', label:'Dauer / Menge',  type:'select', options:['','5 min','10 min','15 min','20 min','30 min','45 min','60 min'] },
+      { id:'stroke',   label:'Aktivität',      type:'select', options:['','Sonstiges'] },
+      { id:'zone',     label:'Intensität',     type:'select', options:['','Leicht','Mittel','Intensiv'] },
+      { id:'rest',     label:'Pause (Sek.)',   type:'number', default:30,  min:0, max:300 },
+      { id:'equip',    label:'Equipment',      type:'select', options:['','Keins','Sonstiges'] },
+      { id:'focus',    label:'Notiz',          type:'text',   placeholder:'Beschreibung der Aufgabe…' }
+    ]
+  }
+};
+
+// ── ADAPTIVE FORM LOGIC ───────────────────────────────────────────────────────
+let currentTrainingType = null;
+
+function onTrainingTypeSelected(type) {
+  currentTrainingType = type;
+  const cfg = TRAINING_TYPE_CONFIG[type] || TRAINING_TYPE_CONFIG['Sonstiges'];
+
+  // Update form color accent
+  const form = document.getElementById('tform');
+  if (form) form.style.setProperty('--type-color', cfg.color);
+
+  // Show/hide km field
+  const kmSection = document.getElementById('tf-km-section');
+  if (kmSection) kmSection.style.display = cfg.showKm ? '' : 'none';
+
+  // Show/hide strokes section
+  const strokeSection = document.getElementById('tf-strokes-section');
+  if (strokeSection) strokeSection.style.display = cfg.showStrokes ? '' : 'none';
+
+  // Update sets section
+  updateSetsSection(cfg);
+
+  // Show/hide extra type-specific fields
+  updateExtraTypeFields(type, cfg);
+
+  // Update sets label and hint
+  const setsLabel = document.querySelector('.sets-hdr .flabel');
+  if (setsLabel && cfg.setsLabel) setsLabel.textContent = cfg.setsLabel;
+  const setsHint = document.querySelector('.sets-hint');
+  if (setsHint && cfg.setsHint) setsHint.textContent = cfg.setsHint;
+
+  // Show/hide sets section entirely
+  const setsSection = document.getElementById('tf-sets-section');
+  if (setsSection) setsSection.style.display = cfg.showSets ? '' : 'none';
+
+  // Show regeneration special UI if needed
+  const regenSection = document.getElementById('tf-regen-section');
+  if (regenSection) regenSection.style.display = type === 'Regeneration' ? '' : 'none';
+
+  // Clear existing sets and rebuild with correct type
+  const container = document.getElementById('setscontainer');
+  if (container) container.innerHTML = '';
+  if (typeof S !== 'undefined') S.setIdx = 0;
+}
+
+function updateSetsSection(cfg) {
+  // Override addSet to use correct set type
+  window._currentSetType = cfg.setType || 'swim';
+}
+
+function updateExtraTypeFields(type, cfg) {
+  // Location field
+  const locSection = document.getElementById('tf-location-section');
+  if (locSection) locSection.style.display = cfg.extraFields.includes('location') ? '' : 'none';
+
+  // Activity field (for endurance)
+  const actSection = document.getElementById('tf-activity-section');
+  if (actSection) actSection.style.display = cfg.extraFields.includes('activity') ? '' : 'none';
+
+  // Recovery type field
+  const recSection = document.getElementById('tf-recovery-section');
+  if (recSection) recSection.style.display = cfg.extraFields.includes('recovery_type') ? '' : 'none';
+}
+
+// ── ADAPTIVE SET BUILDER ──────────────────────────────────────────────────────
+// Override addSet to use current training type
+const _origAddSetAdaptive = window.addSet;
+window.addSet = function() {
+  const setType = window._currentSetType || 'swim';
+  const setConfig = SET_TYPE_CONFIGS[setType] || SET_TYPE_CONFIGS.swim;
+
+  if (typeof S !== 'undefined') S.setIdx++;
+  const idx = (typeof S !== 'undefined') ? S.setIdx : Date.now();
+  const c = document.getElementById('setscontainer');
+  if (!c) return;
+
+  const div = document.createElement('div');
+  div.className = 'set-row';
+  div.id = `set-${idx}`;
+
+  // Build fields based on set type
+  const fieldsHTML = buildAdaptiveSetFields(idx, setConfig, setType);
+
+  div.innerHTML = `
+    <div class="set-hdr">
+      <span class="set-title">Aufgabe ${idx}</span>
+      <div style="display:flex;gap:6px">
+        <button type="button" class="btnsm" onclick="saveSetAsTemplate(${idx})" title="Als Vorlage">💾</button>
+        <button type="button" class="set-rm" onclick="removeSet(${idx})">✕</button>
+      </div>
+    </div>
+    ${fieldsHTML}
+    <div class="sprev" id="sprev-${idx}">–</div>
+  `;
+  c.appendChild(div);
+  updateAdaptiveSetPreview(idx, setConfig);
+};
+
+function buildAdaptiveSetFields(idx, setConfig, setType) {
+  const fields = setConfig.fields;
+  let html = '';
+
+  // Row 1: Reps + Distance/Duration
+  html += `<div class="sgrid">`;
+  const f0 = fields[0]; // reps/sets
+  const f1 = fields[1]; // distance/duration
+  html += buildField(idx, f0);
+  html += buildField(idx, f1);
+  html += `</div>`;
+
+  // Row 2: Activity/Stroke + Zone/Intensity
+  html += `<div class="sgrid">`;
+  const f2 = fields[2]; // stroke/exercise
+  const f3 = fields[3]; // zone/intensity
+  html += buildField(idx, f2);
+  html += buildField(idx, f3);
+  html += `</div>`;
+
+  // Row 3: Rest + Equipment
+  html += `<div class="sgrid">`;
+  const f4 = fields[4]; // rest
+  const f5 = fields[5]; // equipment
+  html += buildField(idx, f4);
+  html += buildField(idx, f5);
+  html += `</div>`;
+
+  // Focus/note field
+  const f6 = fields[6];
+  html += `<div class="sfield" style="margin-top:6px">
+    <label>${f6.label}</label>
+    <input type="text" id="s-${f6.id}-${idx}" class="finput" style="padding:8px 10px;font-size:.83rem"
+      placeholder="${f6.placeholder||''}" maxlength="150"
+      oninput="updateAdaptiveSetPreview(${idx}, null)"/>
+  </div>`;
+
+  return html;
+}
+
+function buildField(idx, field) {
+  if (!field) return '<div class="sfield"></div>';
+  if (field.type === 'select') {
+    return `<div class="sfield">
+      <label>${field.label}</label>
+      <select id="s-${field.id}-${idx}" onchange="updateAdaptiveSetPreview(${idx}, null)">
+        ${(field.options||[]).map(o=>`<option value="${o}">${o||'–'}</option>`).join('')}
+      </select>
+    </div>`;
+  } else {
+    return `<div class="sfield">
+      <label>${field.label}</label>
+      <input type="${field.type||'text'}" id="s-${field.id}-${idx}"
+        ${field.min!==undefined?`min="${field.min}"`:''}
+        ${field.max!==undefined?`max="${field.max}"`:''}
+        value="${field.default||''}"
+        placeholder="${field.placeholder||''}"
+        oninput="updateAdaptiveSetPreview(${idx}, null)"/>
+    </div>`;
+  }
+}
+
+function updateAdaptiveSetPreview(idx, setConfig) {
+  const setType = window._currentSetType || 'swim';
+  const cfg = setConfig || SET_TYPE_CONFIGS[setType] || SET_TYPE_CONFIGS.swim;
+  const fields = cfg.fields;
+
+  let parts = [];
+  fields.forEach(f => {
+    const el = document.getElementById(`s-${f.id}-${idx}`);
+    if (!el || !el.value) return;
+    const val = el.value;
+    if (f.id === 'reps' && val > 1) parts.push(val + '×');
+    else if (f.id === 'reps') return;
+    else if (val) parts.push(val);
+  });
+
+  const prev = document.getElementById(`sprev-${idx}`);
+  if (prev) prev.textContent = parts.join(' ') || '–';
+}
+
+// Override collectSets for adaptive fields
+window.collectSets = function() {
+  const sets = [];
+  document.querySelectorAll('.set-row').forEach(row => {
+    const idx = row.id.replace('set-','');
+    const setType = window._currentSetType || 'swim';
+    const cfg = SET_TYPE_CONFIGS[setType] || SET_TYPE_CONFIGS.swim;
+
+    const set = { setType };
+    cfg.fields.forEach(f => {
+      const el = document.getElementById(`s-${f.id}-${idx}`);
+      if (el) set[f.id] = el.value || '';
+    });
+
+    // Map to standard fields for compatibility
+    set.reps     = parseInt(set.reps) || 1;
+    set.distance = set.distance || '';
+    set.stroke   = set.stroke   || '';
+    set.zone     = set.zone     || '';
+    set.restSec  = parseInt(set.rest) || 0;
+    set.equipment= set.equip    || '';
+    set.focus    = set.focus    || '';
+    set.note     = set.focus    || '';
+
+    if (set.distance || set.stroke || set.focus) sets.push(set);
+  });
+  return sets;
+};
+
+// ── INJECT ADAPTIVE FORM ELEMENTS ─────────────────────────────────────────────
+function injectAdaptiveFormElements() {
+  // Add type-specific sections to training form
+  const optFields = document.getElementById('optfields');
+  if (!optFields) return;
+
+  // Add location field
+  if (!document.getElementById('tf-location-section')) {
+    const locDiv = document.createElement('div');
+    locDiv.id = 'tf-location-section';
+    locDiv.className = 'fsec';
+    locDiv.style.display = 'none';
+    locDiv.innerHTML = `<label class="flabel">Trainingsort</label>
+      <select id="tf-location" class="fselect">
+        <option value="">Bitte wählen</option>
+        <option>Fitnessstudio</option><option>Zuhause</option><option>Draußen</option>
+        <option>Sportplatz</option><option>Halle</option><option>Sonstiges</option>
+      </select>`;
+    optFields.prepend(locDiv);
+  }
+
+  // Add recovery type field
+  if (!document.getElementById('tf-recovery-section')) {
+    const recDiv = document.createElement('div');
+    recDiv.id = 'tf-recovery-section';
+    recDiv.className = 'fsec';
+    recDiv.style.display = 'none';
+    recDiv.innerHTML = `<label class="flabel">Art der Erholung</label>
+      <div class="chips" id="recovery-chips">
+        <button type="button" class="chip" data-v="Schlaf" onclick="pickChip(this,'tf-recovery-type')">😴 Schlaf</button>
+        <button type="button" class="chip" data-v="Massage" onclick="pickChip(this,'tf-recovery-type')">💆 Massage</button>
+        <button type="button" class="chip" data-v="Dehnen" onclick="pickChip(this,'tf-recovery-type')">🤸 Dehnen</button>
+        <button type="button" class="chip" data-v="Eisbad" onclick="pickChip(this,'tf-recovery-type')">🧊 Eisbad</button>
+        <button type="button" class="chip" data-v="Sauna" onclick="pickChip(this,'tf-recovery-type')">🧖 Sauna</button>
+        <button type="button" class="chip" data-v="Spaziergang" onclick="pickChip(this,'tf-recovery-type')">🚶 Spaziergang</button>
+        <button type="button" class="chip" data-v="Sonstiges" onclick="pickChip(this,'tf-recovery-type')">📝 Sonstiges</button>
+      </div>
+      <input type="hidden" id="tf-recovery-type"/>`;
+    optFields.prepend(recDiv);
+  }
+
+  // Add regen special section (shown instead of sets for Regeneration)
+  if (!document.getElementById('tf-regen-section')) {
+    const regenDiv = document.createElement('div');
+    regenDiv.id = 'tf-regen-section';
+    regenDiv.style.display = 'none';
+    regenDiv.innerHTML = `<div class="card" style="background:var(--g1);border-color:var(--g5);margin-bottom:14px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.4rem">💙</span>
+        <div>
+          <p style="font-size:.875rem;font-weight:700;color:var(--g5)">Regenerationstag</p>
+          <p style="font-size:.75rem;color:var(--tm)">Erholung ist genauso wichtig wie Training. Gut gemacht!</p>
+        </div>
+      </div>
+    </div>`;
+    const setsSection = document.getElementById('tf-sets-section') ||
+      document.querySelector('.sets-hdr')?.closest('.fsec');
+    if (setsSection) setsSection.before(regenDiv);
+  }
+
+  // Wrap km field in identifiable section
+  const kmInput = document.getElementById('tf-km');
+  if (kmInput && !document.getElementById('tf-km-section')) {
+    const kmParent = kmInput.closest('.fsec');
+    if (kmParent) kmParent.id = 'tf-km-section';
+  }
+
+  // Wrap strokes in identifiable section
+  const strokeChips = document.getElementById('strokechips');
+  if (strokeChips && !document.getElementById('tf-strokes-section')) {
+    const strokeParent = strokeChips.closest('.fsec');
+    if (strokeParent) strokeParent.id = 'tf-strokes-section';
+  }
+
+  // Wrap sets in identifiable section
+  const setsContainer = document.getElementById('setscontainer');
+  if (setsContainer && !document.getElementById('tf-sets-section')) {
+    const setsParent = setsContainer.closest('.fsec');
+    if (setsParent) setsParent.id = 'tf-sets-section';
+  }
+}
+
+// ── OVERRIDE pickChip for training type ──────────────────────────────────────
+const _origPickChipAdaptive = window.pickChip;
+window.pickChip = function(btn, hiddenId) {
+  _origPickChipAdaptive(btn, hiddenId);
+  if (hiddenId === 'tf-type') {
+    const type = btn.dataset.v || btn.dataset.val;
+    if (type) onTrainingTypeSelected(type);
+  }
+};
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('swimtrack-ready', () => {
+  injectAdaptiveFormElements();
+  // Set default type
+  window._currentSetType = 'swim';
+});
+
+// Also inject when navigating to training page
+const _origNavAdaptive = window.nav;
+window.nav = function(page) {
+  _origNavAdaptive(page);
+  if (page === 'training') {
+    setTimeout(() => {
+      injectAdaptiveFormElements();
+      // Re-apply current type if set
+      if (currentTrainingType) onTrainingTypeSelected(currentTrainingType);
+    }, 100);
+  }
+};
+</script>
+
+<!-- LVT DETAIL MODAL -->
+<div id="mlvtdetail" class="moverlay hidden">
+  <div class="msheet" style="max-height:90vh">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="font-size:1rem">LVT-Herausforderung</h3>
+      <button class="btnsm" onclick="closeM('mlvtdetail')">✕</button>
+    </div>
+    <div id="lvt-detail-content"></div>
+    <button class="btn full" onclick="completeTodayChallenge();closeM('mlvtdetail')" style="margin-top:12px">
+      ✓ Herausforderung abgeschlossen!
+    </button>
+    <button class="btn2 full" onclick="closeM('mlvtdetail')" style="margin-top:8px">Schließen</button>
+  </div>
+</div>
+
+<script>
+/* SwimTrack – LVT Tagesherausforderung + Landtraining-Fixes
+   Basiert auf DSV Landesvielseitigkeitstest Testmanual 2017/2018
+   ================================================================ */
+'use strict';
+
+// ── LVT ÜBUNGSKATALOG (aus Testmanual) ───────────────────────────────────────
+const LVT_EXERCISES = {
+  // ATHLETIK
+  liegestuetze: {
+    name: 'Liegestütze',
+    category: 'athletik',
+    icon: '💪',
+    lvtTest: 'Kraftausdauer Arm- und Brustmuskulatur',
+    description: 'Körper gerade wie ein Brett. Brust berührt den Boden. Arme vollständig strecken.',
+    technique: 'Hände schulterbreit, Finger nach vorn. Körper durchgespannt – Kopf, Rumpf, Beine in einer Geraden. Takt: 30 Liegestütze/Minute.',
+    unit: 'Wiederholungen',
+    defaultReps: 10,
+    sets: 3,
+    rest: 60,
+    lvtNorm: { ak9: 5, ak10: 8, ak11: 10, ak12: 12, ak13: 15, ak14: 18 }
+  },
+  klimmzuege: {
+    name: 'Klimmzüge',
+    category: 'athletik',
+    icon: '🏋️',
+    lvtTest: 'Maximalkraft Armbeuger und Schultergürtel',
+    description: 'Streckhang mit Ristgriff. Kinn über die Stange. Keine Körperschwünge.',
+    technique: 'Schulterbreiter Ristgriff. Arme nach jeder Wiederholung vollständig strecken. Kontrolliert absenken – nicht fallen lassen.',
+    unit: 'Wiederholungen',
+    defaultReps: 3,
+    sets: 2,
+    rest: 90,
+    lvtNorm: { ak9: 1, ak10: 2, ak11: 3, ak12: 4, ak13: 5, ak14: 6 }
+  },
+  schlussdreisprung: {
+    name: 'Schlussdreisprung',
+    category: 'athletik',
+    icon: '🦘',
+    lvtTest: 'Schnellkraft Beinmuskulatur',
+    description: 'Drei aufeinanderfolgende beidbeinige Sprünge ohne Pause. Arme zum Schwungholen nutzen.',
+    technique: 'Leichte Hockstellung vor der Absprunglinie. Beidbeiniger Absprung. Drei Sprünge fließend ohne Halt.',
+    unit: 'Meter (Gesamtweite)',
+    defaultReps: 1,
+    sets: 3,
+    rest: 60,
+    lvtNorm: { ak9: 4.0, ak10: 4.5, ak11: 5.0, ak12: 5.5, ak13: 6.0, ak14: 6.5 }
+  },
+  bauchmuskel: {
+    name: 'Bauchmuskeltest',
+    category: 'athletik',
+    icon: '🏋️',
+    lvtTest: 'Maximalkraft Bauch- und Hüftmuskulatur',
+    description: 'Aus der Rückenlage in den Sitz. Drei Stufen: Arme vorgestreckt (1P), verschränkt (2P), hinter Kopf (3P).',
+    technique: 'Beine ca. 90° angewinkelt, Füße aufgestellt. Kein schwungvolles Aufrichten – langsame Ausführung.',
+    unit: 'Punkte (1–3)',
+    defaultReps: 1,
+    sets: 1,
+    rest: 30,
+    lvtNorm: { ak9: 1, ak10: 1, ak11: 2, ak12: 2, ak13: 3, ak14: 3 }
+  },
+  rueckenhaltetest: {
+    name: 'Rückenhaltetest',
+    category: 'athletik',
+    icon: '🦸',
+    lvtTest: 'Kraftausdauer Rückenstreckmuskulatur',
+    description: 'In Bauchlage auf erhöhtem Kasten. Oberkörper waagerecht halten, Arme nach vorn gestreckt.',
+    technique: 'Oberkante Becken an Vorderkante Kasten. Arme in Eintauchhaltung. Ruhig halten – kein Hohlkreuz. Max. 1:20 min.',
+    unit: 'Sekunden',
+    defaultReps: 60,
+    sets: 1,
+    rest: 30,
+    lvtNorm: { ak9: 20, ak10: 30, ak11: 40, ak12: 50, ak13: 60, ak14: 70 }
+  },
+  // BEWEGLICHKEIT
+  schulterbeweglichkeit: {
+    name: 'Schulterbeweglichkeit',
+    category: 'beweglichkeit',
+    icon: '🔄',
+    lvtTest: 'Beweglichkeit Schultergürtel',
+    description: 'In Bauchlage, Stab mit gestreckten Armen anheben. Abstand Stab–Boden messen.',
+    technique: 'Arme schulterbreit parallel. Stirn und Oberkörper berühren den Boden. Handgelenke nicht abknicken. Stab parallel zum Boden.',
+    unit: 'Zentimeter',
+    defaultReps: 1,
+    sets: 2,
+    rest: 30,
+    lvtNorm: { ak9: 20, ak10: 25, ak11: 30, ak12: 35, ak13: 40, ak14: 45 }
+  },
+  rumpfbeugen: {
+    name: 'Rumpfbeugen',
+    category: 'beweglichkeit',
+    icon: '🤸',
+    lvtTest: 'Rumpfbeweglichkeit und Dehnfähigkeit',
+    description: 'Aus dem Streckstand langsam nach vorne beugen. Knie gestreckt. Fingerspitzen (1P), Faust (2P), Handfläche (3P).',
+    technique: 'Langsam und gleichmäßig ausatmen beim Beugen. Knie müssen gestreckt bleiben. Position 3 Sekunden halten.',
+    unit: 'Punkte (1–3)',
+    defaultReps: 1,
+    sets: 1,
+    rest: 30,
+    lvtNorm: { ak9: 1, ak10: 1, ak11: 2, ak12: 2, ak13: 3, ak14: 3 }
+  },
+  fussstreckung: {
+    name: 'Fußstreckung & -beugung',
+    category: 'beweglichkeit',
+    icon: '🦶',
+    lvtTest: 'Fußbeweglichkeit',
+    description: 'Im Strecksitz Fuß strecken und anziehen. Winkel in Grad messen.',
+    technique: 'Fuß ohne Einwärts- oder Auswärtsdrehung bewegen. Schlechterer Fuß wird gemessen. Endstellung halten.',
+    unit: 'Grad',
+    defaultReps: 1,
+    sets: 1,
+    rest: 20,
+    lvtNorm: { ak9: 40, ak10: 45, ak11: 50, ak12: 55, ak13: 60, ak14: 65 }
+  },
+  // VORBEREITUNGSÜBUNGEN (nicht direkt LVT, aber vorbereitung)
+  schulterrotation: {
+    name: 'Schulter-Außenrotation',
+    category: 'vorbereitung',
+    icon: '🔄',
+    lvtTest: 'Vorbereitung Schulterbeweglichkeit',
+    description: 'Ellenbogen am Körper, Arm nach außen drehen. Mit Theraband oder ohne.',
+    technique: 'Ellenbogen 90° gebeugt, am Körper fixiert. Langsam nach außen drehen und zurück.',
+    unit: 'Wiederholungen je Arm',
+    defaultReps: 15,
+    sets: 3,
+    rest: 30,
+    lvtNorm: null
+  },
+  wandschieben: {
+    name: 'Wall Slides',
+    category: 'vorbereitung',
+    icon: '🧱',
+    lvtTest: 'Vorbereitung Schulterbeweglichkeit',
+    description: 'Rücken an der Wand, Arme hochschieben. Schulterblatt-Kontrolle.',
+    technique: 'Rücken und Arme immer an der Wand. Langsam hoch und runter.',
+    unit: 'Wiederholungen',
+    defaultReps: 10,
+    sets: 3,
+    rest: 30,
+    lvtNorm: null
+  },
+  huefte_dehnen: {
+    name: 'Hüftbeuger-Dehnung',
+    category: 'vorbereitung',
+    icon: '🤸',
+    lvtTest: 'Vorbereitung Rumpfbeugen',
+    description: 'Knie auf dem Boden, Hüfte nach vorne schieben. Für Rumpfbeweglichkeit.',
+    technique: 'Rücken gerade, nicht ins Hohlkreuz. Langsam einatmen beim Dehnen.',
+    unit: 'Sekunden je Seite',
+    defaultReps: 30,
+    sets: 3,
+    rest: 15,
+    lvtNorm: null
+  },
+  fersenheben: {
+    name: 'Fersenheben (einbeinig)',
+    category: 'vorbereitung',
+    icon: '🦶',
+    lvtTest: 'Vorbereitung Fußbeweglichkeit',
+    description: 'Auf einem Bein stehend, Ferse heben und senken. Für Sprunggelenk-Stabilität.',
+    technique: 'Langsam und kontrolliert. Nicht schwingen. Beide Seiten gleich.',
+    unit: 'Wiederholungen je Bein',
+    defaultReps: 20,
+    sets: 3,
+    rest: 20,
+    lvtNorm: null
+  }
+};
+
+// ── TAGESHERAUSFORDERUNGEN (LVT-Vorbereitung) ─────────────────────────────────
+// 28 verschiedene Challenges – 4 Wochen Vorbereitung
+const LVT_DAILY_CHALLENGES = [
+  // Woche 1: Grundlagen
+  { day:1,  focus:'Liegestütze',         exercises:[{key:'liegestuetze',sets:3,reps:8,rest:60}],  pts:5, tip:'Körper gerade halten – das ist das Wichtigste!' },
+  { day:2,  focus:'Schulterbeweglichkeit',exercises:[{key:'schulterbeweglichkeit',sets:3,reps:1,rest:30},{key:'schulterrotation',sets:3,reps:12,rest:30}], pts:4, tip:'Langsam und kontrolliert – Qualität vor Quantität.' },
+  { day:3,  focus:'Rumpfbeugen',          exercises:[{key:'rumpfbeugen',sets:3,reps:1,rest:20},{key:'huefte_dehnen',sets:3,reps:30,rest:15}], pts:4, tip:'Knie gestreckt lassen – das ist die Herausforderung!' },
+  { day:4,  focus:'Klimmzüge',            exercises:[{key:'klimmzuege',sets:3,reps:2,rest:90}],   pts:5, tip:'Auch 1 Klimmzug ist ein Klimmzug. Arme vollständig strecken!' },
+  { day:5,  focus:'Fußbeweglichkeit',     exercises:[{key:'fussstreckung',sets:2,reps:1,rest:20},{key:'fersenheben',sets:3,reps:15,rest:20}], pts:4, tip:'Fuß ohne Drehung bewegen – gerade strecken und anziehen.' },
+  { day:6,  focus:'Bauchmuskel',          exercises:[{key:'bauchmuskel',sets:3,reps:1,rest:30}],  pts:4, tip:'Langsam aufrichten – kein Schwung!' },
+  { day:7,  focus:'Aktive Erholung',      exercises:[{key:'huefte_dehnen',sets:3,reps:30,rest:15},{key:'schulterrotation',sets:2,reps:10,rest:20}], pts:3, tip:'Heute locker bleiben – Erholung ist Training.' },
+
+  // Woche 2: Aufbau
+  { day:8,  focus:'Liegestütze Aufbau',   exercises:[{key:'liegestuetze',sets:4,reps:10,rest:60}], pts:5, tip:'Takt halten: 1 Sekunde runter, 1 Sekunde hoch.' },
+  { day:9,  focus:'Schulter komplett',    exercises:[{key:'schulterbeweglichkeit',sets:3,reps:1,rest:30},{key:'wandschieben',sets:3,reps:10,rest:30}], pts:5, tip:'Schulterblätter zusammenziehen beim Hochschieben.' },
+  { day:10, focus:'Rückenhaltetest',      exercises:[{key:'rueckenhaltetest',sets:2,reps:30,rest:60}], pts:5, tip:'Eintauchhaltung – Arme nach vorn, Blick nach unten.' },
+  { day:11, focus:'Klimmzüge Aufbau',     exercises:[{key:'klimmzuege',sets:4,reps:3,rest:90}],   pts:5, tip:'Kontrolliert absenken – das stärkt genauso wie hochziehen.' },
+  { day:12, focus:'Sprungkraft',          exercises:[{key:'schlussdreisprung',sets:3,reps:1,rest:60}], pts:5, tip:'Arme schwingen mit! Drei Sprünge fließend ohne Pause.' },
+  { day:13, focus:'Beweglichkeit komplett',exercises:[{key:'rumpfbeugen',sets:2,reps:1,rest:20},{key:'fussstreckung',sets:2,reps:1,rest:20},{key:'schulterbeweglichkeit',sets:2,reps:1,rest:30}], pts:6, tip:'Alle drei Beweglichkeitstests des LVT in einer Einheit.' },
+  { day:14, focus:'Aktive Erholung',      exercises:[{key:'huefte_dehnen',sets:4,reps:30,rest:15},{key:'fersenheben',sets:3,reps:20,rest:20}], pts:3, tip:'Dehnen und Mobilisieren – der Körper dankt es dir.' },
+
+  // Woche 3: Intensivierung
+  { day:15, focus:'Liegestütze Intensiv', exercises:[{key:'liegestuetze',sets:4,reps:12,rest:60}], pts:6, tip:'Wenn du den Takt nicht mehr halten kannst, ist Schluss.' },
+  { day:16, focus:'Klimmzüge Intensiv',   exercises:[{key:'klimmzuege',sets:4,reps:4,rest:90}],   pts:6, tip:'Ristgriff, schulterbreit. Kein Schwingen!' },
+  { day:17, focus:'Bauch & Rücken',       exercises:[{key:'bauchmuskel',sets:3,reps:1,rest:30},{key:'rueckenhaltetest',sets:2,reps:40,rest:60}], pts:6, tip:'Bauch und Rücken zusammen – das ist dein Kraftzentrum.' },
+  { day:18, focus:'Sprungkraft Intensiv', exercises:[{key:'schlussdreisprung',sets:5,reps:1,rest:60}], pts:6, tip:'Bester von 3 Versuchen zählt beim LVT. Heute 5 Versuche!' },
+  { day:19, focus:'Schulter Intensiv',    exercises:[{key:'schulterbeweglichkeit',sets:4,reps:1,rest:30},{key:'schulterrotation',sets:4,reps:15,rest:30},{key:'wandschieben',sets:3,reps:12,rest:30}], pts:7, tip:'Schultergesundheit ist das A und O im Schwimmen.' },
+  { day:20, focus:'Beweglichkeit Intensiv',exercises:[{key:'rumpfbeugen',sets:3,reps:1,rest:20},{key:'fussstreckung',sets:3,reps:1,rest:20},{key:'huefte_dehnen',sets:4,reps:45,rest:15}], pts:6, tip:'Ziel: Handfläche beim Rumpfbeugen. Knie gestreckt!' },
+  { day:21, focus:'Aktive Erholung',      exercises:[{key:'schulterrotation',sets:2,reps:10,rest:20},{key:'fersenheben',sets:2,reps:15,rest:20}], pts:3, tip:'Letzte Ruhewoche vor dem Endspurt.' },
+
+  // Woche 4: LVT-Simulation
+  { day:22, focus:'LVT-Simulation Athletik 1',exercises:[{key:'liegestuetze',sets:1,reps:20,rest:120},{key:'klimmzuege',sets:1,reps:5,rest:120}], pts:8, tip:'Wie beim echten LVT: Ein Versuch, maximale Leistung.' },
+  { day:23, focus:'LVT-Simulation Beweglichkeit',exercises:[{key:'schulterbeweglichkeit',sets:1,reps:1,rest:60},{key:'rumpfbeugen',sets:1,reps:1,rest:60},{key:'fussstreckung',sets:1,reps:1,rest:60}], pts:7, tip:'Alle drei Beweglichkeitstests – wie beim echten LVT.' },
+  { day:24, focus:'LVT-Simulation Athletik 2',exercises:[{key:'schlussdreisprung',sets:3,reps:1,rest:60},{key:'bauchmuskel',sets:1,reps:1,rest:60}], pts:8, tip:'Schlussdreisprung: 3 Versuche, bester zählt.' },
+  { day:25, focus:'Rücken & Stabilität',  exercises:[{key:'rueckenhaltetest',sets:3,reps:60,rest:60}], pts:7, tip:'1 Minute und 20 Sekunden ist das Maximum beim LVT.' },
+  { day:26, focus:'Kompletteinheit',      exercises:[{key:'liegestuetze',sets:3,reps:10,rest:60},{key:'klimmzuege',sets:3,reps:3,rest:90},{key:'bauchmuskel',sets:2,reps:1,rest:30}], pts:8, tip:'Alle Athletik-Tests in einer Einheit.' },
+  { day:27, focus:'Letzte Beweglichkeit', exercises:[{key:'schulterbeweglichkeit',sets:3,reps:1,rest:30},{key:'rumpfbeugen',sets:3,reps:1,rest:20},{key:'fussstreckung',sets:2,reps:1,rest:20}], pts:6, tip:'Letzte Vorbereitung – locker und konzentriert.' },
+  { day:28, focus:'Ruhetag vor LVT',      exercises:[{key:'huefte_dehnen',sets:2,reps:30,rest:15},{key:'schulterrotation',sets:2,reps:10,rest:20}], pts:3, tip:'Heute nur locker dehnen. Morgen bist du bereit!' }
+];
+
+// ── LVT CHALLENGE STATE ───────────────────────────────────────────────────────
+function getLVTState() {
+  return JSON.parse(localStorage.getItem('st_lvt_state') || '{}');
+}
+function saveLVTState(state) {
+  localStorage.setItem('st_lvt_state', JSON.stringify(state));
+}
+
+function getLVTStartDate() {
+  const state = getLVTState();
+  if (!state.startDate) {
+    // Set start date to today
+    state.startDate = today();
+    saveLVTState(state);
+  }
+  return state.startDate;
+}
+
+function getLVTDay() {
+  const start = getLVTStartDate();
+  const startD = new Date(start + 'T12:00:00');
+  const todayD = new Date(today() + 'T12:00:00');
+  const diff = Math.floor((todayD - startD) / 86400000);
+  return Math.min(Math.max(diff + 1, 1), 28);
+}
+
+function getTodayChallenge() {
+  const day = getLVTDay();
+  return LVT_DAILY_CHALLENGES.find(c => c.day === day) || LVT_DAILY_CHALLENGES[0];
+}
+
+function isChallengeCompletedToday() {
+  const state = getLVTState();
+  return state.completedDates && state.completedDates.includes(today());
+}
+
+async function completeTodayChallenge() {
+  const challenge = getTodayChallenge();
+  const state = getLVTState();
+  if (!state.completedDates) state.completedDates = [];
+  if (!state.completedDates.includes(today())) {
+    state.completedDates.push(today());
+    saveLVTState(state);
+
+    // Award points
+    await logPts(
+      [{ reason: `LVT-Herausforderung Tag ${challenge.day}: ${challenge.focus}`, pts: challenge.pts }],
+      'lvt_' + today(),
+      'lvt_challenge',
+      today()
+    );
+
+    haptic('success');
+    showToast(`LVT-Challenge abgeschlossen! +${challenge.pts} Punkte 🏆`);
+    renderLVTChallenge();
+    if (typeof updateHeaderStats === 'function') updateHeaderStats();
+  }
+}
+
+// ── RENDER LVT CHALLENGE (Heute-Seite) ───────────────────────────────────────
+function renderLVTChallenge() {
+  const container = document.getElementById('lvt-challenge-container');
+  if (!container) return;
+
+  const challenge = getTodayChallenge();
+  const completed = isChallengeCompletedToday();
+  const day = getLVTDay();
+  const totalDays = 28;
+  const pct = Math.round((day / totalDays) * 100);
+
+  const exerciseList = challenge.exercises.map(ex => {
+    const exDef = LVT_EXERCISES[ex.key];
+    if (!exDef) return '';
+    const repsLabel = ex.sets > 1
+      ? `${ex.sets}×${ex.reps} ${exDef.unit}`
+      : `${ex.reps} ${exDef.unit}`;
+    return `<div class="lvt-ex-item">
+      <span class="lvt-ex-icon">${exDef.icon}</span>
+      <div class="lvt-ex-info">
+        <div class="lvt-ex-name">${exDef.name}</div>
+        <div class="lvt-ex-reps">${repsLabel}${ex.rest ? ` · Pause ${ex.rest}s` : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="lvt-card ${completed?'done':''}" onclick="${completed?'':'showLVTDetail()'}">
+      <div class="lvt-card-header">
+        <div class="lvt-header-left">
+          <div class="lvt-badge">LVT</div>
+          <div class="lvt-day-info">
+            <div class="lvt-day-label">Tagesherausforderung · Tag ${day}/28</div>
+            <div class="lvt-focus">${challenge.focus}</div>
+          </div>
+        </div>
+        <div class="lvt-pts-badge">+${challenge.pts} Pkt.</div>
+      </div>
+
+      <div class="lvt-progress-bar-wrap">
+        <div class="lvt-progress-bar-fill" style="width:${pct}%"></div>
+      </div>
+
+      <div class="lvt-exercises">${exerciseList}</div>
+
+      <div class="lvt-tip">💡 ${challenge.tip}</div>
+
+      ${completed
+        ? `<div class="lvt-done-badge">✓ Heute erledigt!</div>`
+        : `<button class="btn full" onclick="event.stopPropagation();completeTodayChallenge()" style="margin-top:10px">
+             ✓ Herausforderung abgeschlossen!
+           </button>`
+      }
+    </div>
+  `;
+}
+
+// ── LVT DETAIL MODAL ──────────────────────────────────────────────────────────
+function showLVTDetail() {
+  const challenge = getTodayChallenge();
+  const modal = document.getElementById('mlvtdetail');
+  if (!modal) return;
+
+  const content = document.getElementById('lvt-detail-content');
+  if (content) {
+    content.innerHTML = `
+      <div class="lvt-detail-header">
+        <div class="lvt-badge large">LVT Tag ${challenge.day}</div>
+        <h3>${challenge.focus}</h3>
+        <p style="font-size:.83rem;color:var(--tm)">Vorbereitung auf den Landesvielseitigkeitstest</p>
+      </div>
+
+      ${challenge.exercises.map(ex => {
+        const exDef = LVT_EXERCISES[ex.key];
+        if (!exDef) return '';
+        return `<div class="lvt-detail-exercise">
+          <div class="lvt-detail-ex-header">
+            <span style="font-size:1.4rem">${exDef.icon}</span>
+            <div>
+              <div class="lvt-detail-ex-name">${exDef.name}</div>
+              ${exDef.lvtTest ? `<div class="lvt-detail-ex-test">LVT: ${exDef.lvtTest}</div>` : ''}
+            </div>
+            <div class="lvt-detail-ex-reps">${ex.sets}×${ex.reps} ${exDef.unit}</div>
+          </div>
+          <div class="lvt-detail-ex-desc">${exDef.description}</div>
+          <div class="lvt-detail-ex-tech">
+            <strong>Technik:</strong> ${exDef.technique}
+          </div>
+          ${ex.rest ? `<div class="lvt-detail-ex-rest">Pause: ${ex.rest} Sekunden</div>` : ''}
+        </div>`;
+      }).join('')}
+
+      <div class="lvt-detail-tip">
+        <span style="font-size:1.2rem">💡</span>
+        <p>${challenge.tip}</p>
+      </div>
+    `;
+  }
+
+  modal.classList.remove('hidden');
+}
+
+// ── PUNKTESYSTEM FÜR LANDTRAINING ─────────────────────────────────────────────
+// Override calcPts to be fair for all training types
+const _origCalcPtsLVT = window.calcPts;
+window.calcPts = function(entry) {
+  const reasons = [];
+  let total = 0;
+  const add = (r, p) => { reasons.push({reason:r, pts:p}); total += p; };
+
+  // Base points – same for ALL training types (fair!)
+  add('Training eingetragen', 10);
+
+  // All required fields
+  if (entry.date && entry.type && entry.durationMin && entry.load && entry.wellbeing && entry.planCompleted) {
+    add('Alle Pflichtfelder vollständig', 2);
+  }
+
+  // Reflection – same for all
+  if (entry.reflGood || entry.reflHard || entry.reflNext) {
+    add('Trainingsreflexion ausgefüllt', 3);
+  }
+
+  // Plan completion – same for all
+  if (entry.planCompleted === 'ja') add('Trainingsplan vollständig absolviert', 5);
+  else if (entry.planCompleted === 'teilweise') add('Trainingsplan teilweise absolviert', 2);
+
+  // Extra exercise – same for all
+  if (entry.hasExtra && entry.extraDurMin >= 10) add('Extraübung (≥10 min)', 3);
+
+  // Type-specific bonus points (small, not discriminatory)
+  const type = entry.type || '';
+  if (type === 'Krafttraining' || type === 'Athletiktraining') {
+    if (entry.sets && entry.sets.length >= 2) add('Strukturiertes Krafttraining (≥2 Aufgaben)', 2);
+  }
+  if (type === 'Beweglichkeit') {
+    if (entry.durationMin >= 20) add('Ausführliche Beweglichkeitseinheit (≥20 min)', 2);
+  }
+  if (type === 'Regeneration') {
+    add('Regeneration bewusst dokumentiert', 2); // Bonus for documenting recovery
+  }
+  if (type === 'Wassertraining' || type === 'Techniktraining') {
+    if (entry.km && entry.km >= 2) add('Umfangreiche Schwimmeinheit (≥2 km)', 2);
+  }
+
+  return { total, reasons };
+};
+
+// ── INJECT LVT INTO HEUTE PAGE ────────────────────────────────────────────────
+const _origRenderHeuteLVT = window.renderHeutePage;
+window.renderHeutePage = async function() {
+  await _origRenderHeuteLVT();
+
+  // Inject LVT challenge container after motivation card
+  if (!document.getElementById('lvt-challenge-container')) {
+    const motivCard = document.querySelector('.motiv');
+    if (motivCard) {
+      const div = document.createElement('div');
+      div.id = 'lvt-challenge-container';
+      motivCard.after(div);
+    }
+  }
+  renderLVTChallenge();
+};
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('swimtrack-ready', () => {
+  // Initialize LVT start date if not set
+  getLVTStartDate();
+});
+</script>
+<script>
+
+function resetLVT() {
+  showConfirm('LVT-Programm neu starten?', 'Der Fortschritt wird zurückgesetzt. Tag 1 beginnt heute neu.',
+    () => {
+      const state = getLVTState();
+      state.startDate = today();
+      state.completedDates = [];
+      saveLVTState(state);
+      closeM('mconfirm');
+      showToast('LVT-Programm neu gestartet! Tag 1 beginnt heute.');
+      renderLVTChallenge();
+      // Update settings info
+      const infoEl = document.getElementById('lvt-day-info');
+      if (infoEl) infoEl.textContent = 'Tag 1 von 28 – Viel Erfolg!';
+    }
+  );
+}
+
+// Update LVT day info in settings
+const _origLoadSettingsLVT = window.loadSettingsPage;
+window.loadSettingsPage = async function() {
+  if (_origLoadSettingsLVT) await _origLoadSettingsLVT();
+  const infoEl = document.getElementById('lvt-day-info');
+  if (infoEl) {
+    const day = getLVTDay();
+    const completed = isChallengeCompletedToday();
+    infoEl.textContent = 'Tag ' + day + ' von 28' + (completed ? ' · Heute erledigt ✓' : ' · Heute noch offen');
+  }
+};
+
+</script>
+
+<!-- PHYSIO DETAIL MODAL -->
+<div id="mphysiodetail" class="moverlay hidden">
+  <div class="msheet" style="max-height:90vh">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="font-size:1rem">Knie-Physiotherapie</h3>
+      <button class="btnsm" onclick="closeM('mphysiodetail')">✕</button>
+    </div>
+    <div id="physio-detail-content"></div>
+    <button class="btn full" onclick="completeTodayPhysio();closeM('mphysiodetail')"
+      style="margin-top:12px;background:linear-gradient(135deg,#27AE60,#1ABC9C)">
+      ✓ Physiotherapie erledigt!
+    </button>
+    <button class="btn2 full" onclick="closeM('mphysiodetail')" style="margin-top:8px">Schließen</button>
+  </div>
+</div>
+
+<script>
+/* SwimTrack – Physiotherapie X-Beine + Faires Punktesystem
+   Basiert auf evidenzbasierten Übungen für Genu valgum
+   Quellen: EvoFitLab, Foundational Rehab, Gesundheitsportal Austria
+   ================================================================ */
+'use strict';
+
+// ══════════════════════════════════════════════════════════════════
+// 1. FAIRES PUNKTESYSTEM (umfangs- und dauerbasiert)
+// ══════════════════════════════════════════════════════════════════
+
+window.calcPts = function(entry) {
+  const reasons = [];
+  let total = 0;
+  const add = (r, p) => { if (p > 0) { reasons.push({reason:r, pts:p}); total += p; } };
+
+  const type = entry.type || '';
+  const dur  = parseInt(entry.durationMin) || 0;
+  const km   = parseFloat(entry.km) || 0;
+
+  // ── BASIS-PUNKTE: Dauer-basiert (fair für alle Trainingsarten) ──
+  // Jede Minute Training = Wert. Schwimmen ist intensiver → höherer Faktor.
+  let basePts = 0;
+  if (type === 'Wassertraining' || type === 'Techniktraining') {
+    // Schwimmen: 0.15 Punkte/Minute (90 min = 13.5 → 14 Pkt)
+    basePts = Math.round(dur * 0.15);
+    // Zusatz für Kilometer (1,9 km = +4 Pkt)
+    if (km >= 1) basePts += Math.round(km * 2);
+  } else if (type === 'Krafttraining' || type === 'Athletiktraining') {
+    // Kraft: 0.10 Punkte/Minute (60 min = 6 Pkt)
+    basePts = Math.round(dur * 0.10);
+  } else if (type === 'Ausdauertraining') {
+    // Ausdauer: 0.12 Punkte/Minute (45 min = 5 Pkt)
+    basePts = Math.round(dur * 0.12);
+    if (km >= 1) basePts += Math.round(km * 1.5);
+  } else if (type === 'Beweglichkeit') {
+    // Beweglichkeit: 0.08 Punkte/Minute (30 min = 2 Pkt)
+    basePts = Math.round(dur * 0.08);
+  } else if (type === 'Regeneration') {
+    // Regeneration: 0.06 Punkte/Minute + Bonus für Dokumentation
+    basePts = Math.round(dur * 0.06) + 2;
+  } else {
+    // Sonstiges: 0.08 Punkte/Minute
+    basePts = Math.round(dur * 0.08);
+  }
+
+  // Minimum 3, Maximum 20 Basispunkte
+  basePts = Math.max(3, Math.min(20, basePts));
+  add('Training dokumentiert (' + dur + ' min' + (km > 0 ? ', ' + km.toFixed(1) + ' km' : '') + ')', basePts);
+
+  // ── QUALITÄTS-BONUS (gleich für alle Trainingsarten) ──
+  if (entry.date && entry.type && entry.durationMin && entry.load && entry.wellbeing && entry.planCompleted) {
+    add('Alle Pflichtfelder vollständig', 2);
+  }
+  if (entry.reflGood || entry.reflHard || entry.reflNext) {
+    add('Trainingsreflexion ausgefüllt', 3);
+  }
+  if (entry.planCompleted === 'ja') add('Trainingsplan vollständig absolviert', 5);
+  else if (entry.planCompleted === 'teilweise') add('Trainingsplan teilweise absolviert', 2);
+
+  // ── STRUKTUR-BONUS ──
+  const sets = entry.sets || [];
+  if (sets.length >= 3) add('Strukturiertes Training (≥3 Aufgaben dokumentiert)', 2);
+
+  // ── EXTRA-ÜBUNG ──
+  if (entry.hasExtra && entry.extraDurMin >= 10) add('Extraübung (≥10 min)', 3);
+
+  return { total, reasons };
+};
+
+// ══════════════════════════════════════════════════════════════════
+// 2. PHYSIOTHERAPIE-PROGRAMM: X-BEINE / KNIEBESCHWERDEN
+// ══════════════════════════════════════════════════════════════════
+
+const PHYSIO_EXERCISES = {
+  // PHASE 1: AKTIVIERUNG & MOBILISATION (Woche 1-2)
+  glutebridge: {
+    name: 'Gesäßbrücke (Glute Bridge)',
+    icon: '🌉',
+    category: 'aktivierung',
+    description: 'Rückenlage, Knie gebeugt. Hüfte anheben und Gesäß anspannen. Knie nach außen drücken.',
+    technique: 'Theraband über den Knien (optional). Knie zeigen nach außen – nicht nach innen fallen lassen! Oben 2 Sekunden halten.',
+    unit: 'Wiederholungen',
+    defaultReps: 15,
+    sets: 3,
+    rest: 30,
+    knieFriendly: true,
+    xBeinFocus: 'Stärkt Gesäßmuskel (Glute max/med) – Hauptmuskel gegen X-Beine'
+  },
+  clamshell: {
+    name: 'Muschel (Clamshell)',
+    icon: '🦪',
+    category: 'aktivierung',
+    description: 'Seitlage, Knie 45° gebeugt, Füße zusammen. Oberes Knie zur Decke heben ohne Hüfte zu drehen.',
+    technique: 'Hüfte darf nicht nach hinten rollen! Langsam heben und senken. Theraband über Knien für mehr Widerstand.',
+    unit: 'Wiederholungen je Seite',
+    defaultReps: 15,
+    sets: 3,
+    rest: 30,
+    knieFriendly: true,
+    xBeinFocus: 'Aktiviert Hüftabduktoren (Glute medius) – wichtigster Muskel bei X-Beinen'
+  },
+  seitliches_beinheben: {
+    name: 'Seitliches Beinheben',
+    icon: '🦵',
+    category: 'aktivierung',
+    description: 'Seitlage, unteres Knie gebeugt. Oberes Bein gestreckt zur Decke heben.',
+    technique: 'Fuß bleibt waagerecht (nicht nach oben drehen). 5 Sekunden halten. Langsam absenken.',
+    unit: 'Wiederholungen je Seite',
+    defaultReps: 15,
+    sets: 3,
+    rest: 30,
+    knieFriendly: true,
+    xBeinFocus: 'Stärkt Hüftabduktoren – korrigiert Knie-Einwärtskollaps'
+  },
+  fire_hydrant: {
+    name: 'Fire Hydrant',
+    icon: '🔥',
+    category: 'aktivierung',
+    description: 'Auf Händen und Knien. Knie seitlich zur Decke heben (wie ein Hund am Hydranten).',
+    technique: 'Knie bleibt 90° gebeugt. Hüfte nicht mitdrehen. Langsam und kontrolliert.',
+    unit: 'Wiederholungen je Seite',
+    defaultReps: 12,
+    sets: 3,
+    rest: 30,
+    knieFriendly: true,
+    xBeinFocus: 'Außenrotation der Hüfte – direkte Korrektur der X-Bein-Stellung'
+  },
+  knoechel_mobilitaet: {
+    name: 'Sprunggelenk-Mobilisation',
+    icon: '🦶',
+    category: 'mobilitaet',
+    description: 'Im Stehen oder Sitzen: Fuß kreisen, strecken, anziehen. Beide Richtungen.',
+    technique: 'Langsam und vollständig. Wichtig für Schwimmen und Knie-Ausrichtung.',
+    unit: 'Kreise je Richtung je Fuß',
+    defaultReps: 15,
+    sets: 2,
+    rest: 15,
+    knieFriendly: true,
+    xBeinFocus: 'Verbessert Sprunggelenk-Beweglichkeit – reduziert Kompensation im Knie'
+  },
+
+  // PHASE 2: KRAFT & KONTROLLE (Woche 3-4)
+  einbeinige_bruecke: {
+    name: 'Einbeinige Gesäßbrücke',
+    icon: '🌉',
+    category: 'kraft',
+    description: 'Wie Gesäßbrücke, aber ein Bein gestreckt in der Luft. Hüfte gerade halten.',
+    technique: 'Hüfte nicht absinken lassen. Knie des Standbeins zeigt nach außen. Langsam und kontrolliert.',
+    unit: 'Wiederholungen je Seite',
+    defaultReps: 10,
+    sets: 3,
+    rest: 45,
+    knieFriendly: true,
+    xBeinFocus: 'Einseitige Gesäßkraft – korrigiert Asymmetrien'
+  },
+  kniebeuge_band: {
+    name: 'Kniebeuge mit Theraband',
+    icon: '🏋️',
+    category: 'kraft',
+    description: 'Theraband über den Knien. Kniebeuge – Knie aktiv nach außen drücken gegen das Band.',
+    technique: 'Knie zeigen über die Zehen. Nicht nach innen fallen lassen. Nur so tief wie schmerzfrei!',
+    unit: 'Wiederholungen',
+    defaultReps: 12,
+    sets: 3,
+    rest: 45,
+    knieFriendly: false, // nur wenn schmerzfrei
+    xBeinFocus: 'Trainiert korrekte Knie-Ausrichtung unter Last'
+  },
+  seitgang_band: {
+    name: 'Seitgang mit Band (Lateral Walk)',
+    icon: '🦀',
+    category: 'kraft',
+    description: 'Theraband über Knien oder Knöcheln. Leichte Hocke. Seitwärts gehen – Spannung halten.',
+    technique: 'Knie zeigen nach außen. Schritte gleichmäßig. 20 Schritte je Richtung.',
+    unit: 'Schritte je Richtung',
+    defaultReps: 20,
+    sets: 3,
+    rest: 45,
+    knieFriendly: true,
+    xBeinFocus: 'Stärkt Hüftabduktoren unter Bewegung – funktionell für Alltag und Sport'
+  },
+  einbeinstand: {
+    name: 'Einbeinstand mit Kontrolle',
+    icon: '🦩',
+    category: 'kraft',
+    description: 'Auf einem Bein stehen. Knie leicht gebeugt. Knie zeigt über die Zehen – nicht nach innen!',
+    technique: 'Im Spiegel kontrollieren. 30 Sekunden halten. Augen zu für mehr Schwierigkeit.',
+    unit: 'Sekunden je Bein',
+    defaultReps: 30,
+    sets: 3,
+    rest: 30,
+    knieFriendly: true,
+    xBeinFocus: 'Propriozeption und Gleichgewicht – Knie-Kontrolle im Alltag'
+  },
+  stufen_absenken: {
+    name: 'Stufen-Absenken (Step Down)',
+    icon: '🪜',
+    category: 'kraft',
+    description: 'Auf einer Stufe stehen. Gegenüberliegendes Bein langsam zum Boden absenken. Knie kontrollieren.',
+    technique: 'Knie des Standbeins zeigt über die Zehen – nicht nach innen! Langsam und kontrolliert.',
+    unit: 'Wiederholungen je Seite',
+    defaultReps: 8,
+    sets: 3,
+    rest: 45,
+    knieFriendly: false, // nur wenn schmerzfrei
+    xBeinFocus: 'Exzentrische Kraft – wichtig für Treppensteigen und Laufen'
+  },
+
+  // DEHNEN & MOBILISATION
+  adduktoren_dehnen: {
+    name: 'Adduktoren-Dehnung (Frosch)',
+    icon: '🐸',
+    category: 'dehnen',
+    description: 'Auf Händen und Knien, Knie weit auseinander, Füße nach außen. Langsam nach hinten setzen.',
+    technique: 'Langsam und ohne Schmerz. Tief einatmen. 30-60 Sekunden halten.',
+    unit: 'Sekunden',
+    defaultReps: 45,
+    sets: 2,
+    rest: 15,
+    knieFriendly: true,
+    xBeinFocus: 'Dehnt Adduktoren (Innenseite) – löst Zug der X-Bein-Stellung'
+  },
+  huefte_90_90: {
+    name: 'Hüftdehnung 90/90',
+    icon: '🤸',
+    category: 'dehnen',
+    description: 'Sitzen: Vorderbein 90° vor dir, Hinterbein 90° zur Seite. Aufrecht sitzen, nach vorne lehnen.',
+    technique: 'Rücken gerade. Beide Seiten gleich lang dehnen. Kein Schmerz – nur Zug.',
+    unit: 'Sekunden je Seite',
+    defaultReps: 30,
+    sets: 2,
+    rest: 15,
+    knieFriendly: true,
+    xBeinFocus: 'Hüftrotation verbessern – reduziert X-Bein-Kompensation'
+  },
+  it_band_dehnen: {
+    name: 'IT-Band Dehnung',
+    icon: '🦵',
+    category: 'dehnen',
+    description: 'Im Stehen: Bein hinter das andere kreuzen. Zur Seite lehnen. Außenseite des Oberschenkels dehnen.',
+    technique: 'Langsam zur Seite lehnen bis Zug spürbar. 30 Sekunden halten je Seite.',
+    unit: 'Sekunden je Seite',
+    defaultReps: 30,
+    sets: 2,
+    rest: 15,
+    knieFriendly: true,
+    xBeinFocus: 'Löst IT-Band-Spannung – häufige Ursache von Knieschmerzen'
+  },
+  knie_strecken_sitz: {
+    name: 'Knie strecken im Sitzen',
+    icon: '🪑',
+    category: 'mobilitaet',
+    description: 'Auf Stuhlkante sitzen. Knie langsam strecken, 5 Sekunden halten, absenken.',
+    technique: 'Schmerzfreier Bereich! Langsam und kontrolliert. Kein Schwung.',
+    unit: 'Wiederholungen je Bein',
+    defaultReps: 12,
+    sets: 3,
+    rest: 20,
+    knieFriendly: true,
+    xBeinFocus: 'Stärkt Quadrizeps ohne Kniebelastung – sicher bei Knieschmerzen'
+  }
+};
+
+// ── PHYSIOTHERAPIE TAGESPLAN (28 Tage) ───────────────────────────────────────
+const PHYSIO_DAILY_PLAN = [
+  // WOCHE 1: Aktivierung & Bewusstsein
+  { day:1,  phase:'Woche 1: Aktivierung', focus:'Einstieg – Gesäß aktivieren',
+    exercises:[{key:'glutebridge',sets:2,reps:12,rest:30},{key:'clamshell',sets:2,reps:12,rest:30},{key:'knoechel_mobilitaet',sets:2,reps:15,rest:15}],
+    pts:4, tip:'Heute lernst du die wichtigsten Muskeln kennen. Qualität vor Quantität!', safetyNote:'Alle Übungen sind knieschonend.' },
+  { day:2,  phase:'Woche 1: Aktivierung', focus:'Hüftabduktoren stärken',
+    exercises:[{key:'seitliches_beinheben',sets:3,reps:12,rest:30},{key:'fire_hydrant',sets:2,reps:10,rest:30}],
+    pts:4, tip:'Hüfte nicht mitdrehen – das ist die häufigste Fehlerquelle.', safetyNote:'Kein Schmerz im Knie – sofort stoppen wenn Schmerz.' },
+  { day:3,  phase:'Woche 1: Aktivierung', focus:'Dehnen & Mobilisieren',
+    exercises:[{key:'adduktoren_dehnen',sets:2,reps:45,rest:15},{key:'huefte_90_90',sets:2,reps:30,rest:15},{key:'it_band_dehnen',sets:2,reps:30,rest:15}],
+    pts:3, tip:'Dehnen löst die Spannung die X-Beine verursacht. Kein Schmerz – nur Zug.', safetyNote:'Sanft dehnen – nie in den Schmerz.' },
+  { day:4,  phase:'Woche 1: Aktivierung', focus:'Gesäßbrücke + Muschel',
+    exercises:[{key:'glutebridge',sets:3,reps:15,rest:30},{key:'clamshell',sets:3,reps:15,rest:30}],
+    pts:4, tip:'Theraband über den Knien macht die Übungen effektiver.', safetyNote:'Knieschonend – ideal bei Knieschmerzen.' },
+  { day:5,  phase:'Woche 1: Aktivierung', focus:'Gleichgewicht & Kontrolle',
+    exercises:[{key:'einbeinstand',sets:3,reps:20,rest:30},{key:'knoechel_mobilitaet',sets:2,reps:15,rest:15}],
+    pts:3, tip:'Im Spiegel kontrollieren: Knie zeigt über die Zehen – nicht nach innen!', safetyNote:'Knieschonend.' },
+  { day:6,  phase:'Woche 1: Aktivierung', focus:'Knie stärken (sitzend)',
+    exercises:[{key:'knie_strecken_sitz',sets:3,reps:12,rest:20},{key:'seitliches_beinheben',sets:2,reps:12,rest:30}],
+    pts:4, tip:'Knie strecken im Sitzen ist die sicherste Übung bei Knieschmerzen.', safetyNote:'Nur im schmerzfreien Bereich!' },
+  { day:7,  phase:'Woche 1: Aktivierung', focus:'Aktive Erholung',
+    exercises:[{key:'adduktoren_dehnen',sets:2,reps:45,rest:15},{key:'huefte_90_90',sets:2,reps:30,rest:15}],
+    pts:2, tip:'Heute locker dehnen. Der Körper braucht Erholung um zu wachsen.', safetyNote:'Sanft und entspannt.' },
+
+  // WOCHE 2: Aufbau
+  { day:8,  phase:'Woche 2: Aufbau', focus:'Gesäßbrücke intensiver',
+    exercises:[{key:'glutebridge',sets:3,reps:15,rest:30},{key:'clamshell',sets:3,reps:15,rest:30},{key:'fire_hydrant',sets:3,reps:12,rest:30}],
+    pts:5, tip:'Heute alle drei Aktivierungsübungen zusammen. Du schaffst das!', safetyNote:'Knieschonend.' },
+  { day:9,  phase:'Woche 2: Aufbau', focus:'Seitgang einführen',
+    exercises:[{key:'seitgang_band',sets:3,reps:20,rest:45},{key:'einbeinstand',sets:3,reps:25,rest:30}],
+    pts:5, tip:'Seitgang: Knie zeigen nach außen – nicht zusammenfallen lassen!', safetyNote:'Knieschonend.' },
+  { day:10, phase:'Woche 2: Aufbau', focus:'Einbeinige Brücke',
+    exercises:[{key:'einbeinige_bruecke',sets:3,reps:10,rest:45},{key:'knoechel_mobilitaet',sets:2,reps:15,rest:15}],
+    pts:5, tip:'Hüfte gerade halten – das ist die Herausforderung!', safetyNote:'Knieschonend.' },
+  { day:11, phase:'Woche 2: Aufbau', focus:'Dehnen komplett',
+    exercises:[{key:'adduktoren_dehnen',sets:3,reps:45,rest:15},{key:'huefte_90_90',sets:3,reps:30,rest:15},{key:'it_band_dehnen',sets:3,reps:30,rest:15}],
+    pts:4, tip:'Alle drei Dehnübungen – das ist dein Beweglichkeitsprogramm.', safetyNote:'Sanft dehnen.' },
+  { day:12, phase:'Woche 2: Aufbau', focus:'Knie-Kontrolle üben',
+    exercises:[{key:'knie_strecken_sitz',sets:3,reps:15,rest:20},{key:'einbeinstand',sets:3,reps:30,rest:30}],
+    pts:4, tip:'Einbeinstand: Augen zu für mehr Schwierigkeit!', safetyNote:'Knieschonend.' },
+  { day:13, phase:'Woche 2: Aufbau', focus:'Kraft & Aktivierung',
+    exercises:[{key:'glutebridge',sets:4,reps:15,rest:30},{key:'seitgang_band',sets:3,reps:20,rest:45},{key:'clamshell',sets:3,reps:15,rest:30}],
+    pts:6, tip:'Heute die längste Einheit bisher. Du bist auf dem richtigen Weg!', safetyNote:'Knieschonend.' },
+  { day:14, phase:'Woche 2: Aufbau', focus:'Aktive Erholung',
+    exercises:[{key:'adduktoren_dehnen',sets:2,reps:60,rest:15},{key:'huefte_90_90',sets:2,reps:45,rest:15}],
+    pts:2, tip:'Erholung ist Teil des Trainings. Heute locker bleiben.', safetyNote:'Sanft.' },
+
+  // WOCHE 3: Intensivierung
+  { day:15, phase:'Woche 3: Intensivierung', focus:'Kniebeuge mit Band (wenn schmerzfrei)',
+    exercises:[{key:'kniebeuge_band',sets:3,reps:10,rest:45},{key:'glutebridge',sets:3,reps:15,rest:30}],
+    pts:6, tip:'Kniebeuge NUR wenn kein Schmerz! Knie zeigen über die Zehen.', safetyNote:'⚠️ Nur wenn das Knie schmerzfrei ist! Sonst Knie strecken im Sitzen.' },
+  { day:16, phase:'Woche 3: Intensivierung', focus:'Seitgang + Einbeinstand',
+    exercises:[{key:'seitgang_band',sets:4,reps:20,rest:45},{key:'einbeinstand',sets:4,reps:30,rest:30}],
+    pts:6, tip:'Seitgang: Tempo langsam, Kontrolle hoch.', safetyNote:'Knieschonend.' },
+  { day:17, phase:'Woche 3: Intensivierung', focus:'Einbeinige Brücke intensiv',
+    exercises:[{key:'einbeinige_bruecke',sets:4,reps:12,rest:45},{key:'fire_hydrant',sets:3,reps:15,rest:30}],
+    pts:6, tip:'Hüfte gerade – das ist dein Fokus heute.', safetyNote:'Knieschonend.' },
+  { day:18, phase:'Woche 3: Intensivierung', focus:'Stufen-Absenken (wenn schmerzfrei)',
+    exercises:[{key:'stufen_absenken',sets:3,reps:8,rest:45},{key:'einbeinstand',sets:3,reps:30,rest:30}],
+    pts:6, tip:'Stufen-Absenken: Knie kontrollieren – nicht nach innen fallen!', safetyNote:'⚠️ Nur wenn das Knie schmerzfrei ist! Sonst Einbeinstand.' },
+  { day:19, phase:'Woche 3: Intensivierung', focus:'Dehnen & Kraft',
+    exercises:[{key:'adduktoren_dehnen',sets:3,reps:60,rest:15},{key:'huefte_90_90',sets:3,reps:45,rest:15},{key:'glutebridge',sets:3,reps:15,rest:30}],
+    pts:5, tip:'Dehnen und Kraft kombiniert – das ist die effektivste Kombination.', safetyNote:'Knieschonend.' },
+  { day:20, phase:'Woche 3: Intensivierung', focus:'Kompletteinheit',
+    exercises:[{key:'glutebridge',sets:3,reps:15,rest:30},{key:'clamshell',sets:3,reps:15,rest:30},{key:'seitgang_band',sets:3,reps:20,rest:45},{key:'einbeinstand',sets:3,reps:30,rest:30}],
+    pts:7, tip:'Alle Hauptübungen in einer Einheit. Das ist dein Fortschritt!', safetyNote:'Knieschonend.' },
+  { day:21, phase:'Woche 3: Intensivierung', focus:'Aktive Erholung',
+    exercises:[{key:'adduktoren_dehnen',sets:2,reps:60,rest:15},{key:'knoechel_mobilitaet',sets:2,reps:20,rest:15}],
+    pts:2, tip:'Letzte Ruhewoche. Morgen beginnt die finale Phase.', safetyNote:'Sanft.' },
+
+  // WOCHE 4: Integration
+  { day:22, phase:'Woche 4: Integration', focus:'Kraft-Fokus',
+    exercises:[{key:'einbeinige_bruecke',sets:4,reps:12,rest:45},{key:'seitgang_band',sets:4,reps:20,rest:45}],
+    pts:7, tip:'Du bist in der letzten Woche! Qualität bleibt das Wichtigste.', safetyNote:'Knieschonend.' },
+  { day:23, phase:'Woche 4: Integration', focus:'Kontrolle & Balance',
+    exercises:[{key:'einbeinstand',sets:4,reps:40,rest:30},{key:'knie_strecken_sitz',sets:3,reps:15,rest:20}],
+    pts:6, tip:'Einbeinstand 40 Sekunden – das ist dein neues Ziel!', safetyNote:'Knieschonend.' },
+  { day:24, phase:'Woche 4: Integration', focus:'Kniebeuge-Progression',
+    exercises:[{key:'kniebeuge_band',sets:4,reps:12,rest:45},{key:'glutebridge',sets:3,reps:15,rest:30}],
+    pts:7, tip:'Kniebeuge: Knie zeigen über die Zehen – das ist die wichtigste Regel.', safetyNote:'⚠️ Nur wenn schmerzfrei!' },
+  { day:25, phase:'Woche 4: Integration', focus:'Dehnen intensiv',
+    exercises:[{key:'adduktoren_dehnen',sets:3,reps:60,rest:15},{key:'huefte_90_90',sets:3,reps:45,rest:15},{key:'it_band_dehnen',sets:3,reps:45,rest:15}],
+    pts:5, tip:'Beweglichkeit ist genauso wichtig wie Kraft. Heute Fokus aufs Dehnen.', safetyNote:'Sanft.' },
+  { day:26, phase:'Woche 4: Integration', focus:'Kompletteinheit',
+    exercises:[{key:'glutebridge',sets:3,reps:15,rest:30},{key:'seitgang_band',sets:4,reps:20,rest:45},{key:'einbeinige_bruecke',sets:3,reps:12,rest:45},{key:'einbeinstand',sets:3,reps:35,rest:30}],
+    pts:8, tip:'Fast geschafft! Diese Übungen bleiben dein tägliches Programm.', safetyNote:'Knieschonend.' },
+  { day:27, phase:'Woche 4: Integration', focus:'Letzte Aktivierung',
+    exercises:[{key:'clamshell',sets:3,reps:15,rest:30},{key:'fire_hydrant',sets:3,reps:12,rest:30},{key:'adduktoren_dehnen',sets:2,reps:60,rest:15}],
+    pts:5, tip:'Vorletzter Tag. Du hast 27 Tage durchgehalten – das ist außergewöhnlich!', safetyNote:'Knieschonend.' },
+  { day:28, phase:'Woche 4: Integration', focus:'Abschluss & Ausblick',
+    exercises:[{key:'glutebridge',sets:2,reps:15,rest:30},{key:'einbeinstand',sets:2,reps:30,rest:30},{key:'adduktoren_dehnen',sets:2,reps:45,rest:15}],
+    pts:5, tip:'28 Tage geschafft! Diese Übungen täglich weiterführen – das ist der Schlüssel.', safetyNote:'Diese Übungen täglich weiterführen!' }
+];
+
+// ── PHYSIO STATE ──────────────────────────────────────────────────────────────
+function getPhysioState() {
+  return JSON.parse(localStorage.getItem('st_physio_state') || '{}');
+}
+function savePhysioState(state) {
+  localStorage.setItem('st_physio_state', JSON.stringify(state));
+}
+function getPhysioStartDate() {
+  const state = getPhysioState();
+  if (!state.startDate) { state.startDate = today(); savePhysioState(state); }
+  return state.startDate;
+}
+function getPhysioDay() {
+  const start = getPhysioStartDate();
+  const diff = Math.floor((new Date(today()+'T12:00:00') - new Date(start+'T12:00:00')) / 86400000);
+  return Math.min(Math.max(diff + 1, 1), 28);
+}
+function getTodayPhysio() {
+  const day = getPhysioDay();
+  return PHYSIO_DAILY_PLAN.find(p => p.day === day) || PHYSIO_DAILY_PLAN[0];
+}
+function isPhysioCompletedToday() {
+  const state = getPhysioState();
+  return state.completedDates && state.completedDates.includes(today());
+}
+
+async function completeTodayPhysio() {
+  const plan = getTodayPhysio();
+  const state = getPhysioState();
+  if (!state.completedDates) state.completedDates = [];
+  if (!state.completedDates.includes(today())) {
+    state.completedDates.push(today());
+    savePhysioState(state);
+    await logPts(
+      [{ reason: `Physiotherapie Tag ${plan.day}: ${plan.focus}`, pts: plan.pts }],
+      'physio_' + today(), 'physio', today()
+    );
+    haptic('success');
+    showToast(`Physiotherapie erledigt! +${plan.pts} Punkte 💙`);
+    renderPhysioChallenge();
+    if (typeof updateHeaderStats === 'function') updateHeaderStats();
+  }
+}
+
+// ── RENDER PHYSIO CHALLENGE ───────────────────────────────────────────────────
+function renderPhysioChallenge() {
+  const container = document.getElementById('physio-challenge-container');
+  if (!container) return;
+
+  const plan      = getTodayPhysio();
+  const completed = isPhysioCompletedToday();
+  const day       = getPhysioDay();
+  const pct       = Math.round((day / 28) * 100);
+
+  const exList = plan.exercises.map(ex => {
+    const def = PHYSIO_EXERCISES[ex.key];
+    if (!def) return '';
+    const repsLabel = ex.sets > 1 ? `${ex.sets}×${ex.reps} ${def.unit}` : `${ex.reps} ${def.unit}`;
+    return `<div class="physio-ex-item">
+      <span class="physio-ex-icon">${def.icon}</span>
+      <div class="physio-ex-info">
+        <div class="physio-ex-name">${def.name}</div>
+        <div class="physio-ex-reps">${repsLabel}${ex.rest ? ` · Pause ${ex.rest}s` : ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="physio-card ${completed?'done':''}" onclick="${completed?'':'showPhysioDetail()'}">
+      <div class="physio-card-header">
+        <div class="physio-header-left">
+          <div class="physio-badge">Physio</div>
+          <div>
+            <div class="physio-day-label">Knie-Programm · Tag ${day}/28</div>
+            <div class="physio-focus">${plan.focus}</div>
+          </div>
+        </div>
+        <div class="physio-pts-badge">+${plan.pts} Pkt.</div>
+      </div>
+      <div class="physio-prog-wrap">
+        <div class="physio-prog-fill" style="width:${pct}%"></div>
+      </div>
+      <div class="physio-exercises">${exList}</div>
+      ${plan.safetyNote ? `<div class="physio-safety">${plan.safetyNote}</div>` : ''}
+      <div class="physio-tip">💡 ${plan.tip}</div>
+      ${completed
+        ? `<div class="physio-done">✓ Heute erledigt!</div>`
+        : `<button class="btn full" onclick="event.stopPropagation();completeTodayPhysio()" style="margin-top:10px;background:linear-gradient(135deg,#27AE60,#1ABC9C)">
+             ✓ Physiotherapie erledigt!
+           </button>`
+      }
+    </div>`;
+}
+
+function showPhysioDetail() {
+  const plan = getTodayPhysio();
+  const modal = document.getElementById('mphysiodetail');
+  if (!modal) return;
+  const content = document.getElementById('physio-detail-content');
+  if (content) {
+    content.innerHTML = `
+      <div style="text-align:center;margin-bottom:16px">
+        <div class="physio-badge large">Knie-Physiotherapie Tag ${plan.day}</div>
+        <h3 style="margin-top:8px">${plan.focus}</h3>
+        <p style="font-size:.78rem;color:var(--tm)">${plan.phase}</p>
+      </div>
+      ${plan.safetyNote ? `<div class="physio-safety" style="margin-bottom:14px;font-size:.83rem">${plan.safetyNote}</div>` : ''}
+      ${plan.exercises.map(ex => {
+        const def = PHYSIO_EXERCISES[ex.key];
+        if (!def) return '';
+        return `<div class="physio-detail-ex">
+          <div class="physio-detail-ex-hdr">
+            <span style="font-size:1.4rem">${def.icon}</span>
+            <div style="flex:1">
+              <div style="font-size:.9rem;font-weight:700">${def.name}</div>
+              <div style="font-size:.68rem;color:var(--g5);font-weight:600">${def.xBeinFocus}</div>
+            </div>
+            <div style="font-size:.78rem;font-weight:800;color:var(--b6);white-space:nowrap">${ex.sets}×${ex.reps} ${def.unit}</div>
+          </div>
+          <div style="font-size:.8rem;color:var(--t2);line-height:1.5;margin-bottom:6px">${def.description}</div>
+          <div style="font-size:.75rem;color:var(--tm);padding:6px 10px;background:var(--g1);border-radius:8px;border-left:3px solid var(--g5)">
+            <strong>Technik:</strong> ${def.technique}
+          </div>
+          ${ex.rest ? `<div style="font-size:.7rem;color:var(--tm);margin-top:4px">Pause: ${ex.rest} Sekunden</div>` : ''}
+        </div>`;
+      }).join('')}
+      <div style="background:var(--a1);border-radius:12px;padding:12px;margin-top:10px;display:flex;gap:8px">
+        <span style="font-size:1.2rem">💡</span>
+        <p style="font-size:.83rem;color:var(--a5);font-weight:500">${plan.tip}</p>
+      </div>
+      <div style="background:var(--b0);border-radius:12px;padding:10px;margin-top:8px;font-size:.75rem;color:var(--b6)">
+        ℹ️ Diese Übungen ersetzen keine ärztliche oder physiotherapeutische Behandlung. Bei Schmerzen sofort stoppen und den Arzt konsultieren.
+      </div>
+    `;
+  }
+  modal.classList.remove('hidden');
+}
+
+// ── INJECT INTO HEUTE PAGE ────────────────────────────────────────────────────
+const _origRenderHeutePhysio = window.renderHeutePage;
+window.renderHeutePage = async function() {
+  await _origRenderHeutePhysio();
+  if (!document.getElementById('physio-challenge-container')) {
+    const lvtContainer = document.getElementById('lvt-challenge-container');
+    const div = document.createElement('div');
+    div.id = 'physio-challenge-container';
+    if (lvtContainer) lvtContainer.after(div);
+    else {
+      const motivCard = document.querySelector('.motiv');
+      if (motivCard) motivCard.after(div);
+    }
+  }
+  renderPhysioChallenge();
+};
+
+// ── RESET ─────────────────────────────────────────────────────────────────────
+function resetPhysio() {
+  showConfirm('Physio-Programm neu starten?', 'Der Fortschritt wird zurückgesetzt.',
+    () => {
+      const state = getPhysioState();
+      state.startDate = today();
+      state.completedDates = [];
+      savePhysioState(state);
+      closeM('mconfirm');
+      showToast('Physio-Programm neu gestartet!');
+      renderPhysioChallenge();
+    }
+  );
+}
+
+window.addEventListener('swimtrack-ready', () => { getPhysioStartDate(); });
+</script>
+<script>
+
+// Update physio day info in settings
+const _origLoadSettingsPhysio = window.loadSettingsPage;
+window.loadSettingsPage = async function() {
+  if (_origLoadSettingsPhysio) await _origLoadSettingsPhysio();
+  const infoEl = document.getElementById('physio-day-info');
+  if (infoEl) {
+    const day = getPhysioDay();
+    const done = isPhysioCompletedToday();
+    infoEl.textContent = 'Tag ' + day + ' von 28' + (done ? ' · Heute erledigt ✓' : ' · Heute noch offen');
+  }
 };
 
 </script>
