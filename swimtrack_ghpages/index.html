@@ -2750,6 +2750,31 @@ body[data-theme=dark] {
 .pts-explain-type { color:var(--t2); }
 .pts-explain-val { font-weight:700; color:var(--b6); font-size:.75rem; }
 
+
+/* ── MEHR MENU ── */
+.mehr-menu { position:fixed; inset:0; z-index:5000; }
+.mehr-menu.hidden { display:none !important; }
+.mehr-menu-backdrop { position:absolute; inset:0; background:rgba(0,0,0,.5); backdrop-filter:blur(4px); }
+.mehr-menu-sheet {
+  position:absolute; bottom:var(--nav); left:0; right:0;
+  background:var(--card); border-radius:20px 20px 0 0;
+  padding:20px 16px 24px; box-shadow:0 -8px 32px rgba(0,0,0,.15);
+  animation:mup .25s cubic-bezier(.4,0,.2,1);
+}
+.mehr-menu-title { font-size:.83rem; font-weight:700; color:var(--tm); margin-bottom:14px; text-align:center; }
+.mehr-menu-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.mehr-item {
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  padding:14px 8px; border-radius:14px; background:var(--subtle);
+  border:1px solid var(--borderL); cursor:pointer; transition:all .15s;
+  font-size:.75rem; font-weight:600; color:var(--t1);
+}
+.mehr-item:active { background:var(--b0); color:var(--b6); transform:scale(.95); }
+.mehr-item svg { width:22px; height:22px; stroke:var(--b6); }
+/* Nav: 5 buttons, clean */
+.botnav { overflow:hidden !important; }
+.nb { min-width:0 !important; flex:1 !important; }
+
 </style>
 <style>
 /* Pfad-Erklärung */
@@ -3429,19 +3454,47 @@ body::before {
 <button class="nb" id="nb-wettkampf" onclick="nav('wettkampf')">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg><span>Wettkampf</span>
 </button>
-<button class="nb" id="nb-fortschritt" onclick="nav('fortschritt')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Fortschritt</span>
-</button>
 <button class="nb" id="nb-erfolge" onclick="nav('erfolge')">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><span>Erfolge</span>
 </button>
-<button class="nb" id="nb-avatar-custom" onclick="nav('avatar-custom')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M16 4c1 .8 2 2.2 2 4"/></svg><span>Avatar</span>
-</button>
-<button class="nb" id="nb-einstellungen" onclick="nav('einstellungen')">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span>Einstellungen</span>
+<button class="nb" id="nb-mehr" onclick="toggleMehrMenu()">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>Mehr</span>
 </button>
 </nav>
+
+<!-- MEHR MENU -->
+<div id="mehr-menu" class="mehr-menu hidden">
+  <div class="mehr-menu-backdrop" onclick="closeMehrMenu()"></div>
+  <div class="mehr-menu-sheet">
+    <div class="mehr-menu-title">Weitere Bereiche</div>
+    <div class="mehr-menu-grid">
+      <button class="mehr-item" onclick="closeMehrMenu();nav('fortschritt')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span>Fortschritt</span>
+      </button>
+      <button class="mehr-item" onclick="closeMehrMenu();nav('avatar-custom')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <span>Avatar</span>
+      </button>
+      <button class="mehr-item" onclick="closeMehrMenu();nav('heimuebungen')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        <span>Übungen</span>
+      </button>
+      <button class="mehr-item" onclick="closeMehrMenu();nav('plan')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Trainingsplan</span>
+      </button>
+      <button class="mehr-item" onclick="closeMehrMenu();nav('kalender')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+        <span>Kalender</span>
+      </button>
+      <button class="mehr-item" onclick="closeMehrMenu();nav('einstellungen')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <span>Einstellungen</span>
+      </button>
+    </div>
+  </div>
+</div>
 <!-- MODALS -->
 <div class="moverlay hidden" id="msave">
 <div class="msheet">
@@ -11481,6 +11534,167 @@ window.loadSettingsPage = async function() {
     infoEl.textContent = 'Tag ' + day + ' von 28' + (done ? ' · Heute erledigt ✓' : ' · Heute noch offen');
   }
 };
+
+</script>
+<script>
+
+// SAFE AVATAR: Simple, error-free SVG avatar
+function buildSafeAvatarSVG(levelNum, customization, size, animated, emotion) {
+  const W = size || 200, H = size || 200;
+  const cx = W/2;
+  const s = W/200;
+  const custom = customization || {};
+
+  // Colors
+  const app = typeof getAvatarAppearance === 'function' ? getAvatarAppearance() : {};
+  const skinTones = {'s1':'#FDBCB4','s2':'#E8A87C','s3':'#C68642','s4':'#8D5524','s5':'#4A2912'};
+  const hairCols  = {'hc1':'#4A2C0A','hc2':'#8B5E3C','hc3':'#1A1A1A','hc4':'#D4A843','hc5':'#8B2500'};
+  const eyeCols   = {'e1':'#5C3317','e2':'#2980B9','e3':'#27AE60','e4':'#7F8C8D'};
+  const skin = skinTones[app.skinKey] || '#FDBCB4';
+  const hair = hairCols[app.hairColorKey] || '#4A2C0A';
+  const eye  = eyeCols[app.eyeColorKey]  || '#5C3317';
+
+  // Suit color
+  const ACC = typeof ACC_COLORS !== 'undefined' ? ACC_COLORS : {};
+  const suitC = custom.suit ? ACC[custom.suit] : null;
+  const suit  = suitC ? suitC.main : (levelNum >= 6 ? '#0D3B6E' : levelNum >= 4 ? '#1A5276' : '#B0C4DE');
+  const capC  = custom.cap    ? ACC[custom.cap]    : null;
+  const gogC  = custom.goggle ? ACC[custom.goggle] : null;
+  const medC  = custom.medal  ? ACC[custom.medal]  : null;
+
+  // Level badge color
+  const badgeCol = levelNum >= 9 ? '#FFD700' : levelNum >= 7 ? '#E74C3C' : levelNum >= 5 ? '#8E44AD' : '#0044FF';
+
+  // Smile based on emotion
+  const smileD = (emotion === 'happy' || emotion === 'excited')
+    ? 'M' + (cx-W*0.05) + ',' + (H*0.345) + ' Q' + cx + ',' + (H*0.375) + ' ' + (cx+W*0.05) + ',' + (H*0.345)
+    : 'M' + (cx-W*0.04) + ',' + (H*0.35) + ' Q' + cx + ',' + (H*0.36) + ' ' + (cx+W*0.04) + ',' + (H*0.35);
+
+  const animAttr = animated ? 'dur="2.5s" repeatCount="indefinite" values="0,0;2,1;0,0;-2,1;0,0"' : '';
+
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" style="overflow:visible">' +
+    // Water
+    '<ellipse cx="' + cx + '" cy="' + (H*0.84) + '" rx="' + (W*0.46) + '" ry="' + (H*0.055) + '" fill="#0066FF" opacity="0.15"/>' +
+    // Body
+    '<ellipse cx="' + cx + '" cy="' + (H*0.62) + '" rx="' + (W*0.17) + '" ry="' + (H*0.21) + '" fill="' + suit + '"/>' +
+    // Arms
+    '<line x1="' + (cx-W*0.17) + '" y1="' + (H*0.52) + '" x2="' + (cx-W*0.46) + '" y2="' + (H*0.56) + '" stroke="' + skin + '" stroke-width="' + (11*s) + '" stroke-linecap="round"/>' +
+    '<line x1="' + (cx+W*0.17) + '" y1="' + (H*0.52) + '" x2="' + (cx+W*0.46) + '" y2="' + (H*0.56) + '" stroke="' + skin + '" stroke-width="' + (11*s) + '" stroke-linecap="round"/>' +
+    // Legs
+    '<line x1="' + (cx-W*0.09) + '" y1="' + (H*0.82) + '" x2="' + (cx-W*0.07) + '" y2="' + (H*0.96) + '" stroke="' + suit + '" stroke-width="' + (10*s) + '" stroke-linecap="round"/>' +
+    '<line x1="' + (cx+W*0.09) + '" y1="' + (H*0.82) + '" x2="' + (cx+W*0.07) + '" y2="' + (H*0.94) + '" stroke="' + suit + '" stroke-width="' + (10*s) + '" stroke-linecap="round"/>' +
+    // Neck
+    '<rect x="' + (cx-W*0.055) + '" y="' + (H*0.38) + '" width="' + (W*0.11) + '" height="' + (H*0.09) + '" rx="' + (4*s) + '" fill="' + skin + '"/>' +
+    // Head
+    '<ellipse cx="' + cx + '" cy="' + (H*0.29) + '" rx="' + (W*0.145) + '" ry="' + (H*0.135) + '" fill="' + skin + '"/>' +
+    // Hair (if no cap)
+    (!capC ? '<ellipse cx="' + cx + '" cy="' + (H*0.20) + '" rx="' + (W*0.145) + '" ry="' + (H*0.075) + '" fill="' + hair + '"/>' : '') +
+    // Cap
+    (capC ? '<ellipse cx="' + cx + '" cy="' + (H*0.24) + '" rx="' + (W*0.148) + '" ry="' + (H*0.105) + '" fill="' + capC.main + '"/><ellipse cx="' + cx + '" cy="' + (H*0.185) + '" rx="' + (W*0.135) + '" ry="' + (H*0.065) + '" fill="' + capC.main + '"/>' : '') +
+    // Goggles
+    (gogC ? '<ellipse cx="' + (cx-W*0.065) + '" cy="' + (H*0.305) + '" rx="' + (W*0.055) + '" ry="' + (H*0.038) + '" fill="' + gogC.lens + '" stroke="' + gogC.frame + '" stroke-width="' + (2.5*s) + '"/><ellipse cx="' + (cx+W*0.065) + '" cy="' + (H*0.305) + '" rx="' + (W*0.055) + '" ry="' + (H*0.038) + '" fill="' + gogC.lens + '" stroke="' + gogC.frame + '" stroke-width="' + (2.5*s) + '"/><line x1="' + (cx-W*0.01) + '" y1="' + (H*0.305) + '" x2="' + (cx+W*0.01) + '" y2="' + (H*0.305) + '" stroke="' + gogC.frame + '" stroke-width="' + (2.5*s) + '"/>' : '') +
+    // Eyes
+    '<circle cx="' + (cx-W*0.055) + '" cy="' + (H*0.295) + '" r="' + (3*s) + '" fill="' + eye + '"/>' +
+    '<circle cx="' + (cx+W*0.055) + '" cy="' + (H*0.295) + '" r="' + (3*s) + '" fill="' + eye + '"/>' +
+    '<circle cx="' + (cx-W*0.048) + '" cy="' + (H*0.29) + '" r="' + (1.2*s) + '" fill="white" opacity="0.6"/>' +
+    '<circle cx="' + (cx+W*0.062) + '" cy="' + (H*0.29) + '" r="' + (1.2*s) + '" fill="white" opacity="0.6"/>' +
+    // Smile
+    '<path d="' + smileD + '" stroke="#3A2010" stroke-width="' + (1.8*s) + '" fill="none" stroke-linecap="round"/>' +
+    // Cheeks
+    '<circle cx="' + (cx-W*0.095) + '" cy="' + (H*0.325) + '" r="' + (4*s) + '" fill="#FFB6C1" opacity="0.45"/>' +
+    '<circle cx="' + (cx+W*0.095) + '" cy="' + (H*0.325) + '" r="' + (4*s) + '" fill="#FFB6C1" opacity="0.45"/>' +
+    // Medal
+    (medC ? '<circle cx="' + (cx+W*0.22) + '" cy="' + (H*0.52) + '" r="' + (11*s) + '" fill="' + medC.main + '"/><text x="' + (cx+W*0.22) + '" y="' + (H*0.527) + '" text-anchor="middle" font-size="' + (9*s) + '" fill="white" font-weight="bold">★</text>' : '') +
+    // Level badge
+    '<circle cx="' + (W*0.84) + '" cy="' + (H*0.14) + '" r="' + (13*s) + '" fill="' + badgeCol + '" stroke="white" stroke-width="' + (2*s) + '"/>' +
+    '<text x="' + (W*0.84) + '" y="' + (H*0.148) + '" text-anchor="middle" dominant-baseline="middle" font-size="' + (9*s) + '" fill="white" font-weight="bold" font-family="Inter,sans-serif">' + levelNum + '</text>' +
+    // Animation
+    (animated ? '<animateTransform attributeName="transform" type="translate" ' + animAttr + ' additive="sum"/>' : '') +
+    '</svg>';
+}
+
+// Override ALL avatar building functions with safe version
+window.buildAvatarSVG = function(levelNum, unlocked, size, animated) {
+  const custom = typeof getAvatarCustomization === 'function' ? getAvatarCustomization() : {};
+  const hybridState = typeof getHybridUnlocked === 'function' ? getHybridUnlocked() : {};
+  const HYBRID_LOCAL = typeof HYBRID_ACC !== 'undefined' ? HYBRID_ACC : [];
+  const SLOTS = ['cap','goggle','suit','medal','extra'];
+  const autoCustom = Object.assign({}, custom);
+  SLOTS.forEach(function(slot) {
+    if (!autoCustom[slot]) {
+      const first = HYBRID_LOCAL.find(function(a) { return a.slot === slot && hybridState[a.key]; });
+      if (first) autoCustom[slot] = first.key;
+    }
+  });
+  const emotion = 'neutral';
+  return buildSafeAvatarSVG(levelNum, autoCustom, size, animated, emotion);
+};
+window.buildAvatarSVGSync = buildSafeAvatarSVG;
+window.buildAvatarV3 = buildSafeAvatarSVG;
+
+</script>
+<script>
+
+// Ensure LVT + Physio challenges always render on Heute page
+(function() {
+  function ensureChallengeContainers() {
+    // Find insertion point: after motivation card or after status card
+    const motivCard = document.querySelector('#page-heute .motiv');
+    const statusCard = document.getElementById('todaystatus');
+    const insertAfter = motivCard || statusCard;
+    if (!insertAfter) return;
+
+    if (!document.getElementById('lvt-challenge-container')) {
+      const div = document.createElement('div');
+      div.id = 'lvt-challenge-container';
+      insertAfter.after(div);
+    }
+    if (!document.getElementById('physio-challenge-container')) {
+      const lvtEl = document.getElementById('lvt-challenge-container');
+      const div = document.createElement('div');
+      div.id = 'physio-challenge-container';
+      if (lvtEl) lvtEl.after(div);
+      else insertAfter.after(div);
+    }
+  }
+
+  // Override renderHeutePage to always show challenges
+  const _origRenderHeuteFix = window.renderHeutePage;
+  window.renderHeutePage = async function() {
+    await _origRenderHeuteFix();
+    ensureChallengeContainers();
+    if (typeof renderLVTChallenge === 'function') renderLVTChallenge();
+    if (typeof renderPhysioChallenge === 'function') renderPhysioChallenge();
+  };
+
+  // Also run on nav to heute
+  const _origNavFix = window.nav;
+  window.nav = function(page) {
+    _origNavFix(page);
+    if (page === 'heute') {
+      setTimeout(function() {
+        ensureChallengeContainers();
+        if (typeof renderLVTChallenge === 'function') renderLVTChallenge();
+        if (typeof renderPhysioChallenge === 'function') renderPhysioChallenge();
+      }, 200);
+    }
+    // Update nav active state for Mehr menu items
+    const morePages = ['fortschritt','avatar-custom','heimuebungen','plan','kalender','einstellungen'];
+    const moreBtn = document.getElementById('nb-mehr');
+    if (moreBtn) moreBtn.classList.toggle('active', morePages.includes(page));
+  };
+})();
+
+// Mehr menu functions
+function toggleMehrMenu() {
+  const menu = document.getElementById('mehr-menu');
+  if (menu) menu.classList.toggle('hidden');
+  haptic('light');
+}
+function closeMehrMenu() {
+  const menu = document.getElementById('mehr-menu');
+  if (menu) menu.classList.add('hidden');
+}
 
 </script>
 </body></html>`);
