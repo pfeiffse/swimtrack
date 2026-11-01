@@ -7112,29 +7112,15 @@ async function injectAvatarStrip(pageId) {
 async function updateHeaderAvatarSVG() {
   const av = document.getElementById('havatar');
   if (!av) return;
-
   const img = localStorage.getItem('st_avatar_img');
-  if (img) {
-    av.innerHTML = `<img src="${img}" style="width:36px;height:36px;object-fit:cover;border-radius:50%"/>`;
-    return;
-  }
-
-  const stats  = await computeStats();
-  const lv     = getLvl(stats.totalPoints);
-  const badges = await dbAll('badges');
-  const badgeKeys = badges.map(b => b.key);
-  const extStats = typeof computeExtendedStats === 'function' ? await computeExtendedStats() : stats;
-  const dayStreak = extStats.dayStreak || 0;
-  const unlocked  = typeof getUnlockedAccessories === 'function'
-    ? getUnlockedAccessories(lv.num, badgeKeys, dayStreak) : [];
-
-  if (typeof buildAvatarSVG === 'function') {
-    av.innerHTML = buildAvatarSVG(lv.num, unlocked, 36, false);
+  if (img) { av.innerHTML = '<img src="' + img + '" style="width:36px;height:36px;object-fit:cover;border-radius:50%"/>'; return; }
+  try {
+    const stats = await computeStats();
+    const lv = getLvl(stats.totalPoints);
+    localStorage.setItem('st_cached_level', lv.num);
+    av.innerHTML = window.buildAvatarSVG(lv.num, [], 36, false);
     av.style.background = 'transparent';
-  } else {
-    const emoji = localStorage.getItem('st_avatar') || '🏊';
-    av.textContent = emoji;
-  }
+  } catch(e) { av.textContent = '🏊'; }
 }
 
 // ── EINTRÄGE ALS NAVIGATION ───────────────────────────────────────────────────
@@ -7494,10 +7480,8 @@ function triggerCardLevelUpAnim() {
 
 // ── INJECT CARD INTO HEUTE PAGE ───────────────────────────────────────────────
 async function renderInteractiveAvatarCard() {
-  // Find or create container
   let container = document.getElementById('avatar-heute-container');
   if (!container) {
-    // Create and insert before todayplan
     container = document.createElement('div');
     container.id = 'avatar-heute-container';
     const todayplan = document.getElementById('todayplan');
@@ -7507,14 +7491,47 @@ async function renderInteractiveAvatarCard() {
       if (scroll) scroll.prepend(container);
     }
   }
-
-  const cardHTML = await buildInteractiveAvatarCard();
-  container.innerHTML = cardHTML;
-  animateAvatarCardProgress();
-
-  // Remove old simple avatar card if present
-  const oldCard = document.querySelector('.avatar-heute-card:not(#avatar-interactive-card)');
-  if (oldCard) oldCard.remove();
+  try {
+    const stats = await computeStats();
+    const lv = getLvl(stats.totalPoints);
+    const nextLv = (typeof LEVELS !== 'undefined' ? LEVELS : [])[lv.num] || null;
+    const ptsIn = stats.totalPoints - lv.min;
+    const range = nextLv ? nextLv.min - lv.min : 1;
+    const pct = nextLv ? Math.min(100, Math.round((ptsIn/range)*100)) : 100;
+    const ptsLeft = nextLv ? nextLv.min - stats.totalPoints : 0;
+    const extStats = typeof computeExtendedStats === 'function' ? await computeExtendedStats() : stats;
+    const dayStreak = extStats.dayStreak || 0;
+    // Use safe avatar (overridden)
+    const svg = window.buildAvatarSVG(lv.num, [], 100, true);
+    const lvName = lv.name || 'Schwimmerin';
+    const showHint = nextLv && pct >= 80;
+    container.innerHTML =
+      '<div class="avatar-interactive-card" onclick="nav('erfolge')">' +
+        '<div class="aic-top">' +
+          '<div class="aic-avatar-wrap" style="width:100px;height:100px">' + svg + '</div>' +
+          '<div class="aic-info">' +
+            '<div class="aic-swimmer-name">' + lvName + '</div>' +
+            '<div class="aic-level-name">Level ' + lv.num + ' – ' + lv.name + '</div>' +
+            '<div class="aic-stats-row">' +
+              '<div class="aic-stat"><span class="aic-stat-val">' + stats.totalPoints + '</span><span class="aic-stat-lbl">Punkte</span></div>' +
+              '<div class="aic-stat-divider"></div>' +
+              '<div class="aic-stat"><span class="aic-stat-val">' + dayStreak + '🔥</span><span class="aic-stat-lbl">Streak</span></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="aic-progress-section">' +
+          '<div class="aic-progress-header">' +
+            '<span class="aic-progress-label">' + (showHint ? '⚡ Fast da! ' : '') + (nextLv ? 'Noch ' + ptsLeft + ' Punkte bis Level ' + (lv.num+1) : '🏆 Champion!') + '</span>' +
+            '<span class="aic-progress-pct">' + pct + '%</span>' +
+          '</div>' +
+          '<div class="aic-progress-bar-wrap"><div class="aic-progress-bar-fill ' + (showHint?'pulsing':'') + '" style="width:' + pct + '%"></div></div>' +
+        '</div>' +
+        '<div class="aic-tap-hint">Tippe für alle Erfolge →</div>' +
+      '</div>';
+  } catch(e) {
+    console.warn('Avatar card error:', e);
+    if (container) container.innerHTML = '';
+  }
 }
 
 // ── OVERRIDE renderHeutePage ──────────────────────────────────────────────────
