@@ -1558,62 +1558,19 @@ function confirmReset(){
 // ── RESIZE ────────────────────────────────────────────────────────────────────
 let _rt;window.addEventListener('resize',()=>{clearTimeout(_rt);_rt=setTimeout(()=>{if(S.page==='fortschritt')renderFortschrittPage();},200);});
 function initPWA(){
-  var manifest={name:'SwimTrack',short_name:'SwimTrack',
-    description:'Trainingstagebuch',start_url:'.',display:'standalone',
-    orientation:'portrait',background_color:'#0044FF',theme_color:'#0044FF',lang:'de',
-    icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%230044FF"/><text y=".9em" font-size="80" x="10">&#x1F3CA;</text></svg>',sizes:'192x192',type:'image/svg+xml'}]};
+  var manifest={name:'SwimTrack',short_name:'SwimTrack',description:'Trainingstagebuch',start_url:'.',display:'standalone',orientation:'portrait',background_color:'#0044FF',theme_color:'#0044FF',lang:'de',icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%230044FF"/><text y=".9em" font-size="80" x="10">&#x1F3CA;</text></svg>',sizes:'192x192',type:'image/svg+xml'}]};
   var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
-  var link=document.getElementById('pwa-manifest');
-  if(link)link.href=URL.createObjectURL(mblob);
+  var link=document.getElementById('pwa-manifest');if(link)link.href=URL.createObjectURL(mblob);
   if(!('serviceWorker' in navigator))return;
-  var swLines=[
-    'const CN="swimtrack-v8";',
-    'self.addEventListener("install",e=>{self.skipWaiting();});',
-    'self.addEventListener("activate",e=>{',
-    '  e.waitUntil(caches.keys().then(function(keys){',
-    '    return Promise.all(keys.filter(function(k){return k!==CN;}).map(function(k){return caches.delete(k);}));',
-    '  }).then(function(){return self.clients.claim();}));',
-    '});',
-    'self.addEventListener("fetch",function(e){',
-    '  var req=e.request;',
-    '  if(req.method!=="GET")return;',
-    '  var url=req.url;',
-    '  var isNav=req.mode==="navigate"||url.includes("github.io")||url.endsWith("/")||url.endsWith(".html");',
-    '  if(isNav){',
-    '    e.respondWith(fetch(req,{cache:"no-cache"}).then(function(res){',
-    '      if(res&&res.ok){var c=res.clone();caches.open(CN).then(function(ca){ca.put(req,c);});}',
-    '      return res;',
-    '    }).catch(function(){return caches.match(req);}));',
-    '    return;',
-    '  }',
-    '  e.respondWith(caches.match(req).then(function(r){',
-    '    if(r)return r;',
-    '    return fetch(req).then(function(res){',
-    '      if(res&&res.ok){var c=res.clone();caches.open(CN).then(function(ca){ca.put(req,c);});}',
-    '      return res;',
-    '    });',
-    '  }));',
-    '});'
-  ];
+  var swLines=['const CN="swimtrack-v9";','self.addEventListener("install",e=>{self.skipWaiting();});','self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CN;}).map(function(k){return caches.delete(k);}));}).then(function(){return self.clients.claim();}));});','self.addEventListener("fetch",function(e){var req=e.request;if(req.method!=="GET")return;var url=req.url;var isNav=req.mode==="navigate"||url.includes("github.io")||url.endsWith("/")||url.endsWith(".html");if(isNav){e.respondWith(fetch(req,{cache:"no-cache"}).then(function(res){if(res&&res.ok){var c=res.clone();caches.open(CN).then(function(ca){ca.put(req,c);});}return res;}).catch(function(){return caches.match(req);}));return;}e.respondWith(caches.match(req).then(function(r){if(r)return r;return fetch(req).then(function(res){if(res&&res.ok){var c=res.clone();caches.open(CN).then(function(ca){ca.put(req,c);});}return res;});}));});'];
   var swBlob=new Blob([swLines.join('\n')],{type:'application/javascript'});
-  navigator.serviceWorker.register(URL.createObjectURL(swBlob),{scope:'./'})
-    .then(function(reg){
-      setInterval(function(){reg.update();},60000);
-      reg.addEventListener('updatefound',function(){
-        var nw=reg.installing;
-        if(nw)nw.addEventListener('statechange',function(){
-          if(nw.state==='installed'&&navigator.serviceWorker.controller)showUpdateBanner();
-        });
-      });
-    }).catch(function(){});
+  navigator.serviceWorker.register(URL.createObjectURL(swBlob),{scope:'./'}).then(function(reg){setInterval(function(){reg.update();},60000);reg.addEventListener('updatefound',function(){var nw=reg.installing;if(nw)nw.addEventListener('statechange',function(){if(nw.state==='installed'&&navigator.serviceWorker.controller)showUpdateBanner();});});}).catch(function(){});
 }
 function showUpdateBanner(){
   if(document.getElementById('upd-banner'))return;
-  var b=document.createElement('div');
-  b.id='upd-banner';
+  var b=document.createElement('div');b.id='upd-banner';
   b.style.cssText='position:fixed;top:52px;left:0;right:0;z-index:9000;background:linear-gradient(135deg,#00C853,#00A846);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.2);animation:slideDown .3s ease';
-  b.innerHTML='<span style="font-size:.82rem;font-weight:600">Neue Version verfuegbar!</span>'+
-    '<button onclick="location.reload()" style="background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);color:#fff;padding:5px 12px;border-radius:999px;font-size:.78rem;font-weight:700;cursor:pointer">Aktualisieren</button>';
+  b.innerHTML='<span style="font-size:.82rem;font-weight:600">Neue Version verfuegbar!</span><button onclick="location.reload()" style="background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);color:#fff;padding:5px 12px;border-radius:999px;font-size:.78rem;font-weight:700;cursor:pointer">Aktualisieren</button>';
   document.body.appendChild(b);
 }
 function renderAvatarCustomizer(){
@@ -2448,20 +2405,22 @@ var WK_WARMUP_PHASEN = [
   }
 ];
 
-// ── Technikkriterien ──────────────────────────────────────────────
+// ── Technikkriterien (World Aquatics Regeln 2024/2025) ───────────
+// Quelle: World Aquatics Swimming Reference Card, gültig ab 13.12.2024
 var WK_TECHNIK = {
   'Freistil': {
     icon: '🏊',
     dq_risiken: [
-      'Beim Anschlag: Beide Hände müssen die Wand berühren (nur bei Staffel)',
-      'Tauchen: Nicht länger als 15m unter Wasser bleiben'
+      'Wand bei Wende oder Ziel nicht berührt (SW 5.2)',
+      'Kopf nicht vor der 15m-Marke nach Start/Wende aufgetaucht (SW 5.3)',
+      'Komplett untergetaucht während des Schwimmens (SW 5.3)'
     ],
     start: [
       'Kraftvoll abspringen und Körper ganz strecken',
       'Sauber ins Wasser eintauchen – wenig Spritzer',
       'Sofort Streamline: Arme über den Kopf, Hände übereinander',
       'Mindestens 4 Delphinkicks unter Wasser',
-      'Mindestens 7,5 m unter Wasser bleiben'
+      'Vor der 15m-Marke auftauchen – sonst DQ!'
     ],
     technik: [
       'Beine kräftig schlagen – Zehenspitzen durchbrechen die Wasseroberfläche',
@@ -2471,10 +2430,10 @@ var WK_TECHNIK = {
       'Körper leicht drehen – das macht den Zug stärker'
     ],
     wende: [
-      'Letzten Zug: Luft anhalten',
+      'Wand berühren (mit irgendeinem Körperteil)',
       'Schnelle, kleine Rolle an der Wand',
       'Kräftig abstoßen in Streamline',
-      'Mindestens 4 Delphinkicks, mind. 7,5 m unter Wasser'
+      'Vor der 15m-Marke auftauchen'
     ],
     tipps: [
       'Beim Sprint (50m): Alles geben von Anfang an!',
@@ -2485,16 +2444,19 @@ var WK_TECHNIK = {
   'Rücken': {
     icon: '🔄',
     dq_risiken: [
-      '⚠️ DISQUALIFIKATION: Auf den Bauch drehen vor der Wende (außer bei der Rollwende)',
-      '⚠️ DISQUALIFIKATION: Kopf unter Wasser beim Anschlag',
-      'Beim Start: Nicht zu früh loslassen'
+      'Rückenlage verlassen (außer bei der Rollwende) – sofort DQ! (SW 6.2)',
+      'Kopf nicht vor der 15m-Marke nach Start/Wende aufgetaucht (SW 6.3)',
+      'Wende nicht sofort nach Drehen auf die Brust eingeleitet (SW 6.4)',
+      'Wand bei der Wende nicht berührt (SW 6.4)',
+      'Nach der Wende nicht auf dem Rücken abgestoßen (SW 6.4)',
+      'Rennen nicht auf dem Rücken beendet (SW 6.5)'
     ],
     start: [
       'Griff am Startblock, Füße an der Wand',
       'Kräftig abwerfen und Körper strecken',
       'Rückwärts ins Wasser eintauchen',
       'Sofort Streamline und Delphinkicks',
-      'Mindestens 4 Delphinkicks, mind. 7,5 m unter Wasser'
+      'Vor der 15m-Marke auftauchen'
     ],
     technik: [
       'Beine kräftig schlagen – Zehenspitzen durchbrechen die Wasseroberfläche',
@@ -2504,10 +2466,11 @@ var WK_TECHNIK = {
       'Schulter kommt über Wasser wenn der Arm zurückgeführt wird'
     ],
     wende: [
-      '5m vor der Wand: Züge zählen, nicht umdrehen!',
-      'Schnelle, kleine Rolle',
-      'Kräftig abstoßen in Streamline',
-      'Mindestens 4 Delphinkicks, mind. 7,5 m unter Wasser'
+      '5m-Fahne beachten: Noch 5m bis zur Wand!',
+      'Züge zählen nach der Fahne – nicht umdrehen!',
+      'Rollwende: Auf die Brust drehen, sofort Rolle, Abstoß auf dem Rücken',
+      'Wand berühren während der Wende',
+      'Vor der 15m-Marke auftauchen'
     ],
     tipps: [
       'Die 5m-Fahne zeigt dir: Noch 5m bis zur Wand!',
@@ -2518,30 +2481,37 @@ var WK_TECHNIK = {
   'Brust': {
     icon: '🐸',
     dq_risiken: [
-      '⚠️ DISQUALIFIKATION: Anschlag nur mit einer Hand (beide Hände müssen gleichzeitig die Wand berühren!)',
-      '⚠️ DISQUALIFIKATION: Knie beim Beinschlag zu weit öffnen (Schmetterlingsschlag)',
-      '⚠️ DISQUALIFIKATION: Kopf taucht beim Schwimmen komplett unter (außer nach Start/Wende)',
-      '⚠️ KNIE-HINWEIS: Knie nicht zu weit öffnen – schont auch deine Knie!'
+      'Anschlag nur mit einer Hand – beide Hände müssen gleichzeitig die Wand berühren! (SW 7.6)',
+      'Armbewegungen nicht gleichzeitig (SW 7.2)',
+      'Beinbewegungen nicht gleichzeitig (SW 7.4)',
+      'Mehr als ein Delphinkick nach Start/Wende (SW 7.1)',
+      'Delphinkick während des Schwimmens (SW 7.5)',
+      'Ellenbogen über Wasser beim Armzug (SW 7.3)',
+      'Hände über die Hüftlinie zurückgeführt (SW 7.3)',
+      'Füße beim Antrieb nicht nach außen gedreht (SW 7.5)',
+      'Kopf nicht bei jedem Zyklus aufgetaucht (SW 7.4)',
+      'Körper nicht auf der Brust (SW 7.2)'
     ],
     start: [
       'Kraftvoll abspringen',
       'Sauber eintauchen',
       'Einen vollständigen Brustzug unter Wasser (Tauchzug)',
       'Dann auftauchen und normal schwimmen',
-      'Mindestens 7,5 m unter Wasser'
+      'Vor der 15m-Marke auftauchen'
     ],
     technik: [
       'Nach jedem Zug kurz gleiten – das ist wichtig bei Brust!',
-      'Arme und Beine schnell bewegen, ohne Pause',
-      'Knie beim Anziehen nur hüftbreit öffnen – nicht zu weit!',
-      'Hände gehen gerade nach vorne',
+      'Arme und Beine gleichzeitig und symmetrisch bewegen',
+      'Hände gleichzeitig von der Brust nach vorne führen',
+      'Ellenbogen bleiben unter Wasser beim Armzug',
+      'Füße beim Beinschlag nach außen drehen (Froschfüße)',
       'Rhythmus: Arme ziehen → Beine anziehen → Strecken → Gleiten'
     ],
     wende: [
-      'Beide Hände gleichzeitig an die Wand – sehr wichtig!',
+      'Beide Hände gleichzeitig an die Wand – das Wichtigste überhaupt!',
       'Schnell drehen',
       'Kräftig abstoßen in Streamline',
-      'Tauchzug + mind. 7,5 m unter Wasser'
+      'Tauchzug + vor der 15m-Marke auftauchen'
     ],
     tipps: [
       'Die Gleitphase macht Brust besonders – nicht weglassen!',
@@ -2551,29 +2521,33 @@ var WK_TECHNIK = {
   'Schmetterling': {
     icon: '🦋',
     dq_risiken: [
-      '⚠️ DISQUALIFIKATION: Anschlag nur mit einer Hand (beide Hände müssen gleichzeitig die Wand berühren!)',
-      '⚠️ DISQUALIFIKATION: Arme einzeln nach vorne führen (müssen gleichzeitig schwingen)',
-      '⚠️ DISQUALIFIKATION: Kopf taucht beim Atmen komplett unter'
+      'Anschlag nur mit einer Hand – beide Hände müssen gleichzeitig die Wand berühren! (SW 8.4)',
+      'Arme nicht gleichzeitig über Wasser nach vorne geführt (SW 8.2)',
+      'Arme nicht gleichzeitig unter Wasser zurückgeführt (SW 8.2)',
+      'Wechselnde (nicht gleichzeitige) Beinbewegung (SW 8.3)',
+      'Brustkick-Bewegung ausgeführt (SW 8.3)',
+      'Mehr als ein Armzug unter Wasser nach Start/Wende (SW 8.5)',
+      'Kopf nicht vor der 15m-Marke aufgetaucht (SW 8.5)',
+      'Körper nicht auf der Brust (SW 8.1)'
     ],
     start: [
       'Kraftvoll abspringen',
       'Sauber eintauchen',
       'Sofort Streamline und Delphinkicks',
-      'Mindestens 4 Delphinkicks, mind. 7,5 m unter Wasser'
+      'Vor der 15m-Marke auftauchen'
     ],
     technik: [
       '2 Beinschläge pro Armzug – Zehenspitzen durchbrechen die Wasseroberfläche',
-      'Arme und Beine im richtigen Rhythmus',
+      'Arme gleichzeitig über Wasser nach vorne schwingen',
       'Alle 2 Züge atmen (2er-Atmung)',
-      'Körper macht eine Wellenbewegung',
+      'Körper macht eine Wellenbewegung (beginnt in der Hüfte)',
       'Beim Atmen kommt nur der Kopf raus – Brust bleibt im Wasser'
     ],
     wende: [
-      'Letzten Zug: Luft anhalten',
       'Beide Hände gleichzeitig an die Wand – sehr wichtig!',
       'Schnell drehen',
       'Kräftig abstoßen in Streamline',
-      'Mindestens 4 Delphinkicks, mind. 7,5 m unter Wasser'
+      'Vor der 15m-Marke auftauchen'
     ],
     tipps: [
       'Die Wellenbewegung beginnt in der Hüfte – nicht in den Schultern',
@@ -2583,10 +2557,12 @@ var WK_TECHNIK = {
   'Lagen': {
     icon: '🔀',
     dq_risiken: [
-      '⚠️ DISQUALIFIKATION: Falsche Reihenfolge (muss sein: Schmetterling → Rücken → Brust → Freistil)',
-      '⚠️ DISQUALIFIKATION: Bei Rücken→Brust-Wende auf den Bauch drehen (Bauchlage = sofort DQ!)',
-      '⚠️ DISQUALIFIKATION: Anschlag bei Schmetterling oder Brust nur mit einer Hand',
-      '⚠️ DISQUALIFIKATION: Beim Rücken-Teil auf den Bauch drehen'
+      'Falsche Reihenfolge – muss sein: Schmetterling → Rücken → Brust → Freistil! (SW 9.1)',
+      'Rücken→Brust-Wende: Auf den Bauch drehen ohne sofortige Wende = DQ! (SW 6.4)',
+      'Im Freistil-Abschnitt: Schmetterling, Rücken oder Brust geschwommen (SW 5.1)',
+      'Anschlag am Ende jedes Abschnitts nicht regelkonform (SW 9.4)',
+      'Schmetterling-Abschnitt: Anschlag nur mit einer Hand (SW 8.4)',
+      'Brust-Abschnitt: Anschlag nur mit einer Hand (SW 7.6)'
     ],
     start: [
       'Reihenfolge merken: Schmetterling → Rücken → Brust → Freistil',
@@ -2595,13 +2571,13 @@ var WK_TECHNIK = {
     technik: [
       'Schmetterling: 2 Beinschläge, Wellenbewegung, 2er-Atmung',
       'Rücken: Kopf ruhig, Schulterrotation, kleiner Finger zuerst',
-      'Brust: Gleiten, enger Beinschlag, gleichzeitiger Anschlag',
+      'Brust: Gleiten, gleichzeitige Arm- und Beinbewegung, gleichzeitiger Anschlag',
       'Freistil: Kräftiger Beinschlag, 3er-Atmung, langer Abdruck'
     ],
     wende: [
       'Schmetterling→Rücken: Beide Hände gleichzeitig → Rücken-Wende',
-      'Rücken→Brust (Cross-Over): 5m vor Wand Züge zählen → Anschlag mit oberem Arm → seitliche Körperlage → seitliche Rolle → Abstoß',
-      '🚨 Rücken→Brust: Körper MUSS seitlich sein – NIEMALS auf den Bauch drehen!',
+      'Rücken→Brust: Auf die Brust drehen → SOFORT Wende einleiten → seitliche Rolle → Abstoß',
+      '🚨 Rücken→Brust: Auf die Brust drehen und NICHT sofort wenden = DQ!',
       'Brust→Freistil: Beide Hände gleichzeitig → Kraulwende'
     ],
     tipps: [
@@ -2610,6 +2586,7 @@ var WK_TECHNIK = {
     ]
   }
 };
+
 
 // ── Strecken-Tipps ────────────────────────────────────────────────
 var WK_STRECKEN = {
