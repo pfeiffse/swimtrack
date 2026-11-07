@@ -316,7 +316,7 @@ input,select,textarea{font-family:inherit;font-size:16px}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-.wk-start-block{background:var(--subtle);border:1.5px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:10px;border-left:3px solid var(--blue)}
+.wk-start-block{background:var(--subtle);border:1.5px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:10px;border-left:3px solid var(--blue,#0044FF)}
 @keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
 
 </style>
@@ -1567,7 +1567,7 @@ function initPWA(){
   if(link)link.href=URL.createObjectURL(mblob);
   if(!('serviceWorker' in navigator))return;
   var swLines=[
-    'const CN="swimtrack-v7";',
+    'const CN="swimtrack-v8";',
     'self.addEventListener("install",e=>{self.skipWaiting();});',
     'self.addEventListener("activate",e=>{',
     '  e.waitUntil(caches.keys().then(function(keys){',
@@ -1693,95 +1693,108 @@ function removeAvPhoto(){
 }
 
 // ══════════════════════════════════════════════════════════════════
-// WETTKAMPF MODULE v3 – Alle Bugs behoben
-// - PB-Erkennung korrekt (konsistente Keys)
-// - Verlauf zeigt alle Starts mit Zeiten (immer sichtbar)
-// - Bestzeiten werden korrekt gespeichert und angezeigt
-// - Zwischenzeiten (Splits)
+// WETTKAMPF MODULE v5 – Alle Bugs behoben
+// WICHTIG: addWkStart hier definiert, überschreibt alte Version
 // ══════════════════════════════════════════════════════════════════
 'use strict';
 
-function getSplitDistances(distNum) {
-  var d = parseInt(distNum) || 0;
+// ── Hilfsfunktionen ───────────────────────────────────────────────
+function wkFmtTime(min, sec, ms) {
+  var m = parseInt(min) || 0;
+  var s = parseInt(sec) || 0;
+  var h = parseInt(ms)  || 0;
+  if (m > 0) return m + ':' + String(s).padStart(2,'0') + ',' + String(h).padStart(2,'0');
+  return s + ',' + String(h).padStart(2,'0') + ' s';
+}
+
+function wkTimeToCs(min, sec, ms) {
+  return (parseInt(min)||0)*6000 + (parseInt(sec)||0)*100 + (parseInt(ms)||0);
+}
+
+function wkGetSplitDistances(distStr) {
+  var d = parseInt(distStr) || 0;
   if (d <= 50)   return [];
   if (d === 100) return [50];
   if (d === 200) return [50, 100, 150];
   if (d === 400) return [100, 200, 300];
-  if (d === 800) return [100,200,300,400,500,600,700];
+  if (d === 800) return [100, 200, 300, 400, 500, 600, 700];
   if (d === 1500) return [100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400];
   return [];
 }
 
-function buildWkStartHTML(idx) {
-  var distOpts = ['50 m','100 m','200 m','400 m','800 m','1500 m','4x50 m','4x100 m'];
-  var strokeOpts = ['Freistil','Ruecken','Brust','Schmetterling','Lagen'];
-  return '<div class="wk-start" id="wks-'+idx+'">' +
-    '<div class="wk-start-hdr">' +
-      '<span style="font-size:.82rem;font-weight:700">Start '+idx+'</span>' +
-      '<button type="button" class="set-rm" onclick="removeWkStart('+idx+')">&#x2715;</button>' +
-    '</div>' +
-    '<div class="sgrid">' +
-      '<div class="sfield"><label>Strecke</label>' +
-        '<select id="wkd-'+idx+'" onchange="updateWkSplits('+idx+')">' +
-          distOpts.map(function(o){return '<option value="'+o+'">'+o+'</option>';}).join('') +
-        '</select>' +
-      '</div>' +
-      '<div class="sfield"><label>Lage</label>' +
-        '<select id="wks-'+idx+'">' +
-          strokeOpts.map(function(o){return '<option value="'+o+'">'+o+'</option>';}).join('') +
-        '</select>' +
-      '</div>' +
-    '</div>' +
-    '<div class="sfield" style="margin-top:8px">' +
-      '<label>Endzeit &nbsp;<span style="font-size:.68rem;color:var(--tm);font-weight:400">Min : Sek , Hundertstel</span></label>' +
-      '<div class="time-grp">' +
-        '<input type="number" class="time-inp" id="wkm-'+idx+'" placeholder="0" min="0" max="59"/>' +
-        '<span class="time-sep">:</span>' +
-        '<input type="number" class="time-inp" id="wkse-'+idx+'" placeholder="00" min="0" max="59"/>' +
-        '<span class="time-sep">,</span>' +
-        '<input type="number" class="time-inp" id="wkms-'+idx+'" placeholder="00" min="0" max="99"/>' +
-      '</div>' +
-    '</div>' +
-    '<div class="sfield" style="margin-top:8px">' +
-      '<label>Platzierung <span style="font-size:.68rem;color:var(--tm);font-weight:400">(optional)</span></label>' +
-      '<input type="number" class="finput" id="wkp-'+idx+'" placeholder="z.B. 3" min="1" style="max-width:120px"/>' +
-    '</div>' +
-    '<div id="wk-splits-'+idx+'" style="margin-top:8px"></div>' +
-  '</div>';
-}
-
+// ── Start-Block aufbauen ──────────────────────────────────────────
+// OVERRIDE: Diese Funktion ersetzt die alte addWkStart aus js_core
 function addWkStart() {
-  S.wkIdx++;
+  if (typeof S === 'undefined') { window.S = {}; }
+  S.wkIdx = (S.wkIdx || 0) + 1;
   var idx = S.wkIdx;
-  var c = document.getElementById('wk-starts');
-  var div = document.createElement('div');
-  div.innerHTML = buildWkStartHTML(idx);
-  c.appendChild(div.firstElementChild);
+  var container = document.getElementById('wk-starts');
+  if (!container) return;
+
+  var distOpts   = ['50 m','100 m','200 m','400 m','800 m','1500 m'];
+  var strokeOpts = ['Freistil','Rücken','Brust','Schmetterling','Lagen'];
+
+  var el = document.createElement('div');
+  el.className = 'wk-start-block';
+  el.id = 'wks-' + idx;
+
+  var distSelHtml = '<select id="wkd-' + idx + '" style="width:100%;padding:8px 9px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;color:var(--t1);background:var(--card);outline:none" onchange="wkUpdateSplits(' + idx + ')">' +
+    distOpts.map(function(o){ return '<option value="' + o + '">' + o + '</option>'; }).join('') + '</select>';
+
+  var strokeSelHtml = '<select id="wks-' + idx + '" style="width:100%;padding:8px 9px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;color:var(--t1);background:var(--card);outline:none">' +
+    strokeOpts.map(function(o){ return '<option value="' + o + '">' + o + '</option>'; }).join('') + '</select>';
+
+  el.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
+      '<span style="font-size:.85rem;font-weight:700;color:var(--blue,#0044FF)">Start ' + idx + '</span>' +
+      '<button type="button" style="width:26px;height:26px;border-radius:50%;background:var(--red-l,#FFEBEE);color:var(--red,#F44336);font-size:.75rem;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none" onclick="wkRemoveStart(' + idx + ')">&#x2715;</button>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">' +
+      '<div><label style="font-size:.72rem;font-weight:600;color:var(--tm);display:block;margin-bottom:3px">Strecke</label>' + distSelHtml + '</div>' +
+      '<div><label style="font-size:.72rem;font-weight:600;color:var(--tm);display:block;margin-bottom:3px">Lage</label>' + strokeSelHtml + '</div>' +
+    '</div>' +
+    '<div style="margin-bottom:8px">' +
+      '<label style="font-size:.72rem;font-weight:600;color:var(--tm);display:block;margin-bottom:5px">Zeit &nbsp;<span style="font-weight:400;color:var(--tm)">Min : Sek , Hundertstel</span></label>' +
+      '<div style="display:flex;align-items:center;gap:6px">' +
+        '<input type="number" id="wkm-' + idx + '" placeholder="0" min="0" max="59" style="width:52px;padding:9px 6px;border:1.5px solid var(--border);border-radius:8px;font-size:1rem;font-weight:700;text-align:center;color:var(--t1);background:var(--card);outline:none"/>' +
+        '<span style="font-size:1.1rem;font-weight:700;color:var(--tm)">:</span>' +
+        '<input type="number" id="wkse-' + idx + '" placeholder="00" min="0" max="59" style="width:52px;padding:9px 6px;border:1.5px solid var(--border);border-radius:8px;font-size:1rem;font-weight:700;text-align:center;color:var(--t1);background:var(--card);outline:none"/>' +
+        '<span style="font-size:1.1rem;font-weight:700;color:var(--tm)">,</span>' +
+        '<input type="number" id="wkms-' + idx + '" placeholder="00" min="0" max="99" style="width:52px;padding:9px 6px;border:1.5px solid var(--border);border-radius:8px;font-size:1rem;font-weight:700;text-align:center;color:var(--t1);background:var(--card);outline:none"/>' +
+      '</div>' +
+    '</div>' +
+    '<div style="margin-bottom:6px">' +
+      '<label style="font-size:.72rem;font-weight:600;color:var(--tm);display:block;margin-bottom:3px">Platzierung <span style="font-weight:400">(optional)</span></label>' +
+      '<input type="number" id="wkp-' + idx + '" placeholder="z.B. 3" min="1" style="width:100px;padding:8px 9px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;color:var(--t1);background:var(--card);outline:none"/>' +
+    '</div>' +
+    '<div id="wk-splits-' + idx + '"></div>';
+
+  container.appendChild(el);
 }
 
-function removeWkStart(idx) {
-  var e = document.getElementById('wks-'+idx);
-  if (e) e.remove();
+function wkRemoveStart(idx) {
+  var el = document.getElementById('wks-' + idx);
+  if (el) el.remove();
 }
 
-function updateWkSplits(idx) {
-  var distEl = document.getElementById('wkd-'+idx);
-  var container = document.getElementById('wk-splits-'+idx);
+function wkUpdateSplits(idx) {
+  var distEl = document.getElementById('wkd-' + idx);
+  var container = document.getElementById('wk-splits-' + idx);
   if (!distEl || !container) return;
-  var distNum = parseInt(distEl.value) || 0;
-  var splits = getSplitDistances(distNum);
+  var splits = wkGetSplitDistances(distEl.value);
   if (!splits.length) { container.innerHTML = ''; return; }
-  var html = '<div style="background:var(--subtle);border-radius:var(--r);padding:10px;margin-top:4px">' +
+
+  var html = '<div style="background:var(--subtle);border-radius:8px;padding:10px;margin-top:4px">' +
     '<div style="font-size:.72rem;font-weight:700;color:var(--tm);margin-bottom:8px">Zwischenzeiten (optional)</div>';
   splits.forEach(function(sp) {
     html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
-      '<span style="font-size:.72rem;font-weight:700;color:var(--blue);min-width:44px">'+sp+'m:</span>' +
-      '<div class="time-grp">' +
-        '<input type="number" class="time-inp" id="wksplit-'+idx+'-'+sp+'-m" placeholder="0" min="0" max="59" style="width:44px"/>' +
-        '<span class="time-sep">:</span>' +
-        '<input type="number" class="time-inp" id="wksplit-'+idx+'-'+sp+'-s" placeholder="00" min="0" max="59" style="width:44px"/>' +
-        '<span class="time-sep">,</span>' +
-        '<input type="number" class="time-inp" id="wksplit-'+idx+'-'+sp+'-ms" placeholder="00" min="0" max="99" style="width:44px"/>' +
+      '<span style="font-size:.72rem;font-weight:700;color:var(--blue,#0044FF);min-width:48px">' + sp + 'm:</span>' +
+      '<div style="display:flex;align-items:center;gap:4px">' +
+        '<input type="number" id="wksplit-' + idx + '-' + sp + '-m" placeholder="0" min="0" max="59" style="width:44px;padding:6px 4px;border:1.5px solid var(--border);border-radius:6px;font-size:.85rem;font-weight:700;text-align:center;color:var(--t1);background:var(--card);outline:none"/>' +
+        '<span style="font-size:.9rem;font-weight:700;color:var(--tm)">:</span>' +
+        '<input type="number" id="wksplit-' + idx + '-' + sp + '-s" placeholder="00" min="0" max="59" style="width:44px;padding:6px 4px;border:1.5px solid var(--border);border-radius:6px;font-size:.85rem;font-weight:700;text-align:center;color:var(--t1);background:var(--card);outline:none"/>' +
+        '<span style="font-size:.9rem;font-weight:700;color:var(--tm)">,</span>' +
+        '<input type="number" id="wksplit-' + idx + '-' + sp + '-ms" placeholder="00" min="0" max="99" style="width:44px;padding:6px 4px;border:1.5px solid var(--border);border-radius:6px;font-size:.85rem;font-weight:700;text-align:center;color:var(--t1);background:var(--card);outline:none"/>' +
       '</div>' +
     '</div>';
   });
@@ -1789,55 +1802,82 @@ function updateWkSplits(idx) {
   container.innerHTML = html;
 }
 
-function collectSplits(idx, distNum) {
-  var splits = getSplitDistances(distNum);
+function wkCollectSplits(idx, distStr) {
+  var splits = wkGetSplitDistances(distStr);
   var result = [];
   splits.forEach(function(sp) {
-    var m  = parseInt(document.getElementById('wksplit-'+idx+'-'+sp+'-m')?.value)  || 0;
-    var s  = parseInt(document.getElementById('wksplit-'+idx+'-'+sp+'-s')?.value)  || 0;
-    var ms = parseInt(document.getElementById('wksplit-'+idx+'-'+sp+'-ms')?.value) || 0;
+    var mEl  = document.getElementById('wksplit-' + idx + '-' + sp + '-m');
+    var sEl  = document.getElementById('wksplit-' + idx + '-' + sp + '-s');
+    var msEl = document.getElementById('wksplit-' + idx + '-' + sp + '-ms');
+    var m  = parseInt(mEl  ? mEl.value  : 0) || 0;
+    var s  = parseInt(sEl  ? sEl.value  : 0) || 0;
+    var ms = parseInt(msEl ? msEl.value : 0) || 0;
     var cs = m*6000 + s*100 + ms;
     if (cs > 0) result.push({ distance: sp, timeCs: cs, timeMin: m, timeSec: s, timeMs: ms });
   });
   return result;
 }
 
+// ── Wettkampf speichern ───────────────────────────────────────────
 async function saveWettkampf(e) {
   e.preventDefault();
   var btn = e.target.querySelector('button[type=submit]');
-  btn.disabled = true; btn.textContent = 'Speichern\u2026';
+  if (btn) { btn.disabled = true; btn.textContent = 'Speichern…'; }
+
   try {
-    var date   = document.getElementById('wk-date').value;
-    var name   = document.getElementById('wk-name').value.trim();
-    var loc    = document.getElementById('wk-loc').value.trim();
+    var date   = (document.getElementById('wk-date')?.value || '').trim();
+    var name   = (document.getElementById('wk-name')?.value || '').trim();
+    var loc    = (document.getElementById('wk-loc')?.value  || '').trim();
     var pool   = document.querySelector('input[name="wk-pool"]:checked')?.value || '25';
     var rating = document.querySelector('input[name="wk-rating"]:checked')?.value || 'gut';
-    var note   = document.getElementById('wk-note').value.trim();
-    if (!date || !name) { showToast('Datum und Name erforderlich.'); return; }
+    var note   = (document.getElementById('wk-note')?.value || '').trim();
+
+    if (!date || !name) {
+      if (typeof showToast === 'function') showToast('Datum und Name erforderlich.');
+      if (btn) { btn.disabled = false; btn.textContent = 'Wettkampf speichern'; }
+      return;
+    }
+
+    // Alle Start-Blöcke sammeln (Klasse wk-start-block)
+    var startBlocks = document.querySelectorAll('#wk-starts .wk-start-block');
+    console.log('[WK] Found start blocks:', startBlocks.length);
 
     var starts = [];
     var newPBs = [];
     var pbs = await dbAll('pbs');
 
-    var startEls = document.querySelectorAll('.wk-start');
-    for (var i = 0; i < startEls.length; i++) {
-      var row = startEls[i];
-      var idx = row.id.replace('wks-','');
-      var dist   = document.getElementById('wkd-'+idx)?.value || '';
-      var stroke = document.getElementById('wks-'+idx)?.value || '';
-      var min    = parseInt(document.getElementById('wkm-'+idx)?.value)  || 0;
-      var sec    = parseInt(document.getElementById('wkse-'+idx)?.value) || 0;
-      var ms     = parseInt(document.getElementById('wkms-'+idx)?.value) || 0;
-      var place  = document.getElementById('wkp-'+idx)?.value || null;
-      if (!dist || !stroke) continue;
-      var cs = min*6000 + sec*100 + ms;
-      if (cs === 0) continue;
-      var distNum = parseInt(dist) || 0;
-      var splits = collectSplits(idx, distNum);
+    for (var i = 0; i < startBlocks.length; i++) {
+      var block = startBlocks[i];
+      var idx = block.id.replace('wks-', '');
 
-      // PB key: "100 m|Freistil|25" – consistent everywhere
+      var distEl   = document.getElementById('wkd-'  + idx);
+      var strokeEl = document.getElementById('wks-'  + idx);
+      var minEl    = document.getElementById('wkm-'  + idx);
+      var secEl    = document.getElementById('wkse-' + idx);
+      var msEl     = document.getElementById('wkms-' + idx);
+      var placeEl  = document.getElementById('wkp-'  + idx);
+
+      var dist   = distEl   ? distEl.value.trim()   : '';
+      var stroke = strokeEl ? strokeEl.value.trim() : '';
+      var min    = parseInt(minEl  ? minEl.value  : 0) || 0;
+      var sec    = parseInt(secEl  ? secEl.value  : 0) || 0;
+      var ms     = parseInt(msEl   ? msEl.value   : 0) || 0;
+      var place  = placeEl && placeEl.value ? parseInt(placeEl.value) : null;
+
+      console.log('[WK] Start ' + idx + ':', dist, stroke, min, sec, ms);
+
+      if (!dist || !stroke) { console.log('[WK] Skipping - no dist/stroke'); continue; }
+      var cs = min*6000 + sec*100 + ms;
+      if (cs === 0) { console.log('[WK] Skipping - no time entered'); continue; }
+
+      var splits = wkCollectSplits(idx, dist);
+
+      // PB-Erkennung
       var pbKey = dist + '|' + stroke + '|' + pool;
-      var existing = pbs.find(function(p){ return p.key === pbKey; });
+      var existing = null;
+      for (var j = 0; j < pbs.length; j++) {
+        if (pbs[j].key === pbKey) { existing = pbs[j]; break; }
+      }
       var existingCs = existing
         ? (existing.timeMin*6000 + existing.timeSec*100 + existing.timeMs)
         : Infinity;
@@ -1852,22 +1892,26 @@ async function saveWettkampf(e) {
           key:pbKey, distance:dist, stroke:stroke, poolLength:pool,
           timeMin:min, timeSec:sec, timeMs:ms, date:date };
         await dbPut('pbs', pbEntry);
-        var existIdx = pbs.findIndex(function(p){ return p.key === pbKey; });
+        var existIdx = -1;
+        for (var k = 0; k < pbs.length; k++) {
+          if (pbs[k].key === pbKey) { existIdx = k; break; }
+        }
         if (existIdx >= 0) pbs[existIdx] = pbEntry;
         else pbs.push(pbEntry);
       }
 
       starts.push({ id:genId(), distance:dist, stroke:stroke,
         timeMin:min, timeSec:sec, timeMs:ms,
-        placement: place ? parseInt(place) : null,
-        isPB:isPB, splits:splits });
+        placement:place, isPB:isPB, splits:splits });
     }
+
+    console.log('[WK] Collected starts:', starts.length, 'PBs:', newPBs.length);
 
     var totalPts = 5;
     var ptReasons = [{ reason:'Wettkampfergebnis eingetragen', pts:5 }];
     newPBs.forEach(function(pb) {
       totalPts += 15;
-      ptReasons.push({ reason:'Neue pers\u00f6nliche Bestzeit: '+pb.dist+' '+pb.stroke, pts:15 });
+      ptReasons.push({ reason:'Neue persönliche Bestzeit: ' + pb.dist + ' ' + pb.stroke, pts:15 });
     });
 
     var compId = genId();
@@ -1876,128 +1920,114 @@ async function saveWettkampf(e) {
     await logPts(ptReasons, compId, 'competition', date);
     var newBadges = await checkBadges();
 
-    document.getElementById('wkform').reset();
-    document.getElementById('wk-date').value = today();
-    document.getElementById('wk-starts').innerHTML = '';
-    S.wkIdx = 0; addWkStart();
+    // Formular zurücksetzen
+    var form = document.getElementById('wkform');
+    if (form) form.reset();
+    var dateEl = document.getElementById('wk-date');
+    if (dateEl) dateEl.value = today();
+    var startsContainer = document.getElementById('wk-starts');
+    if (startsContainer) startsContainer.innerHTML = '';
+    S.wkIdx = 0;
+    addWkStart();
 
+    // Erfolgsmeldung
     if (newPBs.length > 0) {
       var pb = newPBs[0];
-      setText('m-pb-detail', 'Neuer pers\u00f6nlicher Rekord: '+pb.dist+' '+pb.stroke);
-      var imprEl = document.getElementById('m-pb-impr');
+      var detailEl = document.getElementById('m-pb-detail');
+      var imprEl   = document.getElementById('m-pb-impr');
+      if (detailEl) detailEl.textContent = 'Neuer persönlicher Rekord: ' + pb.dist + ' ' + pb.stroke;
       if (imprEl) imprEl.textContent = pb.isFirst
-        ? 'Erste Zeit f\u00fcr diese Strecke eingetragen!'
-        : 'Du hast dich um '+pb.improvement.toFixed(2)+' Sekunden verbessert.';
-      document.getElementById('m-pb').classList.remove('hidden');
+        ? 'Erste Zeit für diese Strecke eingetragen!'
+        : 'Du hast dich um ' + pb.improvement.toFixed(2) + ' Sekunden verbessert.';
+      var mpb = document.getElementById('m-pb');
+      if (mpb) mpb.classList.remove('hidden');
     } else {
-      showSaveModal({ total:totalPts, reasons:ptReasons }, newBadges, 'Wettkampf gespeichert!');
+      if (typeof showSaveModal === 'function') {
+        showSaveModal({ total:totalPts, reasons:ptReasons }, newBadges, 'Wettkampf gespeichert!');
+      } else {
+        if (typeof showToast === 'function') showToast('Wettkampf gespeichert! +' + totalPts + ' Punkte');
+      }
     }
-    renderPBs(); renderWkHist();
+
+    renderPBs();
+    renderWkHist();
 
   } catch(err) {
-    showToast(err.message || 'Fehler beim Speichern.');
-    console.error(err);
+    console.error('[WK] saveWettkampf error:', err);
+    if (typeof showToast === 'function') showToast('Fehler: ' + (err.message || 'Unbekannter Fehler'));
   } finally {
-    btn.disabled = false; btn.textContent = 'Wettkampf speichern';
+    if (btn) { btn.disabled = false; btn.textContent = 'Wettkampf speichern'; }
   }
 }
 
-async function renderWettkampfPage() {
-  document.getElementById('wk-date').value = today();
-  if (!document.getElementById('wk-starts').children.length) addWkStart();
-  renderPBs(); renderWkHist();
-}
-
+// ── Bestzeiten anzeigen ───────────────────────────────────────────
 async function renderPBs() {
-  var c = document.getElementById('pb-list'); if (!c) return;
+  var c = document.getElementById('pb-list');
+  if (!c) return;
   var pbs = await dbAll('pbs');
   var pool   = document.getElementById('pb-pool')?.value   || '';
   var stroke = document.getElementById('pb-stroke')?.value || '';
   var filtered = pbs.slice();
-  if (pool)   filtered = filtered.filter(function(p){ return p.poolLength===pool; });
-  if (stroke) filtered = filtered.filter(function(p){ return p.stroke===stroke; });
+  if (pool)   filtered = filtered.filter(function(p){ return p.poolLength === pool; });
+  if (stroke) filtered = filtered.filter(function(p){ return p.stroke === stroke; });
+
   if (!filtered.length) {
-    c.innerHTML = '<div class="empty"><div class="empty-ico">&#x23F1;</div>' +
-      '<p>Noch keine Bestzeiten.</p>' +
-      '<p class="empty-sub">Trage deinen ersten Wettkampf ein!</p></div>';
+    c.innerHTML = '<div style="text-align:center;padding:28px 14px;color:var(--tm)"><div style="font-size:2.2rem;margin-bottom:7px">⏱️</div><p style="font-size:.875rem;font-weight:500">Noch keine Bestzeiten.</p><p style="font-size:.75rem;margin-top:3px">Trage deinen ersten Wettkampf ein!</p></div>';
     return;
   }
   filtered.sort(function(a,b){
     var da=parseInt(a.distance)||0, db=parseInt(b.distance)||0;
-    if (da!==db) return da-db;
-    return (a.stroke||'').localeCompare(b.stroke||'');
+    if(da!==db)return da-db;
+    return(a.stroke||'').localeCompare(b.stroke||'');
   });
-  c.innerHTML = filtered.map(function(p) {
-    return '<div class="pb-card">' +
-      '<div class="pb-ico">&#x23F1;</div>' +
-      '<div class="pb-body">' +
-        '<div class="pb-title">'+(p.distance||'')+' '+(p.stroke||'')+'</div>' +
-        '<div class="pb-time">'+fmtTime(p.timeMin,p.timeSec,p.timeMs)+'</div>' +
-        '<div class="pb-meta">'+(p.poolLength||'?')+'m Bahn &middot; '+fmtDate(p.date)+'</div>' +
+  c.innerHTML = filtered.map(function(p){
+    return '<div style="background:var(--card);border-radius:14px;padding:12px 13px;margin-bottom:8px;box-shadow:var(--sh);border:1px solid var(--border);display:flex;align-items:center;gap:10px">' +
+      '<div style="width:36px;height:36px;border-radius:10px;background:var(--amber-l,#FFF3E0);display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0">⏱️</div>' +
+      '<div style="flex:1">' +
+        '<div style="font-size:.875rem;font-weight:700">'+(p.distance||'')+' '+(p.stroke||'')+'</div>' +
+        '<div style="font-size:1.1rem;font-weight:800;color:var(--blue,#0044FF);letter-spacing:-.3px">'+wkFmtTime(p.timeMin,p.timeSec,p.timeMs)+'</div>' +
+        '<div style="font-size:.7rem;color:var(--tm)">'+(p.poolLength||'?')+'m Bahn · '+(typeof fmtDate==='function'?fmtDate(p.date):p.date)+'</div>' +
       '</div>' +
     '</div>';
   }).join('');
 }
 
+// ── Verlauf anzeigen ──────────────────────────────────────────────
 async function renderWkHist() {
-  var c = document.getElementById('wk-hist-list'); if (!c) return;
+  var c = document.getElementById('wk-hist-list');
+  if (!c) return;
   var comps = await dbAll('competitions');
   if (!comps.length) {
-    c.innerHTML = '<div class="empty"><div class="empty-ico">&#x1F3C6;</div>' +
-      '<p>Noch keine Wettkämpfe.</p>' +
-      '<p class="empty-sub">Trage deinen ersten Wettkampf ein!</p></div>';
+    c.innerHTML = '<div style="text-align:center;padding:28px 14px;color:var(--tm)"><div style="font-size:2.2rem;margin-bottom:7px">🏆</div><p style="font-size:.875rem;font-weight:500">Noch keine Wettkämpfe.</p><p style="font-size:.75rem;margin-top:3px">Trage deinen ersten Wettkampf ein!</p></div>';
     return;
   }
   comps.sort(function(a,b){ return b.date.localeCompare(a.date); });
-  var ratingMap = {'sehr gut':'&#x2B50;&#x2B50;&#x2B50;','gut':'&#x2B50;&#x2B50;','okay':'&#x2B50;','schwierig':'&#x1F4AA;'};
-  c.innerHTML = comps.map(function(comp) {
+  var ratingIcons = {'sehr gut':'⭐⭐⭐','gut':'⭐⭐','okay':'⭐','schwierig':'💪'};
+  c.innerHTML = comps.map(function(comp){
     var starts = comp.starts || [];
+    var fmtD = typeof fmtDate==='function' ? fmtDate(comp.date) : comp.date;
     var startsHTML = starts.length === 0
-      ? '<div style="font-size:.78rem;color:var(--tm);padding:6px 0">Keine Starts eingetragen.</div>'
-      : starts.map(function(s) {
-          var timeStr = fmtTime(s.timeMin, s.timeSec, s.timeMs);
-          var pbBadge = s.isPB
-            ? '<span style="font-size:.6rem;background:var(--amber-l);color:var(--amber);padding:2px 6px;border-radius:4px;font-weight:700;margin-left:5px">PB</span>'
-            : '';
-          var placeStr = s.placement
-            ? '<span style="font-size:.7rem;color:var(--tm);margin-left:6px">Platz '+s.placement+'</span>'
-            : '';
-          var splitsStr = (s.splits && s.splits.length > 0)
-            ? '<div style="margin-top:4px;font-size:.65rem;color:var(--tm)">'+
-                s.splits.map(function(sp){
-                  return sp.distance+'m: '+fmtTime(sp.timeMin||0,sp.timeSec||0,sp.timeMs||0);
-                }).join(' &middot; ')+
-              '</div>'
+      ? '<div style="font-size:.78rem;color:var(--tm);padding:6px 0;font-style:italic">Keine Starts eingetragen.</div>'
+      : starts.map(function(s){
+          var timeStr = wkFmtTime(s.timeMin,s.timeSec,s.timeMs);
+          var pbBadge = s.isPB ? '<span style="font-size:.6rem;background:var(--amber-l,#FFF3E0);color:var(--amber,#FF8F00);padding:2px 6px;border-radius:4px;font-weight:700;margin-left:6px">PB ⭐</span>' : '';
+          var placeStr = s.placement ? '<span style="font-size:.7rem;color:var(--tm);margin-left:6px">Platz '+s.placement+'</span>' : '';
+          var splitsArr = s.splits || [];
+          var splitsStr = splitsArr.length > 0
+            ? '<div style="margin-top:4px;font-size:.65rem;color:var(--tm)">'+splitsArr.map(function(sp){return sp.distance+'m: '+wkFmtTime(sp.timeMin||0,sp.timeSec||0,sp.timeMs||0);}).join(' · ')+'</div>'
             : '';
           return '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">' +
-            '<div style="min-width:80px">' +
-              '<div style="font-size:.78rem;font-weight:700;color:var(--t1)">'+(s.distance||'')+' '+(s.stroke||'')+'</div>' +
-              '<div style="font-size:.65rem;color:var(--tm)">'+(comp.poolLength||'?')+'m Bahn</div>' +
-            '</div>' +
-            '<div style="flex:1">' +
-              '<div style="display:flex;align-items:center;flex-wrap:wrap">' +
-                '<span style="font-size:1rem;font-weight:800;color:var(--blue)">'+timeStr+'</span>' +
-                pbBadge + placeStr +
-              '</div>' +
-              splitsStr +
-            '</div>' +
+            '<div style="min-width:90px"><div style="font-size:.82rem;font-weight:700">'+(s.distance||'')+' '+(s.stroke||'')+'</div><div style="font-size:.65rem;color:var(--tm)">'+(comp.poolLength||'?')+'m Bahn</div></div>' +
+            '<div style="flex:1"><div style="display:flex;align-items:center;flex-wrap:wrap"><span style="font-size:1.05rem;font-weight:800;color:var(--blue,#0044FF)">'+timeStr+'</span>'+pbBadge+placeStr+'</div>'+splitsStr+'</div>' +
           '</div>';
         }).join('');
-
-    return '<div class="card" style="margin-bottom:10px">' +
+    return '<div style="background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--sh);border:1px solid var(--border)">' +
       '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">' +
-        '<div style="flex:1">' +
-          '<div style="font-size:.95rem;font-weight:800">'+(comp.name||'Wettkampf')+'</div>' +
-          '<div style="font-size:.72rem;color:var(--tm);margin-top:2px">' +
-            fmtDate(comp.date) +
-            (comp.location?' &middot; '+comp.location:'') +
-            ' &middot; '+(comp.poolLength||'?')+'m Bahn' +
-            (ratingMap[comp.rating]?' &middot; '+ratingMap[comp.rating]:'') +
-          '</div>' +
-        '</div>' +
+        '<div style="flex:1"><div style="font-size:.95rem;font-weight:800">'+(comp.name||'Wettkampf')+'</div>' +
+        '<div style="font-size:.72rem;color:var(--tm);margin-top:2px">'+fmtD+(comp.location?' · '+comp.location:'')+' · '+(comp.poolLength||'?')+'m'+(ratingIcons[comp.rating]?' · '+ratingIcons[comp.rating]:'')+'</div></div>' +
         '<div style="display:flex;gap:6px;align-items:center;flex-shrink:0">' +
-          '<span style="font-size:.72rem;font-weight:700;color:var(--blue)">+'+(comp.pointsEarned||0)+' Pkt.</span>' +
-          '<button class="btnlink" style="font-size:.65rem;color:var(--red)" onclick="deleteComp(\''+comp.id+'\')">&#x1F5D1;</button>' +
+          '<span style="font-size:.72rem;font-weight:700;color:var(--blue,#0044FF)">+'+(comp.pointsEarned||0)+' Pkt.</span>' +
+          '<button onclick="wkDeleteComp(\''+comp.id+'\')" style="width:26px;height:26px;border-radius:50%;background:var(--red-l,#FFEBEE);color:var(--red,#F44336);font-size:.75rem;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none">🗑️</button>' +
         '</div>' +
       '</div>' +
       '<div>'+startsHTML+'</div>' +
@@ -2006,28 +2036,48 @@ async function renderWkHist() {
   }).join('');
 }
 
-async function deleteComp(id) {
-  showConfirm('Wettkampf l\u00f6schen?',
-    'Dieser Wettkampf und die damit verbundenen Punkte werden entfernt.',
-    async function() {
-      var log = await dbAll('points_log');
-      var oldPts = log.filter(function(l){return l.entryId===id;}).reduce(function(s,l){return s+l.points;},0);
-      if (oldPts!==0) await dbPut('points_log',{id:genId(),date:today(),reason:'Wettkampf gel\u00f6scht',points:-oldPts,entryId:id,entryType:'deletion'});
-      await dbDel('competitions',id);
-      closeModal('m-confirm'); showToast('Wettkampf gel\u00f6scht.');
-      renderWkHist(); renderPBs();
-    }
-  );
+// ── Wettkampf löschen ─────────────────────────────────────────────
+async function wkDeleteComp(id) {
+  if (typeof showConfirm === 'function') {
+    showConfirm('Wettkampf löschen?','Dieser Wettkampf und die damit verbundenen Punkte werden entfernt.',async function(){
+      await wkDoDelete(id);
+      if(typeof closeModal==='function')closeModal('m-confirm');
+    });
+  } else {
+    if(confirm('Wettkampf löschen?'))await wkDoDelete(id);
+  }
+}
+async function wkDoDelete(id) {
+  var log = await dbAll('points_log');
+  var oldPts = 0;
+  log.forEach(function(l){if(l.entryId===id)oldPts+=l.points;});
+  if(oldPts!==0)await dbPut('points_log',{id:genId(),date:today(),reason:'Wettkampf gelöscht',points:-oldPts,entryId:id,entryType:'deletion'});
+  await dbDel('competitions',id);
+  if(typeof showToast==='function')showToast('Wettkampf gelöscht.');
+  renderPBs(); renderWkHist();
 }
 
+// ── Tab-Navigation ────────────────────────────────────────────────
 function wkTab(id, btn) {
   document.querySelectorAll('#page-wettkampf .tabpane').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('#page-wettkampf .tabbtn').forEach(function(b){b.classList.remove('active');});
-  document.getElementById(id).classList.add('active'); btn.classList.add('active');
-  if (id==='wk-pbs')     renderPBs();
-  if (id==='wk-hist')    renderWkHist();
-  if (id==='wk-analyse' && typeof renderWkAnalyse === 'function') renderWkAnalyse();
-  if (id==='wk-prep'    && typeof renderWkPrep    === 'function') renderWkPrep();
+  var pane = document.getElementById(id);
+  if(pane)pane.classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(id==='wk-pbs')     renderPBs();
+  if(id==='wk-hist')    renderWkHist();
+  if(id==='wk-analyse' && typeof renderWkAnalyse==='function') renderWkAnalyse();
+  if(id==='wk-prep'    && typeof renderWkPrep   ==='function') renderWkPrep();
+}
+
+// ── Seite initialisieren ──────────────────────────────────────────
+async function renderWettkampfPage() {
+  var dateEl = document.getElementById('wk-date');
+  if(dateEl)dateEl.value = today();
+  var startsContainer = document.getElementById('wk-starts');
+  if(startsContainer && startsContainer.children.length===0) addWkStart();
+  renderPBs();
+  renderWkHist();
 }
 // ══════════════════════════════════════════════════════════════════
 // WETTKAMPF ANALYSE v2
@@ -2340,462 +2390,546 @@ function drawLineChart(canvasId, labels, data, color, minY, maxY) {
   labels.forEach(function(l,i){if(i%step===0)ctx.fillText(l,toX(i),H-4);});
 }
 // ══════════════════════════════════════════════════════════════════
-// WETTKAMPF-VORBEREITUNG MODULE v2
-// Eigenständige Strecken-/Lagenauswahl + Aufwärmen + Technik + Tipps
+// WETTKAMPF-VORBEREITUNG v3
+// - Countdown-Timer für Aufwärmphasen
+// - Kindgerechte Sprache (10 Jahre)
+// - Kein Einschw. im Wasser (Trainer übernimmt)
+// - DQ-Warnungen visuell stark hervorgehoben
+// - Strecken/Lagen-Auswahl eigenständig
 // ══════════════════════════════════════════════════════════════════
 'use strict';
 
-// ── Technikkriterien (aus PDF + DSV-Standards) ────────────────────
+// ── Timer-State ───────────────────────────────────────────────────
+var WK_TIMER = {
+  interval: null,
+  remaining: 0,
+  phaseIdx: 0,
+  exIdx: 0,
+  running: false,
+  paused: false
+};
+
+// ── Aufwärm-Phasen (kindgerecht, knieschonend, ohne Einschwimmen) ─
+var WK_WARMUP_PHASEN = [
+  {
+    name: 'Phase 1: Aufwachen & Locker machen',
+    icon: '🔥',
+    color: '#0044FF',
+    totalSec: 120,
+    uebungen: [
+      { name: 'Arm-Kreisen', sec: 30, icon: '💪', anleitung: 'Strecke beide Arme aus und kreise sie – erst vorwärts, dann rückwärts. Schön groß und locker!' },
+      { name: 'Schultern rollen', sec: 20, icon: '🔄', anleitung: 'Rolle deine Schultern langsam nach hinten – 10 Mal. Dann nach vorne – 10 Mal.' },
+      { name: 'Hüfte kreisen', sec: 20, icon: '🌀', anleitung: 'Hände auf die Hüfte, Beine schulterbreit. Kreise mit der Hüfte – wie ein Hula-Hoop!' },
+      { name: 'Oberkörper drehen', sec: 30, icon: '↔️', anleitung: 'Arme ausstrecken, Oberkörper langsam nach links und rechts drehen. Knie bleiben gerade.' }
+    ]
+  },
+  {
+    name: 'Phase 2: Knie schonen & Muskeln wecken',
+    icon: '💙',
+    color: '#00C853',
+    totalSec: 120,
+    uebungen: [
+      { name: 'Gesäßbrücke', sec: 40, icon: '🌉', anleitung: 'Leg dich auf den Rücken, Knie angewinkelt. Hebe dein Gesäß hoch und halte kurz. 15 Mal wiederholen. Kein Stress für die Knie!' },
+      { name: 'Muschel (Clamshell)', sec: 40, icon: '🦪', anleitung: 'Leg dich auf die Seite, Knie leicht gebeugt. Hebe das obere Knie zur Decke – wie eine Muschel die sich öffnet. 10 Mal je Seite.' },
+      { name: 'Fußkreisen', sec: 20, icon: '🦶', anleitung: 'Sitz hin und kreise deinen Fuß – erst rechts, dann links. Das wärmt die Sprunggelenke auf!' },
+      { name: 'Frosch-Dehnung', sec: 20, icon: '🐸', anleitung: 'Knie weit auseinander, langsam nach hinten setzen. Tief einatmen und entspannen.' }
+    ]
+  },
+  {
+    name: 'Phase 3: Schwimm-Modus an!',
+    icon: '🏊',
+    color: '#FF8F00',
+    totalSec: 90,
+    uebungen: [
+      { name: 'Streamline üben', sec: 30, icon: '🚀', anleitung: 'Strecke dich so lang wie möglich – Arme über den Kopf, Hände übereinander. Halte 3 Sekunden. 5 Mal wiederholen. So liegst du im Wasser!' },
+      { name: 'Schulter dehnen', sec: 30, icon: '🤸', anleitung: 'Ziehe einen Arm über die Brust und halte ihn mit dem anderen Arm fest. 15 Sekunden halten, dann Seite wechseln.' },
+      { name: 'Rennen vorstellen', sec: 30, icon: '🧠', anleitung: 'Schließe die Augen. Stell dir vor, wie du ins Wasser springst, schwimmst und anschlägst. Alles perfekt! Das nennt man Visualisierung.' }
+    ]
+  }
+];
+
+// ── Technikkriterien ──────────────────────────────────────────────
 var WK_TECHNIK = {
   'Freistil': {
     icon: '🏊',
+    dq_risiken: [
+      'Beim Anschlag: Beide Hände müssen die Wand berühren (nur bei Staffel)',
+      'Tauchen: Nicht länger als 15m unter Wasser bleiben'
+    ],
     start: [
-      'Kraftvoller Sprung mit Körperspannung',
-      'Sauberes Eintauchen ohne viel Spritzer',
-      'Sofort in Streamline (Arme geschlossen hinter dem Kopf)',
-      'Mindestens 4 Delphinkicks in der Tauchphase',
-      'Mindestens 7,5 m Tauchphase'
+      'Kraftvoll abspringen und Körper ganz strecken',
+      'Sauber ins Wasser eintauchen – wenig Spritzer',
+      'Sofort Streamline: Arme über den Kopf, Hände übereinander',
+      'Mindestens 4 Delphinkicks unter Wasser',
+      'Mindestens 7,5 m unter Wasser bleiben'
     ],
     technik: [
-      'Kraftvoller, durchgängiger Beinschlag – Zehenspitzen durchbrechen die Wasseroberfläche',
-      '3er-Atmung (alle 3 Züge zur Seite atmen)',
-      'Ellenbogen ist der höchste Punkt über Wasser – nicht die Hand',
-      'Streckung vorne und langer Abdruck bis zum Oberschenkel',
-      'Körperrotation 45–60° für maximale Zugkraft'
+      'Beine kräftig schlagen – Zehenspitzen durchbrechen die Wasseroberfläche',
+      'Alle 3 Züge zur Seite atmen (3er-Atmung)',
+      'Der Ellenbogen ist der höchste Punkt über Wasser – nicht die Hand!',
+      'Arm weit nach vorne strecken und bis zum Oberschenkel durchziehen',
+      'Körper leicht drehen – das macht den Zug stärker'
     ],
     wende: [
-      'Letzter Armzug: Luft anhalten',
-      'Schnelle, kleine Rolle (Kraulwende)',
-      'Kraftvoller Abstoß in Streamline',
-      'Mindestens 4 Delphinkicks, mind. 7,5 m Tauchphase'
+      'Letzten Zug: Luft anhalten',
+      'Schnelle, kleine Rolle an der Wand',
+      'Kräftig abstoßen in Streamline',
+      'Mindestens 4 Delphinkicks, mind. 7,5 m unter Wasser'
     ],
-    wissenschaft: [
-      'Körperrotation von 45–60° verbessert Zugkraft und reduziert Wasserwiderstand',
-      'Optimale Atemposition: Kopf dreht mit Körperrotation – nicht separat heben',
-      'Streamline nach Wende reduziert Widerstand um bis zu 30%',
-      'Hohe Zugfrequenz bei 50/100m, längerer Zug bei 400m+'
+    tipps: [
+      'Beim Sprint (50m): Alles geben von Anfang an!',
+      'Bei 100m: Erste 50m kontrolliert, zweite 50m alles geben',
+      'Gute Wende kann bis zu 1 Sekunde einsparen – üben lohnt sich!'
     ]
   },
   'Rücken': {
     icon: '🔄',
+    dq_risiken: [
+      '⚠️ DISQUALIFIKATION: Auf den Bauch drehen vor der Wende (außer bei der Rollwende)',
+      '⚠️ DISQUALIFIKATION: Kopf unter Wasser beim Anschlag',
+      'Beim Start: Nicht zu früh loslassen'
+    ],
     start: [
-      'Start vom Beckenrand (Griff, Füße an der Wand)',
-      'Kraftvoller Abwurf mit Körperspannung',
-      'Sauberes Eintauchen in Streamline',
-      'Mindestens 4 Delphinkicks in der Tauchphase',
-      'Mindestens 7,5 m Tauchphase'
+      'Griff am Startblock, Füße an der Wand',
+      'Kräftig abwerfen und Körper strecken',
+      'Rückwärts ins Wasser eintauchen',
+      'Sofort Streamline und Delphinkicks',
+      'Mindestens 4 Delphinkicks, mind. 7,5 m unter Wasser'
     ],
     technik: [
-      'Kraftvoller, durchgängiger Beinschlag – Zehenspitzen durchbrechen die Wasseroberfläche',
-      'Feste Kopfposition – Nasenspitze zeigt zur Decke',
-      'Saubere Eintauchphase – kleiner Finger taucht zuerst ein',
-      'Beim Abdruck bleibt die Hand unter Wasser',
-      'Schulterrotation: Schulter kommt über Wasser wenn Arm zurückgeführt wird'
+      'Beine kräftig schlagen – Zehenspitzen durchbrechen die Wasseroberfläche',
+      'Kopf ruhig halten – Nasenspitze zeigt zur Decke',
+      'Kleiner Finger taucht zuerst ins Wasser ein',
+      'Hand bleibt beim Abdruck unter Wasser',
+      'Schulter kommt über Wasser wenn der Arm zurückgeführt wird'
     ],
     wende: [
-      '5m vor der Wand Züge zählen ohne unnötiges Umdrehen',
+      '5m vor der Wand: Züge zählen, nicht umdrehen!',
       'Schnelle, kleine Rolle',
-      'Kraftvoller Abstoß in Streamline',
-      'Mindestens 4 Delphinkicks, mind. 7,5 m Tauchphase'
+      'Kräftig abstoßen in Streamline',
+      'Mindestens 4 Delphinkicks, mind. 7,5 m unter Wasser'
     ],
-    wissenschaft: [
-      'Kopfposition ist entscheidend: Jede Abweichung erhöht den Frontalen Widerstand erheblich',
-      'Schulterrotation von 40–50° ermöglicht effektiveren Zug und schont die Schulter',
-      'Beinschlag: Knie bleibt unter Wasser – nur Zehen durchbrechen die Oberfläche',
-      '5m-Markierung vor der Wand nutzen: Züge zählen verhindert Disqualifikation'
+    tipps: [
+      'Die 5m-Fahne zeigt dir: Noch 5m bis zur Wand!',
+      'Züge zählen nach der Fahne – so weißt du wann du wendest',
+      'Kopf ruhig halten macht dich schneller!'
     ]
   },
   'Brust': {
     icon: '🐸',
+    dq_risiken: [
+      '⚠️ DISQUALIFIKATION: Anschlag nur mit einer Hand (beide Hände müssen gleichzeitig die Wand berühren!)',
+      '⚠️ DISQUALIFIKATION: Knie beim Beinschlag zu weit öffnen (Schmetterlingsschlag)',
+      '⚠️ DISQUALIFIKATION: Kopf taucht beim Schwimmen komplett unter (außer nach Start/Wende)',
+      '⚠️ KNIE-HINWEIS: Knie nicht zu weit öffnen – schont auch deine Knie!'
+    ],
     start: [
-      'Kraftvoller Sprung mit Körperspannung',
-      'Sauberes Eintauchen ohne viel Spritzer',
-      'Tauchzug: Ein vollständiger Brustzug unter Wasser',
-      'Mindestens 7,5 m Tauchphase'
+      'Kraftvoll abspringen',
+      'Sauber eintauchen',
+      'Einen vollständigen Brustzug unter Wasser (Tauchzug)',
+      'Dann auftauchen und normal schwimmen',
+      'Mindestens 7,5 m unter Wasser'
     ],
     technik: [
-      'Gleitphase/Pause in voller Streckung nach jedem Zyklus',
-      'Schnelle Arm- & Beinbewegung ohne Pausen',
-      'Enger Beinschlag: Knie werden beim Anziehen maximal hüftbreit geöffnet',
-      'Hände gehen gerade nach vorne beim Armzug',
-      'Rhythmus: Armzug → Arme vor + Beine anziehen → Streckung + Beinschlag → Gleiten'
+      'Nach jedem Zug kurz gleiten – das ist wichtig bei Brust!',
+      'Arme und Beine schnell bewegen, ohne Pause',
+      'Knie beim Anziehen nur hüftbreit öffnen – nicht zu weit!',
+      'Hände gehen gerade nach vorne',
+      'Rhythmus: Arme ziehen → Beine anziehen → Strecken → Gleiten'
     ],
     wende: [
-      'Anschlag mit beiden Händen gleichzeitig unter Wasser',
-      'Schnelle Drehung',
-      'Kraftvoller Abstoß in Streamline',
-      'Tauchzug + mind. 7,5 m Tauchphase'
+      'Beide Hände gleichzeitig an die Wand – sehr wichtig!',
+      'Schnell drehen',
+      'Kräftig abstoßen in Streamline',
+      'Tauchzug + mind. 7,5 m unter Wasser'
     ],
-    wissenschaft: [
-      'Kniewinkel beim Anziehen: 90–130° optimal – zu weites Öffnen erhöht Widerstand stark',
-      'Gleitphase ist entscheidend für Effizienz – zu kurze Gleitphase kostet Energie',
-      'Bei Knieproblemen: Knie enger halten, weniger Außenrotation des Fußes',
-      'Achtung: Brust-Kick ist häufigste Ursache für Knieschmerzen bei Schwimmern (PFPS/MCL)'
+    tipps: [
+      'Die Gleitphase macht Brust besonders – nicht weglassen!',
+      'Beide Hände gleichzeitig anschlagen – immer üben!'
     ]
   },
   'Schmetterling': {
     icon: '🦋',
+    dq_risiken: [
+      '⚠️ DISQUALIFIKATION: Anschlag nur mit einer Hand (beide Hände müssen gleichzeitig die Wand berühren!)',
+      '⚠️ DISQUALIFIKATION: Arme einzeln nach vorne führen (müssen gleichzeitig schwingen)',
+      '⚠️ DISQUALIFIKATION: Kopf taucht beim Atmen komplett unter'
+    ],
     start: [
-      'Kraftvoller Sprung mit Körperspannung',
-      'Sauberes Eintauchen ohne viel Spritzer',
-      'Sofort in Streamline mit Delphinkicks',
-      'Mindestens 4 Delphinkicks, mind. 7,5 m Tauchphase'
+      'Kraftvoll abspringen',
+      'Sauber eintauchen',
+      'Sofort Streamline und Delphinkicks',
+      'Mindestens 4 Delphinkicks, mind. 7,5 m unter Wasser'
     ],
     technik: [
-      '2 kraftvolle Beinschläge pro Armzug – Zehenspitzen durchbrechen die Wasseroberfläche',
-      'Richtiger Rhythmus: Beine/Arme koordiniert',
-      '2er-Atmung (alle 2 Züge atmen)',
-      'Wellenbewegung des Körpers (beginnt in der Hüfte)',
-      'Zur Atmung kommt nur der Kopf raus – Brust bleibt im Wasser'
+      '2 Beinschläge pro Armzug – Zehenspitzen durchbrechen die Wasseroberfläche',
+      'Arme und Beine im richtigen Rhythmus',
+      'Alle 2 Züge atmen (2er-Atmung)',
+      'Körper macht eine Wellenbewegung',
+      'Beim Atmen kommt nur der Kopf raus – Brust bleibt im Wasser'
     ],
     wende: [
-      'Letzter Armzug: Luft anhalten',
-      'Anschlag mit beiden Händen gleichzeitig unter Wasser',
-      'Schnelle Drehung',
-      'Kraftvoller Abstoß in Streamline',
-      'Mindestens 4 Delphinkicks, mind. 7,5 m Tauchphase'
+      'Letzten Zug: Luft anhalten',
+      'Beide Hände gleichzeitig an die Wand – sehr wichtig!',
+      'Schnell drehen',
+      'Kräftig abstoßen in Streamline',
+      'Mindestens 4 Delphinkicks, mind. 7,5 m unter Wasser'
     ],
-    wissenschaft: [
-      'Undulationsbewegung beginnt in der Hüfte, nicht in den Schultern',
-      'Erster Beinschlag beim Eintauchen der Arme, zweiter beim Abdruck – Timing entscheidend',
-      'Atemposition: Kinn knapp über Wasser – zu hohes Heben bremst stark',
-      'Energieintensivste Schwimmart: Pacing bei 200m Schmetterling besonders wichtig'
+    tipps: [
+      'Die Wellenbewegung beginnt in der Hüfte – nicht in den Schultern',
+      'Beide Hände gleichzeitig anschlagen – immer!'
     ]
   },
   'Lagen': {
     icon: '🔀',
+    dq_risiken: [
+      '⚠️ DISQUALIFIKATION: Falsche Reihenfolge (muss sein: Schmetterling → Rücken → Brust → Freistil)',
+      '⚠️ DISQUALIFIKATION: Bei Rücken→Brust-Wende auf den Bauch drehen (Bauchlage = sofort DQ!)',
+      '⚠️ DISQUALIFIKATION: Anschlag bei Schmetterling oder Brust nur mit einer Hand',
+      '⚠️ DISQUALIFIKATION: Beim Rücken-Teil auf den Bauch drehen'
+    ],
     start: [
-      'Reihenfolge: Schmetterling → Rücken → Brust → Freistil',
-      'Start wie Schmetterling: Kraftvoller Sprung, Streamline, Delphinkicks'
+      'Reihenfolge merken: Schmetterling → Rücken → Brust → Freistil',
+      'Start wie Schmetterling: Kraftvoll, Streamline, Delphinkicks'
     ],
     technik: [
       'Schmetterling: 2 Beinschläge, Wellenbewegung, 2er-Atmung',
-      'Rücken: Feste Kopfposition, Schulterrotation, kleiner Finger zuerst',
-      'Brust: Gleitphase, enger Beinschlag, gleichzeitiger Anschlag',
-      'Freistil: Kraftvoller Beinschlag, 3er-Atmung, langer Abdruck'
+      'Rücken: Kopf ruhig, Schulterrotation, kleiner Finger zuerst',
+      'Brust: Gleiten, enger Beinschlag, gleichzeitiger Anschlag',
+      'Freistil: Kräftiger Beinschlag, 3er-Atmung, langer Abdruck'
     ],
     wende: [
-      'Schmetterling→Rücken: Anschlag beide Hände → Rücken-Wende',
-      'Rücken→Brust (Cross-Over): 5m vor Wand Züge zählen → Anschlag mit oberem Arm hinter dem Ohr → seitliche Körperlage → seitliche Rolle → Abstoß',
-      '⚠️ Bauchlage bei Rücken→Brust-Wende = Disqualifikation!',
-      'Brust→Freistil: Anschlag beide Hände → Kraulwende'
+      'Schmetterling→Rücken: Beide Hände gleichzeitig → Rücken-Wende',
+      'Rücken→Brust (Cross-Over): 5m vor Wand Züge zählen → Anschlag mit oberem Arm → seitliche Körperlage → seitliche Rolle → Abstoß',
+      '🚨 Rücken→Brust: Körper MUSS seitlich sein – NIEMALS auf den Bauch drehen!',
+      'Brust→Freistil: Beide Hände gleichzeitig → Kraulwende'
     ],
-    wissenschaft: [
-      'Lagenwechsel-Wenden sind technisch anspruchsvoll – regelmäßiges Üben entscheidend',
-      'Energieverteilung: Schmetterling nicht zu schnell beginnen',
-      'Cross-Over-Wende: Körperlage muss seitlich sein – Videoanalyse empfohlen',
-      'Pacing-Strategie: Gleichmäßige Verteilung über alle 4 Lagen anstreben'
+    tipps: [
+      'Die Rücken→Brust-Wende ist die schwierigste – viel üben!',
+      'Reihenfolge immer im Kopf behalten: Schmetterling, Rücken, Brust, Freistil'
     ]
   }
 };
 
 // ── Strecken-Tipps ────────────────────────────────────────────────
 var WK_STRECKEN = {
-  '50 m': {
-    pacing: 'Maximale Intensität von Start bis Ziel – kein Aufbau',
-    energie: 'ATP-PCr-System (erste 10 Sek) + Laktat-System',
-    tipps: [
-      'Start ist entscheidend: Reaktionszeit + Tauchphase können 0,3–0,5 Sek ausmachen',
-      'Atemfrequenz minimieren – manche Sprinter atmen gar nicht',
-      'Maximale Zugfrequenz von Beginn an – kein Aufbau',
-      'Tauchphase optimal nutzen: 7,5–10 m mit Delphinkicks'
-    ]
-  },
-  '100 m': {
-    pacing: 'Erste 50m kontrolliert schnell, zweite 50m halten',
-    energie: 'Anaerob-laktazid: Laktat-System dominiert',
-    tipps: [
-      'Erste 50m: Kontrolliert schnell – nicht überpacen',
-      'Wende ist kritisch: Gute Wende kann 0,5–1 Sek einsparen',
-      'Zweite 50m: Technik aufrechterhalten trotz Ermüdung',
-      'Atemrhythmus beibehalten – nicht zu häufig atmen'
-    ]
-  },
-  '200 m': {
-    pacing: 'Gleichmäßiges Pacing – alle 50m ähnliche Zeiten',
-    energie: 'Aerob-anaerob gemischt: Beide Systeme stark beansprucht',
-    tipps: [
-      'Negative Split anstreben: Zweite Hälfte leicht schneller',
-      'Erste 50m: Kontrolliert – Überpacing kostet in der zweiten Hälfte viel',
-      'Mentale Strategie: Rennen in 4×50m aufteilen',
-      'Technik bei Ermüdung aufrechterhalten – besonders Wenden'
-    ]
-  },
-  '400 m': {
-    pacing: 'Gleichmäßiges Pacing, leicht negative Split',
-    energie: 'Aerob dominant: VO2max-Bereich, Laktat-Schwelle entscheidend',
-    tipps: [
-      'Erste 100m: Kontrolliert – Überpacing ist der häufigste Fehler',
-      'Rennen in 4×100m aufteilen – jede 100m-Runde planen',
-      'Atemrhythmus: Regelmäßig und kontrolliert',
-      'Letzte 50m: Alles geben – Frequenz erhöhen'
-    ]
-  },
-  '800 m': {
-    pacing: 'Gleichmäßiges Pacing, leicht negative Split in der zweiten Hälfte',
-    energie: 'Aerob dominant: VO2max und Laktat-Schwelle',
-    tipps: [
-      'Erste 200m: Sehr kontrolliert – Renntempo finden',
-      'Mentale Strategie: Rennen in 8×100m aufteilen',
-      'Technik-Fokus: Effizienz ist bei langen Strecken entscheidend',
-      'Letzte 100m: Frequenz erhöhen und alles geben'
-    ]
-  },
-  '1500 m': {
-    pacing: 'Gleichmäßiges Pacing, letzte 100m Spurt',
-    energie: 'Aerob dominant: Ausdauer und Effizienz entscheidend',
-    tipps: [
-      'Erste 400m: Sehr kontrolliert – Renntempo etablieren',
-      'Mentale Strategie: Rennen in Abschnitte aufteilen',
-      'Effizienz über Geschwindigkeit: Langer, effizienter Zug spart Energie',
-      'Letzte 100m: Frequenz erhöhen – Spurt'
-    ]
-  }
+  '50 m':   { emoji:'⚡', pacing:'Alles geben von Anfang an!', tipps:['Start und Tauchphase sind super wichtig – hier gewinnst du Zeit','Atme so wenig wie möglich – das bremst dich','Maximale Geschwindigkeit von Anfang bis Ende','Gute Tauchphase: 7,5–10 m unter Wasser'] },
+  '100 m':  { emoji:'🔥', pacing:'Erste 50m kontrolliert schnell, zweite 50m alles geben', tipps:['Nicht zu schnell starten – sonst bist du am Ende kaputt','Die Wende ist sehr wichtig – übe sie viel!','Zweite 50m: Technik beibehalten auch wenn du müde wirst','Atemrhythmus beibehalten'] },
+  '200 m':  { emoji:'💪', pacing:'Gleichmäßig schwimmen – alle 50m ähnlich schnell', tipps:['Teile das Rennen in 4×50m auf','Erste 50m: Ruhig starten','Zweite Hälfte leicht schneller als erste (Negative Split)','Technik bei Müdigkeit aufrechterhalten'] },
+  '400 m':  { emoji:'🏃', pacing:'Gleichmäßig schwimmen, letzte 50m Spurt', tipps:['Teile das Rennen in 4×100m auf','Erste 100m: Sehr ruhig starten','Regelmäßig atmen – das ist bei langen Strecken wichtig','Letzte 50m: Alles geben!'] },
+  '800 m':  { emoji:'🌊', pacing:'Gleichmäßig schwimmen, letzte 100m Spurt', tipps:['Teile das Rennen in 8×100m auf','Sehr ruhig starten – du hast noch viel vor dir','Effizienz ist wichtiger als Geschwindigkeit','Letzte 100m: Alles geben!'] },
+  '1500 m': { emoji:'🏆', pacing:'Gleichmäßig schwimmen, letzte 100m Spurt', tipps:['Teile das Rennen in Abschnitte auf','Sehr ruhig starten','Langer, effizienter Zug spart Energie','Letzte 100m: Alles geben!'] }
 };
 
-// ── Aufwärm-Protokoll ─────────────────────────────────────────────
-var WK_WARMUP_PHASEN = [
-  {
-    name: 'Phase 1: Aktivierung (2 Min)',
-    icon: '🔥',
-    color: '#0044FF',
-    uebungen: [
-      { name: 'Arm-Kreisen', dauer: '30 Sek', info: 'Beide Arme gleichzeitig vorwärts und rückwärts kreisen' },
-      { name: 'Schulter-Rotation', dauer: '20 Sek', info: 'Arme seitlich, kleine Kreise vor- und rückwärts' },
-      { name: 'Hüft-Kreisen', dauer: '20 Sek', info: 'Hände auf Hüfte, große Kreise – Rumpf mobilisieren' },
-      { name: 'Rumpf-Rotation', dauer: '30 Sek', info: 'Arme ausgestreckt, Oberkörper langsam links-rechts drehen' }
-    ]
-  },
-  {
-    name: 'Phase 2: Knieschonende Aktivierung (2 Min)',
-    icon: '💙',
-    color: '#00C853',
-    uebungen: [
-      { name: 'Gesäßbrücke', dauer: '15 Wdh.', info: 'Rückenlage, Knie gebeugt, Hüfte heben – kein Kniestress' },
-      { name: 'Clamshell', dauer: '10 Wdh./Seite', info: 'Seitlage, oberes Knie zur Decke heben – Hüftabduktoren' },
-      { name: 'Fußkreisen', dauer: '15 Sek/Seite', info: 'Im Sitzen Fuß kreisen – Sprunggelenke mobilisieren' },
-      { name: 'Adduktoren-Dehnung', dauer: '20 Sek', info: 'Froschposition: Knie weit auseinander, langsam nach hinten' }
-    ]
-  },
-  {
-    name: 'Phase 3: Schwimmspezifisch (1–2 Min)',
-    icon: '🏊',
-    color: '#FF8F00',
-    uebungen: [
-      { name: 'Streamline-Aktivierung', dauer: '5×', info: 'Arme über Kopf strecken, Körper vollständig strecken, 3 Sek halten' },
-      { name: 'Schulter-Mobilisation', dauer: '10 Wdh.', info: 'Arm über Brust ziehen und halten – Schulterkapsel dehnen' },
-      { name: 'Visualisierung', dauer: '30 Sek', info: 'Augen schließen, Rennen mental durchschwimmen: Start, Wenden, Finish' }
-    ]
-  }
-];
-
-// ── Hauptfunktion: Vorbereitung rendern ───────────────────────────
+// ── Hauptfunktion ─────────────────────────────────────────────────
 function renderWkPrep() {
   var container = document.getElementById('wk-prep-content');
   if (!container) return;
 
-  var selectedStrecke = localStorage.getItem('wk_prep_strecke') || '';
-  var selectedLage    = localStorage.getItem('wk_prep_lage')    || '';
+  var selStrecke = localStorage.getItem('wk_prep_strecke') || '';
+  var selLage    = localStorage.getItem('wk_prep_lage')    || '';
 
   var strecken = ['50 m','100 m','200 m','400 m','800 m','1500 m'];
   var lagen    = ['Freistil','Rücken','Brust','Schmetterling','Lagen'];
+  var lagenIcons = {'Freistil':'🏊','Rücken':'🔄','Brust':'🐸','Schmetterling':'🦋','Lagen':'🔀'};
 
   var html = '';
 
-  // ── Auswahl-Bereich ──
+  // ── Auswahl ──
   html += '<div style="background:var(--hero);border-radius:18px;padding:16px;margin-bottom:16px;color:#fff">' +
-    '<div style="font-size:.85rem;font-weight:800;margin-bottom:12px">🎯 Mein Start heute</div>' +
-    '<div style="margin-bottom:10px">' +
+    '<div style="font-size:.9rem;font-weight:800;margin-bottom:12px">🎯 Was schwimmst du heute?</div>' +
+    '<div style="margin-bottom:12px">' +
       '<div style="font-size:.72rem;font-weight:700;opacity:.8;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Strecke</div>' +
       '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
-        strecken.map(function(s) {
-          var active = s === selectedStrecke;
-          return '<button onclick="wkPrepSelect(\'strecke\',\'' + s + '\')" style="padding:7px 13px;border-radius:999px;border:1.5px solid ' +
-            (active ? '#fff' : 'rgba(255,255,255,.35)') + ';background:' +
-            (active ? '#fff' : 'rgba(255,255,255,.12)') + ';color:' +
-            (active ? '#0033CC' : '#fff') + ';font-size:.78rem;font-weight:700;cursor:pointer">' + s + '</button>';
+        strecken.map(function(s){
+          var a = s===selStrecke;
+          return '<button onclick="wkPrepSelect(\'strecke\',\''+s+'\')" style="padding:7px 13px;border-radius:999px;border:1.5px solid '+(a?'#fff':'rgba(255,255,255,.35)')+';background:'+(a?'#fff':'rgba(255,255,255,.12)')+';color:'+(a?'#0033CC':'#fff')+';font-size:.78rem;font-weight:700;cursor:pointer">'+s+'</button>';
         }).join('') +
       '</div>' +
     '</div>' +
     '<div>' +
       '<div style="font-size:.72rem;font-weight:700;opacity:.8;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Lage</div>' +
       '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
-        lagen.map(function(l) {
-          var active = l === selectedLage;
-          var icons = {'Freistil':'🏊','Rücken':'🔄','Brust':'🐸','Schmetterling':'🦋','Lagen':'🔀'};
-          return '<button onclick="wkPrepSelect(\'lage\',\'' + l + '\')" style="padding:7px 13px;border-radius:999px;border:1.5px solid ' +
-            (active ? '#fff' : 'rgba(255,255,255,.35)') + ';background:' +
-            (active ? '#fff' : 'rgba(255,255,255,.12)') + ';color:' +
-            (active ? '#0033CC' : '#fff') + ';font-size:.78rem;font-weight:700;cursor:pointer">' +
-            (icons[l]||'') + ' ' + l + '</button>';
+        lagen.map(function(l){
+          var a = l===selLage;
+          return '<button onclick="wkPrepSelect(\'lage\',\''+l+'\')" style="padding:7px 13px;border-radius:999px;border:1.5px solid '+(a?'#fff':'rgba(255,255,255,.35)')+';background:'+(a?'#fff':'rgba(255,255,255,.12)')+';color:'+(a?'#0033CC':'#fff')+';font-size:.78rem;font-weight:700;cursor:pointer">'+(lagenIcons[l]||'')+' '+l+'</button>';
         }).join('') +
       '</div>' +
     '</div>' +
   '</div>';
 
-  // ── Aufwärmen (immer sichtbar) ──
+  // ── Aufwärmen mit Timer ──
   html += '<div style="margin-bottom:16px">' +
-    '<div style="font-size:.9rem;font-weight:800;margin-bottom:4px">🔥 Aufwärmen (knieschonend)</div>' +
-    '<div style="font-size:.72rem;color:var(--tm);margin-bottom:10px">Evidenzbasiert · Swimming.org 3-Phasen-Modell · PMC 2024</div>' +
-    '<div style="background:rgba(0,68,255,.08);border:1px solid rgba(0,68,255,.2);border-radius:10px;padding:9px 12px;margin-bottom:10px;font-size:.75rem;color:var(--blue,#0044FF);font-weight:500">' +
-      '⚠️ Knie-Hinweis: Keine Kniebeugen, keine Sprünge, kein Laufen. Bei Schmerzen sofort stoppen.' +
+    '<div style="font-size:.9rem;font-weight:800;margin-bottom:4px">🔥 Aufwärmen – kurz vor dem Start</div>' +
+    '<div style="font-size:.75rem;color:var(--tm);margin-bottom:10px">Mach das direkt bevor du an den Startblock gehst – ca. 5 Minuten</div>' +
+    '<div style="background:rgba(0,68,255,.08);border:1.5px solid rgba(0,68,255,.2);border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:.78rem;color:var(--blue,#0044FF);font-weight:600">' +
+      '💙 Knie-Hinweis: Keine Sprünge, kein Laufen, keine Kniebeugen. Alle Übungen sind knieschonend!' +
     '</div>';
 
-  WK_WARMUP_PHASEN.forEach(function(phase) {
-    html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px;border-left:3px solid ' + phase.color + '">' +
-      '<div style="font-size:.82rem;font-weight:700;margin-bottom:8px">' + phase.icon + ' ' + phase.name + '</div>';
+  // Timer-Anzeige
+  html += '<div id="wk-timer-display" style="background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:var(--sh);border:1px solid var(--border);text-align:center;display:none">' +
+    '<div id="wk-timer-phase" style="font-size:.78rem;font-weight:700;color:var(--tm);margin-bottom:4px">Phase 1</div>' +
+    '<div id="wk-timer-ex" style="font-size:1rem;font-weight:800;margin-bottom:8px">Übung</div>' +
+    '<div id="wk-timer-anleitung" style="font-size:.78rem;color:var(--t2);margin-bottom:12px;line-height:1.5"></div>' +
+    '<div style="position:relative;width:100px;height:100px;margin:0 auto 12px">' +
+      '<svg viewBox="0 0 100 100" style="width:100px;height:100px;transform:rotate(-90deg)">' +
+        '<circle cx="50" cy="50" r="44" fill="none" stroke="var(--subtle)" stroke-width="8"/>' +
+        '<circle id="wk-timer-ring" cx="50" cy="50" r="44" fill="none" stroke="#0044FF" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="0"/>' +
+      '</svg>' +
+      '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;color:var(--t1)" id="wk-timer-secs">30</div>' +
+    '</div>' +
+    '<div style="display:flex;gap:8px;justify-content:center">' +
+      '<button id="wk-timer-pause-btn" onclick="wkTimerPause()" style="padding:9px 18px;border-radius:999px;background:var(--subtle);color:var(--t1);font-size:.83rem;font-weight:700;border:1.5px solid var(--border);cursor:pointer">⏸ Pause</button>' +
+      '<button onclick="wkTimerSkip()" style="padding:9px 18px;border-radius:999px;background:var(--subtle);color:var(--t1);font-size:.83rem;font-weight:700;border:1.5px solid var(--border);cursor:pointer">⏭ Überspringen</button>' +
+      '<button onclick="wkTimerStop()" style="padding:9px 18px;border-radius:999px;background:var(--red-l,#FFEBEE);color:var(--red,#F44336);font-size:.83rem;font-weight:700;border:none;cursor:pointer">✕ Stop</button>' +
+    '</div>' +
+  '</div>';
+
+  // Start-Button
+  html += '<button id="wk-timer-start-btn" onclick="wkTimerStart()" style="width:100%;padding:14px;border-radius:16px;background:linear-gradient(135deg,#0044FF,#0033CC);color:#fff;font-size:.95rem;font-weight:800;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(0,68,255,.3);margin-bottom:12px">▶ Aufwärmen starten (5 Min)</button>';
+
+  // Phasen-Übersicht
+  WK_WARMUP_PHASEN.forEach(function(phase, pi) {
+    html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px;border-left:3px solid '+phase.color+'">' +
+      '<div style="font-size:.82rem;font-weight:700;margin-bottom:8px">'+phase.icon+' '+phase.name+'</div>';
     phase.uebungen.forEach(function(ue) {
-      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">' +
-        '<div style="flex:1">' +
-          '<div style="font-size:.8rem;font-weight:700">' + ue.name + '</div>' +
-          '<div style="font-size:.7rem;color:var(--tm);margin-top:1px">' + ue.info + '</div>' +
-        '</div>' +
-        '<div style="font-size:.72rem;font-weight:700;color:' + phase.color + ';white-space:nowrap;flex-shrink:0">' + ue.dauer + '</div>' +
+      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">' +
+        '<span style="font-size:1rem;flex-shrink:0">'+ue.icon+'</span>' +
+        '<div style="flex:1"><div style="font-size:.78rem;font-weight:700">'+ue.name+'</div><div style="font-size:.7rem;color:var(--tm);margin-top:1px">'+ue.anleitung+'</div></div>' +
+        '<div style="font-size:.72rem;font-weight:700;color:'+phase.color+';white-space:nowrap;flex-shrink:0">'+ue.sec+' Sek</div>' +
       '</div>';
     });
     html += '</div>';
   });
-
-  // Wasser-Einwärmen
-  html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px">' +
-    '<div style="font-size:.82rem;font-weight:700;margin-bottom:8px">🏊 Einwärmen im Wasser (falls möglich)</div>' +
-    '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">' +
-      '<div style="flex:1"><div style="font-size:.78rem;font-weight:700">Phase 1: Locker einschwimmen</div><div style="font-size:.7rem;color:var(--tm)">Gemischte Lagen, Technikfokus, kein Druck</div></div>' +
-      '<div style="font-size:.72rem;font-weight:700;color:#0044FF;white-space:nowrap">200–300 m</div>' +
-    '</div>' +
-    '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">' +
-      '<div style="flex:1"><div style="font-size:.78rem;font-weight:700">Phase 2: Rennspezifisch</div><div style="font-size:.7rem;color:var(--tm)">4×25 m in Renntempo, Wenden üben</div></div>' +
-      '<div style="font-size:.72rem;font-weight:700;color:#0044FF;white-space:nowrap">4×25 m</div>' +
-    '</div>' +
-    '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0">' +
-      '<div style="flex:1"><div style="font-size:.78rem;font-weight:700">Phase 3: Aktivierung</div><div style="font-size:.7rem;color:var(--tm)">2×15 m maximal – Nervensystem aktivieren (60–90 Sek Pause)</div></div>' +
-      '<div style="font-size:.72rem;font-weight:700;color:#0044FF;white-space:nowrap">2×15 m</div>' +
-    '</div>' +
-  '</div>';
   html += '</div>';
 
-  // ── Technikkriterien (nur wenn Lage gewählt) ──
-  if (selectedLage && WK_TECHNIK[selectedLage]) {
-    var t = WK_TECHNIK[selectedLage];
+  // ── DQ-Warnungen (wenn Lage gewählt) ──
+  if (selLage && WK_TECHNIK[selLage] && WK_TECHNIK[selLage].dq_risiken.length > 0) {
+    var dqs = WK_TECHNIK[selLage].dq_risiken;
+    html += '<div style="background:#FF0000;border-radius:14px;padding:14px;margin-bottom:16px;color:#fff">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">' +
+        '<span style="font-size:1.4rem">🚨</span>' +
+        '<div style="font-size:.9rem;font-weight:900">DISQUALIFIKATIONS-RISIKEN: '+selLage+'</div>' +
+      '</div>' +
+      '<div style="font-size:.72rem;opacity:.9;margin-bottom:10px">Diese Fehler führen sofort zur Disqualifikation – merke sie dir gut!</div>';
+    dqs.forEach(function(dq) {
+      var isKnie = dq.indexOf('KNIE') >= 0;
+      var isDQ   = dq.indexOf('DISQUALIFIKATION') >= 0;
+      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:7px 10px;background:rgba(255,255,255,'+(isKnie?'.15':'.2')+';border-radius:8px;margin-bottom:6px">' +
+        '<span style="font-size:1rem;flex-shrink:0">'+(isKnie?'💙':'⛔')+'</span>' +
+        '<div style="font-size:.78rem;font-weight:'+(isDQ?'700':'600')+'">' + dq.replace('⚠️ DISQUALIFIKATION: ','').replace('⚠️ KNIE-HINWEIS: ','') + '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+  }
+
+  // ── Technikkriterien ──
+  if (selLage && WK_TECHNIK[selLage]) {
+    var t = WK_TECHNIK[selLage];
     html += '<div style="margin-bottom:16px">' +
-      '<div style="font-size:.9rem;font-weight:800;margin-bottom:4px">' + t.icon + ' Technikkriterien: ' + selectedLage + '</div>' +
-      '<div style="font-size:.72rem;color:var(--tm);margin-bottom:10px">Aus deinen hinterlegten Bewertungsschwerpunkten</div>';
+      '<div style="font-size:.9rem;font-weight:800;margin-bottom:4px">'+t.icon+' Technik-Checkliste: '+selLage+'</div>' +
+      '<div style="font-size:.72rem;color:var(--tm);margin-bottom:10px">Das musst du beim Schwimmen beachten</div>';
 
     // Start
     html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px">' +
-      '<div style="font-size:.78rem;font-weight:700;color:var(--blue,#0044FF);margin-bottom:7px">🚀 Start & Tauchphase</div>';
-    t.start.forEach(function(k, i) {
+      '<div style="font-size:.78rem;font-weight:700;color:#0044FF;margin-bottom:7px">🚀 Start & Tauchphase</div>';
+    t.start.forEach(function(k,i){
       html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">' +
-        '<div style="width:18px;height:18px;border-radius:50%;background:#0044FF;color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">' + (i+1) + '</div>' +
-        '<div style="font-size:.78rem">' + k + '</div>' +
-      '</div>';
+        '<div style="width:18px;height:18px;border-radius:50%;background:#0044FF;color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">'+(i+1)+'</div>' +
+        '<div style="font-size:.78rem">'+k+'</div></div>';
     });
     html += '</div>';
 
     // Technik
     html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px">' +
-      '<div style="font-size:.78rem;font-weight:700;color:var(--blue,#0044FF);margin-bottom:7px">🏊 Schwimmtechnik</div>';
-    t.technik.forEach(function(k, i) {
+      '<div style="font-size:.78rem;font-weight:700;color:#0044FF;margin-bottom:7px">🏊 Schwimmtechnik</div>';
+    t.technik.forEach(function(k,i){
       html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">' +
-        '<div style="width:18px;height:18px;border-radius:50%;background:#0044FF;color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">' + (i+1) + '</div>' +
-        '<div style="font-size:.78rem">' + k + '</div>' +
-      '</div>';
+        '<div style="width:18px;height:18px;border-radius:50%;background:#0044FF;color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">'+(i+1)+'</div>' +
+        '<div style="font-size:.78rem">'+k+'</div></div>';
     });
     html += '</div>';
 
     // Wende
     html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px">' +
-      '<div style="font-size:.78rem;font-weight:700;color:var(--blue,#0044FF);margin-bottom:7px">🔁 Wende</div>';
-    t.wende.forEach(function(k, i) {
-      var isWarning = k.indexOf('⚠️') >= 0 || k.indexOf('Disqualifikation') >= 0;
-      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">' +
-        '<div style="width:18px;height:18px;border-radius:50%;background:' + (isWarning?'#F44336':'#0044FF') + ';color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">' + (isWarning?'!':i+1) + '</div>' +
-        '<div style="font-size:.78rem;' + (isWarning?'color:#F44336;font-weight:600':'') + '">' + k + '</div>' +
-      '</div>';
+      '<div style="font-size:.78rem;font-weight:700;color:#0044FF;margin-bottom:7px">🔁 Wende</div>';
+    t.wende.forEach(function(k,i){
+      var isDanger = k.indexOf('🚨') >= 0 || k.indexOf('NIEMALS') >= 0;
+      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);'+(isDanger?'background:rgba(244,67,54,.08);border-radius:6px;padding:6px 8px;margin-bottom:4px':'')+'">'+
+        '<div style="width:18px;height:18px;border-radius:50%;background:'+(isDanger?'#F44336':'#0044FF')+';color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">'+(isDanger?'!':i+1)+'</div>' +
+        '<div style="font-size:.78rem;'+(isDanger?'color:#F44336;font-weight:700':'')+'">'+k+'</div></div>';
     });
     html += '</div>';
 
-    // Wissenschaft
-    html += '<div style="background:linear-gradient(135deg,rgba(0,68,255,.06),rgba(0,194,224,.06));border:1px solid rgba(0,68,255,.15);border-radius:12px;padding:12px;margin-bottom:8px">' +
-      '<div style="font-size:.78rem;font-weight:700;color:#0044FF;margin-bottom:7px">🔬 Wissenschaftliche Erkenntnisse</div>';
-    t.wissenschaft.forEach(function(tip) {
-      html += '<div style="display:flex;align-items:flex-start;gap:6px;padding:4px 0">' +
-        '<span style="color:#0044FF;font-size:.85rem;flex-shrink:0;margin-top:1px">→</span>' +
-        '<div style="font-size:.75rem;color:var(--t2)">' + tip + '</div>' +
-      '</div>';
-    });
+    // Tipps
+    if (t.tipps && t.tipps.length) {
+      html += '<div style="background:linear-gradient(135deg,rgba(0,68,255,.06),rgba(0,194,224,.06));border:1px solid rgba(0,68,255,.15);border-radius:12px;padding:12px;margin-bottom:8px">' +
+        '<div style="font-size:.78rem;font-weight:700;color:#0044FF;margin-bottom:7px">💡 Tipps für dein Rennen</div>';
+      t.tipps.forEach(function(tip){
+        html += '<div style="display:flex;align-items:flex-start;gap:6px;padding:4px 0">' +
+          '<span style="color:#0044FF;font-size:.85rem;flex-shrink:0">→</span>' +
+          '<div style="font-size:.75rem;color:var(--t2)">'+tip+'</div></div>';
+      });
+      html += '</div>';
+    }
     html += '</div>';
-    html += '</div>';
-  } else if (!selectedLage) {
+  } else if (!selLage) {
     html += '<div style="background:var(--subtle);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center">' +
       '<div style="font-size:1.6rem;margin-bottom:6px">📋</div>' +
       '<div style="font-size:.83rem;font-weight:700">Lage wählen</div>' +
-      '<div style="font-size:.75rem;color:var(--tm);margin-top:4px">Wähle oben deine Lage für die passenden Technikkriterien.</div>' +
+      '<div style="font-size:.75rem;color:var(--tm);margin-top:4px">Wähle oben deine Lage – dann siehst du die Technik-Tipps und Disqualifikations-Risiken.</div>' +
     '</div>';
   }
 
-  // ── Renntaktik (nur wenn Strecke gewählt) ──
-  if (selectedStrecke && WK_STRECKEN[selectedStrecke]) {
-    var st = WK_STRECKEN[selectedStrecke];
+  // ── Renntaktik ──
+  if (selStrecke && WK_STRECKEN[selStrecke]) {
+    var st = WK_STRECKEN[selStrecke];
     html += '<div style="margin-bottom:16px">' +
-      '<div style="font-size:.9rem;font-weight:800;margin-bottom:4px">📊 Renntaktik: ' + selectedStrecke + '</div>' +
-      '<div style="font-size:.72rem;color:var(--tm);margin-bottom:10px">Wissenschaftlich fundierte Empfehlungen</div>' +
+      '<div style="font-size:.9rem;font-weight:800;margin-bottom:4px">'+st.emoji+' Renntaktik: '+selStrecke+'</div>' +
       '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px">' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">' +
-          '<div style="background:var(--card);border-radius:8px;padding:9px">' +
-            '<div style="font-size:.62rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Pacing</div>' +
-            '<div style="font-size:.75rem;font-weight:600">' + st.pacing + '</div>' +
-          '</div>' +
-          '<div style="background:var(--card);border-radius:8px;padding:9px">' +
-            '<div style="font-size:.62rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Energiesystem</div>' +
-            '<div style="font-size:.75rem;font-weight:600">' + st.energie + '</div>' +
-          '</div>' +
+        '<div style="background:var(--card);border-radius:8px;padding:9px;margin-bottom:10px">' +
+          '<div style="font-size:.62rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Deine Strategie</div>' +
+          '<div style="font-size:.82rem;font-weight:700">'+st.pacing+'</div>' +
         '</div>';
-    st.tipps.forEach(function(tip) {
+    st.tipps.forEach(function(tip){
       html += '<div style="display:flex;align-items:flex-start;gap:6px;padding:5px 0;border-bottom:1px solid var(--border)">' +
         '<span style="color:#0044FF;font-size:.85rem;flex-shrink:0">✓</span>' +
-        '<div style="font-size:.78rem">' + tip + '</div>' +
-      '</div>';
+        '<div style="font-size:.78rem">'+tip+'</div></div>';
     });
     html += '</div></div>';
-  } else if (!selectedStrecke) {
+  } else if (!selStrecke) {
     html += '<div style="background:var(--subtle);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center">' +
       '<div style="font-size:1.6rem;margin-bottom:6px">📊</div>' +
       '<div style="font-size:.83rem;font-weight:700">Strecke wählen</div>' +
-      '<div style="font-size:.75rem;color:var(--tm);margin-top:4px">Wähle oben deine Strecke für Pacing-Strategie und Renntipps.</div>' +
+      '<div style="font-size:.75rem;color:var(--tm);margin-top:4px">Wähle oben deine Strecke – dann siehst du die Renntaktik.</div>' +
     '</div>';
   }
 
   // ── Checkliste ──
   html += '<div style="background:linear-gradient(135deg,#1A1A2E,#0D3B6E);border-radius:12px;padding:14px;margin-bottom:16px;color:#fff">' +
-    '<div style="font-size:.85rem;font-weight:800;margin-bottom:10px">✅ Wettkampf-Checkliste</div>';
-  var checklist = [
-    'Badeanzug/Badehose + Ersatz eingepackt',
-    'Schwimmbrille (+ Ersatz)',
-    'Badekappe',
-    'Ausreichend Wasser getrunken (mind. 500 ml vor dem Start)',
-    'Leichte Mahlzeit 2–3 Std. vorher (keine schweren Speisen)',
-    'Aufwärmprogramm abgeschlossen',
-    'Startnummer und Startzeit bekannt',
-    'Renntaktik mental durchgegangen',
-    'Knie-Übungen gemacht (Gesäßbrücke, Clamshell)'
-  ];
-  checklist.forEach(function(item) {
+    '<div style="font-size:.85rem;font-weight:800;margin-bottom:10px">✅ Kurz vor dem Start – hast du alles?</div>';
+  ['Badeanzug/Badehose an','Schwimmbrille sitzt richtig','Badekappe auf','Genug getrunken (Wasser!)','Aufwärmen gemacht','Startzeit und Bahn gemerkt','Rennen im Kopf durchgegangen','Knie-Übungen gemacht'].forEach(function(item){
     html += '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.1)">' +
-      '<span style="font-size:.85rem;opacity:.7">☐</span>' +
-      '<span style="font-size:.78rem">' + item + '</span>' +
-    '</div>';
+      '<span style="font-size:.85rem;opacity:.7">☐</span><span style="font-size:.78rem">'+item+'</span></div>';
   });
   html += '</div>';
 
   container.innerHTML = html;
 }
 
-// ── Auswahl speichern und neu rendern ─────────────────────────────
+// ── Auswahl speichern ─────────────────────────────────────────────
 function wkPrepSelect(type, value) {
   if (type === 'strecke') localStorage.setItem('wk_prep_strecke', value);
   if (type === 'lage')    localStorage.setItem('wk_prep_lage',    value);
   renderWkPrep();
+}
+
+// ── Timer-Logik ───────────────────────────────────────────────────
+function wkTimerStart() {
+  WK_TIMER.phaseIdx = 0;
+  WK_TIMER.exIdx    = 0;
+  WK_TIMER.running  = true;
+  WK_TIMER.paused   = false;
+  wkTimerShowDisplay(true);
+  wkTimerLoadExercise();
+}
+
+function wkTimerShowDisplay(show) {
+  var disp = document.getElementById('wk-timer-display');
+  var btn  = document.getElementById('wk-timer-start-btn');
+  if (disp) disp.style.display = show ? 'block' : 'none';
+  if (btn)  btn.style.display  = show ? 'none'  : 'block';
+}
+
+function wkTimerLoadExercise() {
+  if (WK_TIMER.phaseIdx >= WK_WARMUP_PHASEN.length) {
+    wkTimerDone(); return;
+  }
+  var phase = WK_WARMUP_PHASEN[WK_TIMER.phaseIdx];
+  if (WK_TIMER.exIdx >= phase.uebungen.length) {
+    WK_TIMER.phaseIdx++;
+    WK_TIMER.exIdx = 0;
+    wkTimerLoadExercise(); return;
+  }
+  var ex = phase.uebungen[WK_TIMER.exIdx];
+  WK_TIMER.remaining = ex.sec;
+
+  var phaseEl = document.getElementById('wk-timer-phase');
+  var exEl    = document.getElementById('wk-timer-ex');
+  var anlEl   = document.getElementById('wk-timer-anleitung');
+  if (phaseEl) phaseEl.textContent = phase.icon + ' ' + phase.name;
+  if (exEl)    exEl.textContent    = ex.icon + ' ' + ex.name;
+  if (anlEl)   anlEl.textContent   = ex.anleitung;
+
+  wkTimerUpdateDisplay();
+  clearInterval(WK_TIMER.interval);
+  WK_TIMER.interval = setInterval(wkTimerTick, 1000);
+}
+
+function wkTimerTick() {
+  if (WK_TIMER.paused) return;
+  WK_TIMER.remaining--;
+  wkTimerUpdateDisplay();
+  if (WK_TIMER.remaining <= 0) {
+    clearInterval(WK_TIMER.interval);
+    // Vibrate if supported
+    try { if (navigator.vibrate) navigator.vibrate([200,100,200]); } catch(e){}
+    WK_TIMER.exIdx++;
+    setTimeout(wkTimerLoadExercise, 500);
+  }
+}
+
+function wkTimerUpdateDisplay() {
+  var secsEl = document.getElementById('wk-timer-secs');
+  var ring   = document.getElementById('wk-timer-ring');
+  if (secsEl) secsEl.textContent = WK_TIMER.remaining;
+
+  if (ring) {
+    var phase = WK_WARMUP_PHASEN[WK_TIMER.phaseIdx];
+    var ex    = phase ? phase.uebungen[WK_TIMER.exIdx] : null;
+    var total = ex ? ex.sec : 30;
+    var pct   = WK_TIMER.remaining / total;
+    var circ  = 276.5;
+    ring.style.strokeDashoffset = circ * (1 - pct);
+    ring.style.stroke = WK_TIMER.remaining <= 5 ? '#F44336' : (phase ? phase.color : '#0044FF');
+  }
+}
+
+function wkTimerPause() {
+  WK_TIMER.paused = !WK_TIMER.paused;
+  var btn = document.getElementById('wk-timer-pause-btn');
+  if (btn) btn.textContent = WK_TIMER.paused ? '▶ Weiter' : '⏸ Pause';
+}
+
+function wkTimerSkip() {
+  clearInterval(WK_TIMER.interval);
+  WK_TIMER.exIdx++;
+  wkTimerLoadExercise();
+}
+
+function wkTimerStop() {
+  clearInterval(WK_TIMER.interval);
+  WK_TIMER.running = false;
+  WK_TIMER.paused  = false;
+  wkTimerShowDisplay(false);
+}
+
+function wkTimerDone() {
+  clearInterval(WK_TIMER.interval);
+  WK_TIMER.running = false;
+  var disp = document.getElementById('wk-timer-display');
+  if (disp) {
+    disp.innerHTML = '<div style="text-align:center;padding:16px">' +
+      '<div style="font-size:2.5rem;margin-bottom:8px">🎉</div>' +
+      '<div style="font-size:1rem;font-weight:800;margin-bottom:4px">Aufwärmen fertig!</div>' +
+      '<div style="font-size:.83rem;color:var(--tm);margin-bottom:14px">Super gemacht! Du bist bereit für deinen Start.</div>' +
+      '<button onclick="wkTimerStop()" style="padding:10px 20px;border-radius:999px;background:linear-gradient(135deg,#0044FF,#0033CC);color:#fff;font-size:.875rem;font-weight:700;border:none;cursor:pointer">Fertig ✓</button>' +
+    '</div>';
+    disp.style.display = 'block';
+  }
+  var btn = document.getElementById('wk-timer-start-btn');
+  if (btn) btn.style.display = 'none';
+  try { if (navigator.vibrate) navigator.vibrate([300,100,300,100,300]); } catch(e){}
 }
 // ── ÜBUNGEN PAGE ─────────────────────────────────────────────────────────────
 function uebTab(id,btn){
