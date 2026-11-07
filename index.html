@@ -498,6 +498,7 @@ input,select,textarea{font-family:inherit;font-size:16px}
     <button class="tabbtn active" onclick="wkTab('wk-form',this)">Eintragen</button>
     <button class="tabbtn" onclick="wkTab('wk-pbs',this)">Bestzeiten</button>
     <button class="tabbtn" onclick="wkTab('wk-hist',this)">Verlauf</button>
+    <button class="tabbtn" onclick="wkTab('wk-analyse',this)">Analyse</button>
   </div>
   <div id="wk-form" class="tabpane active">
     <form id="wkform" onsubmit="saveWettkampf(event)">
@@ -537,6 +538,7 @@ input,select,textarea{font-family:inherit;font-size:16px}
     <div id="pb-list"></div>
   </div>
   <div id="wk-hist" class="tabpane"><div id="wk-hist-list"></div></div>
+  <div id="wk-analyse" class="tabpane"><div id="wk-analyse-content"></div></div>
 </div>
 
 <!-- FORTSCHRITT -->
@@ -1343,115 +1345,6 @@ async function repeatLast(){
 }
 
 // ── WETTKAMPF ─────────────────────────────────────────────────────────────────
-function wkTab(id,btn){
-  document.querySelectorAll('#page-wettkampf .tabpane').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('#page-wettkampf .tabbtn').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');btn.classList.add('active');
-  if(id==='wk-pbs')renderPBs();if(id==='wk-hist')renderWkHist();
-}
-function addWkStart(){
-  S.wkIdx++;const idx=S.wkIdx;
-  const c=document.getElementById('wk-starts');
-  const div=document.createElement('div');div.className='wk-start';div.id='wks-'+idx;
-  div.innerHTML='<div class="wk-start-hdr"><span style="font-size:.82rem;font-weight:700">Start '+idx+'</span><button type="button" class="set-rm" onclick="removeWkStart('+idx+')">✕</button></div>'+
-    '<div class="sgrid">'+
-      '<div class="sfield"><label>Strecke</label><select id="wkd-'+idx+'"><option>50 m</option><option>100 m</option><option>200 m</option><option>400 m</option><option>800 m</option><option>1500 m</option><option>4×50 m</option><option>4×100 m</option></select></div>'+
-      '<div class="sfield"><label>Lage</label><select id="wks-'+idx+'"><option>Freistil</option><option>Rücken</option><option>Brust</option><option>Schmetterling</option><option>Lagen</option></select></div>'+
-    '</div>'+
-    '<div class="sfield" style="margin-top:8px"><label>Zeit (Min : Sek , Hundertstel)</label>'+
-    '<div class="time-grp"><input type="number" class="time-inp" id="wkm-'+idx+'" placeholder="0" min="0" max="59"/><span class="time-sep">:</span><input type="number" class="time-inp" id="wkse-'+idx+'" placeholder="00" min="0" max="59"/><span class="time-sep">,</span><input type="number" class="time-inp" id="wkms-'+idx+'" placeholder="00" min="0" max="99"/></div></div>'+
-    '<div class="sfield" style="margin-top:8px"><label>Platzierung (optional)</label><input type="number" class="finput" id="wkp-'+idx+'" placeholder="z.B. 3" min="1"/></div>';
-  c.appendChild(div);
-}
-function removeWkStart(idx){const e=document.getElementById('wks-'+idx);if(e)e.remove();}
-async function saveWettkampf(e){
-  e.preventDefault();
-  const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='Speichern…';
-  try{
-    const date=document.getElementById('wk-date').value;
-    const name=document.getElementById('wk-name').value.trim();
-    const loc=document.getElementById('wk-loc').value.trim();
-    const pool=document.querySelector('input[name="wk-pool"]:checked')?.value||'25';
-    const rating=document.querySelector('input[name="wk-rating"]:checked')?.value||'gut';
-    const note=document.getElementById('wk-note').value.trim();
-    if(!date||!name){showToast('Datum und Name erforderlich.');return;}
-    const starts=[];const newPBs=[];
-    document.querySelectorAll('.wk-start').forEach(row=>{
-      const idx=row.id.replace('wks-','');
-      const dist=document.getElementById('wkd-'+idx)?.value;
-      const stroke=document.getElementById('wks-'+idx)?.value;
-      const min=document.getElementById('wkm-'+idx)?.value||'0';
-      const sec=document.getElementById('wkse-'+idx)?.value||'0';
-      const ms=document.getElementById('wkms-'+idx)?.value||'0';
-      const place=document.getElementById('wkp-'+idx)?.value||null;
-      if(!dist||!stroke)return;
-      const cs=timeToCs(min,sec,ms);if(cs===0)return;
-      starts.push({id:genId(),distance:dist,stroke,timeMin:parseInt(min)||0,timeSec:parseInt(sec)||0,timeMs:parseInt(ms)||0,placement:place?parseInt(place):null,isPB:false});
-    });
-    let totalPts=5;const ptReasons=[{reason:'Wettkampfergebnis eingetragen',pts:5}];
-    const pbs=await dbAll('pbs');
-    for(const s of starts){
-      const pbKey=s.distance+'|'+s.stroke+'|'+pool;
-      const existing=pbs.find(p=>p.key===pbKey);
-      const existingCs=existing?timeToCs(existing.timeMin,existing.timeSec,existing.timeMs):Infinity;
-      if(s.timeMin*6000+s.timeSec*100+s.timeMs<existingCs){
-        s.isPB=true;
-        const improvement=existing?(existingCs-(s.timeMin*6000+s.timeSec*100+s.timeMs))/100:null;
-        newPBs.push({dist:s.distance,stroke:s.stroke,pool,timeMin:s.timeMin,timeSec:s.timeSec,timeMs:s.timeMs,improvement});
-        await dbPut('pbs',{id:existing?.id||genId(),key:pbKey,distance:s.distance,stroke:s.stroke,poolLength:pool,timeMin:s.timeMin,timeSec:s.timeSec,timeMs:s.timeMs,date});
-        totalPts+=15;ptReasons.push({reason:'Neue persönliche Bestzeit: '+s.distance+' '+s.stroke,pts:15});
-      }
-    }
-    const compId=genId();
-    await dbPut('competitions',{id:compId,date,name,location:loc,poolLength:pool,rating,note,starts,pointsEarned:totalPts});
-    await logPts(ptReasons,compId,'competition',date);
-    const newBadges=await checkBadges();
-    document.getElementById('wkform').reset();
-    document.getElementById('wk-date').value=today();
-    document.getElementById('wk-starts').innerHTML='';S.wkIdx=0;addWkStart();
-    if(newPBs.length>0){
-      const pb=newPBs[0];
-      setText('m-pb-detail','Neuer persönlicher Rekord: '+pb.dist+' '+pb.stroke);
-      const imprEl=document.getElementById('m-pb-impr');
-      if(imprEl)imprEl.textContent=pb.improvement!==null?'Du hast dich um '+pb.improvement.toFixed(2)+' Sekunden verbessert.':'Erste Zeit für diese Strecke eingetragen.';
-      document.getElementById('m-pb').classList.remove('hidden');
-    }else{showSaveModal({total:totalPts,reasons:ptReasons},newBadges,'Wettkampf gespeichert!');}
-    renderWettkampfPage();
-  }catch(err){showToast(err.message||'Fehler.');}
-  finally{btn.disabled=false;btn.textContent='Wettkampf speichern';}
-}
-async function renderWettkampfPage(){
-  document.getElementById('wk-date').value=today();
-  if(!document.getElementById('wk-starts').children.length)addWkStart();
-  renderPBs();renderWkHist();
-}
-async function renderPBs(){
-  const c=document.getElementById('pb-list');if(!c)return;
-  const pbs=await dbAll('pbs');
-  const pool=document.getElementById('pb-pool')?.value||'';
-  const stroke=document.getElementById('pb-stroke')?.value||'';
-  let filtered=pbs;
-  if(pool)filtered=filtered.filter(p=>p.poolLength===pool);
-  if(stroke)filtered=filtered.filter(p=>p.stroke===stroke);
-  if(!filtered.length){c.innerHTML='<div class="empty"><div class="empty-ico">⏱️</div><p>Noch keine Bestzeiten.</p></div>';return;}
-  filtered.sort((a,b)=>a.distance.localeCompare(b.distance)||a.stroke.localeCompare(b.stroke));
-  c.innerHTML=filtered.map(p=>'<div class="pb-card"><div class="pb-ico">⏱️</div><div class="pb-body"><div class="pb-title">'+p.distance+' '+p.stroke+'</div><div class="pb-time">'+fmtTime(p.timeMin,p.timeSec,p.timeMs)+'</div><div class="pb-meta">'+p.poolLength+'m · '+fmtDate(p.date)+'</div></div></div>').join('');
-}
-async function renderWkHist(){
-  const c=document.getElementById('wk-hist-list');if(!c)return;
-  const comps=await dbAll('competitions');
-  if(!comps.length){c.innerHTML='<div class="empty"><div class="empty-ico">🏆</div><p>Noch keine Wettkämpfe.</p></div>';return;}
-  comps.sort((a,b)=>b.date.localeCompare(a.date));
-  c.innerHTML=comps.map(comp=>'<div class="ecard"><div class="eico">🏆</div><div class="ebody"><div class="etitle">'+comp.name+'</div><div class="emeta">'+fmtDate(comp.date)+(comp.location?' · '+comp.location:'')+' · '+comp.poolLength+'m</div><div class="etags">'+(comp.starts||[]).map(s=>'<span class="etag">'+s.distance+' '+s.stroke+': '+fmtTime(s.timeMin,s.timeSec,s.timeMs)+(s.isPB?' 🏅':'')+'</span>').join('')+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><span class="epts">+'+comp.pointsEarned+'</span><button class="btnlink" style="font-size:.65rem;color:var(--red)" onclick="event.stopPropagation();deleteComp(\''+comp.id+'\')">🗑️</button></div></div>').join('');
-}
-async function deleteComp(id){
-  showConfirm('Wettkampf löschen?','Dieser Wettkampf und die damit verbundenen Punkte werden entfernt.',async()=>{
-    const log=await dbAll('points_log');
-    const oldPts=log.filter(l=>l.entryId===id).reduce((s,l)=>s+l.points,0);
-    if(oldPts!==0)await dbPut('points_log',{id:genId(),date:today(),reason:'Wettkampf gelöscht',points:-oldPts,entryId:id,entryType:'deletion'});
-    await dbDel('competitions',id);closeModal('m-confirm');showToast('Wettkampf gelöscht.');renderWkHist();
-  });
-}
 
 // ── FORTSCHRITT ───────────────────────────────────────────────────────────────
 async function renderFortschrittPage(){
@@ -1709,7 +1602,6 @@ function renderAvatarCustomizer(){
     if(el)el.innerHTML=buildAvatar(1,120,false);
   });
 }
-
 function setAvAppLive(key,val){
   var app=getAvApp();app[key]=val;saveAvApp(app);
   document.querySelectorAll('.color-btn,.opt-btn').forEach(function(b){
@@ -1719,12 +1611,7 @@ function setAvAppLive(key,val){
   computeStats().then(function(stats){
     var lv=getLvl(stats.totalPoints);
     var el=document.getElementById('av-preview');
-    if(el){
-      el.innerHTML=buildAvatar(lv.num,120,false);
-      el.style.transition='transform .2s';
-      el.style.transform='scale(1.05)';
-      setTimeout(function(){el.style.transform='scale(1)';},150);
-    }
+    if(el){el.innerHTML=buildAvatar(lv.num,120,false);el.style.transition='transform .2s';el.style.transform='scale(1.05)';setTimeout(function(){el.style.transform='scale(1)';},150);}
     updateHeaderAvatar();
     var hc=document.getElementById('av-card-container');
     if(hc){var svg=hc.querySelector('.av-svg');if(svg)svg.innerHTML=buildAvatar(lv.num,90,true);}
@@ -1734,7 +1621,6 @@ function setAvAppLive(key,val){
   });
   haptic();
 }
-
 function removeAvPhoto(){
   localStorage.removeItem('st_avatar_img');
   showToast('Foto entfernt.');
@@ -1742,6 +1628,432 @@ function removeAvPhoto(){
   updateHeaderAvatar();
 }
 
+// ══════════════════════════════════════════════════════════════════
+// WETTKAMPF MODULE v2
+// - Korrekte PB-Erkennung und Speicherung
+// - Zwischenzeiten (Splits): bis 200m alle 50m, ab 400m alle 100m
+// - Bestzeiten-Verlauf als Diagramm
+// - Wettkampf-Analyse
+// - Korrekte Anzeige in Fortschritt und Bestzeiten
+// ══════════════════════════════════════════════════════════════════
+'use strict';
+
+// ── SPLIT CONFIGURATION ───────────────────────────────────────────────────────
+function getSplitDistances(totalDist) {
+  var d = parseInt(totalDist) || 0;
+  if (d <= 0) return [];
+  if (d === 50)  return [];                          // no splits for 50m
+  if (d === 100) return [50];                        // 50m split
+  if (d === 200) return [50, 100, 150];              // 50m splits
+  if (d === 400) return [100, 200, 300];             // 100m splits
+  if (d === 800) return [100,200,300,400,500,600,700]; // 100m splits
+  if (d === 1500)return [100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400]; // 100m splits
+  return [];
+}
+
+// ── WK START HTML BUILDER ─────────────────────────────────────────────────────
+function buildWkStartHTML(idx) {
+  return '<div class="wk-start" id="wks-'+idx+'">' +
+    '<div class="wk-start-hdr">' +
+      '<span style="font-size:.82rem;font-weight:700">Start '+idx+'</span>' +
+      '<button type="button" class="set-rm" onclick="removeWkStart('+idx+')">&#x2715;</button>' +
+    '</div>' +
+    '<div class="sgrid">' +
+      '<div class="sfield"><label>Strecke</label>' +
+        '<select id="wkd-'+idx+'" onchange="updateWkSplits('+idx+')">' +
+          '<option>50 m</option><option>100 m</option><option>200 m</option>' +
+          '<option>400 m</option><option>800 m</option><option>1500 m</option>' +
+          '<option>4x50 m</option><option>4x100 m</option>' +
+        '</select>' +
+      '</div>' +
+      '<div class="sfield"><label>Lage</label>' +
+        '<select id="wks-'+idx+'">' +
+          '<option>Freistil</option><option>Ruecken</option><option>Brust</option>' +
+          '<option>Schmetterling</option><option>Lagen</option>' +
+        '</select>' +
+      '</div>' +
+    '</div>' +
+    '<div class="sfield" style="margin-top:8px"><label>Endzeit (Min : Sek , Hundertstel)</label>' +
+      '<div class="time-grp">' +
+        '<input type="number" class="time-inp" id="wkm-'+idx+'" placeholder="0" min="0" max="59"/>' +
+        '<span class="time-sep">:</span>' +
+        '<input type="number" class="time-inp" id="wkse-'+idx+'" placeholder="00" min="0" max="59"/>' +
+        '<span class="time-sep">,</span>' +
+        '<input type="number" class="time-inp" id="wkms-'+idx+'" placeholder="00" min="0" max="99"/>' +
+      '</div>' +
+    '</div>' +
+    '<div class="sfield" style="margin-top:8px"><label>Platzierung (optional)</label>' +
+      '<input type="number" class="finput" id="wkp-'+idx+'" placeholder="z.B. 3" min="1"/>' +
+    '</div>' +
+    '<div id="wk-splits-'+idx+'" style="margin-top:8px"></div>' +
+  '</div>';
+}
+
+function addWkStart() {
+  S.wkIdx++;
+  var idx = S.wkIdx;
+  var c = document.getElementById('wk-starts');
+  var div = document.createElement('div');
+  div.innerHTML = buildWkStartHTML(idx);
+  c.appendChild(div.firstElementChild);
+}
+
+function removeWkStart(idx) {
+  var e = document.getElementById('wks-'+idx);
+  if (e) e.remove();
+}
+
+function updateWkSplits(idx) {
+  var distEl = document.getElementById('wkd-'+idx);
+  var container = document.getElementById('wk-splits-'+idx);
+  if (!distEl || !container) return;
+  var dist = distEl.value.replace(' m','').replace('m','').trim();
+  var splits = getSplitDistances(dist);
+  if (splits.length === 0) { container.innerHTML = ''; return; }
+  var html = '<div style="margin-top:6px"><label style="font-size:.72rem;font-weight:700;color:var(--tm);display:block;margin-bottom:6px">Zwischenzeiten (optional)</label>';
+  splits.forEach(function(sp) {
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+      '<span style="font-size:.72rem;font-weight:600;color:var(--blue);min-width:40px">'+sp+'m:</span>' +
+      '<div class="time-grp">' +
+        '<input type="number" class="time-inp" id="wksplit-'+idx+'-'+sp+'-m" placeholder="0" min="0" max="59" style="width:44px"/>' +
+        '<span class="time-sep">:</span>' +
+        '<input type="number" class="time-inp" id="wksplit-'+idx+'-'+sp+'-s" placeholder="00" min="0" max="59" style="width:44px"/>' +
+        '<span class="time-sep">,</span>' +
+        '<input type="number" class="time-inp" id="wksplit-'+idx+'-'+sp+'-ms" placeholder="00" min="0" max="99" style="width:44px"/>' +
+      '</div>' +
+    '</div>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function collectSplits(idx, dist) {
+  var splits = getSplitDistances(dist);
+  var result = [];
+  splits.forEach(function(sp) {
+    var m  = parseInt(document.getElementById('wksplit-'+idx+'-'+sp+'-m')?.value)  || 0;
+    var s  = parseInt(document.getElementById('wksplit-'+idx+'-'+sp+'-s')?.value)  || 0;
+    var ms = parseInt(document.getElementById('wksplit-'+idx+'-'+sp+'-ms')?.value) || 0;
+    var cs = m*6000 + s*100 + ms;
+    if (cs > 0) result.push({ distance: sp, timeCs: cs, timeMin: m, timeSec: s, timeMs: ms });
+  });
+  return result;
+}
+
+// ── SAVE WETTKAMPF (fixed) ────────────────────────────────────────────────────
+async function saveWettkampf(e) {
+  e.preventDefault();
+  var btn = e.target.querySelector('button[type=submit]');
+  btn.disabled = true; btn.textContent = 'Speichern\u2026';
+  try {
+    var date  = document.getElementById('wk-date').value;
+    var name  = document.getElementById('wk-name').value.trim();
+    var loc   = document.getElementById('wk-loc').value.trim();
+    var pool  = document.querySelector('input[name="wk-pool"]:checked')?.value || '25';
+    var rating= document.querySelector('input[name="wk-rating"]:checked')?.value || 'gut';
+    var note  = document.getElementById('wk-note').value.trim();
+    if (!date || !name) { showToast('Datum und Name erforderlich.'); return; }
+
+    var starts = [];
+    var newPBs = [];
+    var pbs = await dbAll('pbs');
+
+    var startEls = document.querySelectorAll('.wk-start');
+    for (var i = 0; i < startEls.length; i++) {
+      var row = startEls[i];
+      var idx = row.id.replace('wks-','');
+      var dist   = document.getElementById('wkd-'+idx)?.value || '';
+      var stroke = document.getElementById('wks-'+idx)?.value || '';
+      var min    = parseInt(document.getElementById('wkm-'+idx)?.value)  || 0;
+      var sec    = parseInt(document.getElementById('wkse-'+idx)?.value) || 0;
+      var ms     = parseInt(document.getElementById('wkms-'+idx)?.value) || 0;
+      var place  = document.getElementById('wkp-'+idx)?.value || null;
+      if (!dist || !stroke) continue;
+      var cs = min*6000 + sec*100 + ms;
+      if (cs === 0) continue;
+
+      // Collect splits
+      var distNum = dist.replace(' m','').replace('m','').trim();
+      var splits = collectSplits(idx, distNum);
+
+      // PB check – correct calculation
+      var pbKey = dist + '|' + stroke + '|' + pool;
+      var existing = pbs.find(function(p){ return p.key === pbKey; });
+      var existingCs = existing ? (existing.timeMin*6000 + existing.timeSec*100 + existing.timeMs) : Infinity;
+      var isPB = cs < existingCs;
+
+      if (isPB) {
+        var improvement = existing ? (existingCs - cs) / 100 : null;
+        newPBs.push({ dist: dist, stroke: stroke, pool: pool,
+          timeMin: min, timeSec: sec, timeMs: ms, improvement: improvement,
+          prevCs: existing ? existingCs : null });
+        // Save/update PB
+        var pbEntry = {
+          id: existing ? existing.id : genId(),
+          key: pbKey, distance: dist, stroke: stroke, poolLength: pool,
+          timeMin: min, timeSec: sec, timeMs: ms, date: date
+        };
+        await dbPut('pbs', pbEntry);
+        // Update local pbs array for subsequent starts
+        var existIdx = pbs.findIndex(function(p){ return p.key === pbKey; });
+        if (existIdx >= 0) pbs[existIdx] = pbEntry;
+        else pbs.push(pbEntry);
+      }
+
+      starts.push({
+        id: genId(), distance: dist, stroke: stroke,
+        timeMin: min, timeSec: sec, timeMs: ms,
+        placement: place ? parseInt(place) : null,
+        isPB: isPB, splits: splits
+      });
+    }
+
+    // Points
+    var totalPts = 5;
+    var ptReasons = [{ reason: 'Wettkampfergebnis eingetragen', pts: 5 }];
+    newPBs.forEach(function(pb) {
+      totalPts += 15;
+      ptReasons.push({ reason: 'Neue pers\u00f6nliche Bestzeit: ' + pb.dist + ' ' + pb.stroke, pts: 15 });
+    });
+
+    var compId = genId();
+    await dbPut('competitions', {
+      id: compId, date: date, name: name, location: loc,
+      poolLength: pool, rating: rating, note: note,
+      starts: starts, pointsEarned: totalPts
+    });
+    await logPts(ptReasons, compId, 'competition', date);
+    var newBadges = await checkBadges();
+
+    // Reset form
+    document.getElementById('wkform').reset();
+    document.getElementById('wk-date').value = today();
+    document.getElementById('wk-starts').innerHTML = '';
+    S.wkIdx = 0; addWkStart();
+
+    // Show result
+    if (newPBs.length > 0) {
+      var pb = newPBs[0];
+      setText('m-pb-detail', 'Neuer pers\u00f6nlicher Rekord: ' + pb.dist + ' ' + pb.stroke);
+      var imprEl = document.getElementById('m-pb-impr');
+      if (imprEl) imprEl.textContent = pb.improvement !== null
+        ? 'Du hast dich um ' + pb.improvement.toFixed(2) + ' Sekunden verbessert.'
+        : 'Erste Zeit f\u00fcr diese Strecke eingetragen.';
+      document.getElementById('m-pb').classList.remove('hidden');
+    } else {
+      showSaveModal({ total: totalPts, reasons: ptReasons }, newBadges, 'Wettkampf gespeichert!');
+    }
+    renderWettkampfPage();
+  } catch(err) {
+    showToast(err.message || 'Fehler beim Speichern.');
+    console.error(err);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Wettkampf speichern';
+  }
+}
+
+// ── RENDER WETTKAMPF PAGE ─────────────────────────────────────────────────────
+async function renderWettkampfPage() {
+  document.getElementById('wk-date').value = today();
+  if (!document.getElementById('wk-starts').children.length) addWkStart();
+  renderPBs();
+  renderWkHist();
+}
+
+// ── RENDER BESTZEITEN ─────────────────────────────────────────────────────────
+async function renderPBs() {
+  var c = document.getElementById('pb-list'); if (!c) return;
+  var pbs = await dbAll('pbs');
+  var pool   = document.getElementById('pb-pool')?.value   || '';
+  var stroke = document.getElementById('pb-stroke')?.value || '';
+  var filtered = pbs;
+  if (pool)   filtered = filtered.filter(function(p){ return p.poolLength === pool; });
+  if (stroke) filtered = filtered.filter(function(p){ return p.stroke === stroke; });
+  if (!filtered.length) {
+    c.innerHTML = '<div class="empty"><div class="empty-ico">&#x23F1;</div><p>Noch keine Bestzeiten.</p><p class="empty-sub">Trage deinen ersten Wettkampf ein!</p></div>';
+    return;
+  }
+  // Sort by distance then stroke
+  filtered.sort(function(a,b){
+    var da = parseInt(a.distance)||0, db = parseInt(b.distance)||0;
+    if (da !== db) return da - db;
+    return a.stroke.localeCompare(b.stroke);
+  });
+  c.innerHTML = filtered.map(function(p) {
+    return '<div class="pb-card">' +
+      '<div class="pb-ico">&#x23F1;</div>' +
+      '<div class="pb-body">' +
+        '<div class="pb-title">' + p.distance + ' ' + p.stroke + '</div>' +
+        '<div class="pb-time">' + fmtTime(p.timeMin, p.timeSec, p.timeMs) + '</div>' +
+        '<div class="pb-meta">' + p.poolLength + 'm Bahn &middot; ' + fmtDate(p.date) + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── RENDER WETTKAMPF VERLAUF ──────────────────────────────────────────────────
+async function renderWkHist() {
+  var c = document.getElementById('wk-hist-list'); if (!c) return;
+  var comps = await dbAll('competitions');
+  if (!comps.length) {
+    c.innerHTML = '<div class="empty"><div class="empty-ico">&#x1F3C6;</div><p>Noch keine Wettkämpfe.</p></div>';
+    return;
+  }
+  comps.sort(function(a,b){ return b.date.localeCompare(a.date); });
+  c.innerHTML = comps.map(function(comp) {
+    var starts = comp.starts || [];
+    var startsHTML = starts.map(function(s) {
+      var timeStr = fmtTime(s.timeMin, s.timeSec, s.timeMs);
+      var pbBadge = s.isPB ? '<span style="font-size:.6rem;background:var(--amber-l);color:var(--amber);padding:1px 5px;border-radius:4px;font-weight:700;margin-left:4px">PB</span>' : '';
+      var placeStr = s.placement ? ' &middot; Platz ' + s.placement : '';
+      var splitsHTML = '';
+      if (s.splits && s.splits.length > 0) {
+        splitsHTML = '<div style="margin-top:4px;font-size:.65rem;color:var(--tm)">' +
+          s.splits.map(function(sp){ return sp.distance+'m: '+fmtTime(sp.timeMin,sp.timeSec,sp.timeMs); }).join(' &middot; ') +
+          '</div>';
+      }
+      return '<div style="padding:6px 0;border-bottom:1px solid var(--border)">' +
+        '<div style="display:flex;align-items:center;gap:6px">' +
+          '<span style="font-size:.83rem;font-weight:700">' + s.distance + ' ' + s.stroke + '</span>' +
+          '<span style="font-size:.9rem;font-weight:800;color:var(--blue)">' + timeStr + '</span>' +
+          pbBadge +
+          '<span style="font-size:.7rem;color:var(--tm)">' + placeStr + '</span>' +
+        '</div>' +
+        splitsHTML +
+      '</div>';
+    }).join('');
+
+    return '<div class="card" style="margin-bottom:10px">' +
+      '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px">' +
+        '<div>' +
+          '<div style="font-size:.9rem;font-weight:800">' + comp.name + '</div>' +
+          '<div style="font-size:.72rem;color:var(--tm)">' + fmtDate(comp.date) +
+            (comp.location ? ' &middot; ' + comp.location : '') +
+            ' &middot; ' + comp.poolLength + 'm Bahn' +
+          '</div>' +
+        '</div>' +
+        '<div style="display:flex;gap:6px;align-items:center">' +
+          '<span style="font-size:.72rem;font-weight:700;color:var(--blue)">+' + (comp.pointsEarned||0) + ' Pkt.</span>' +
+          '<button class="btnlink" style="font-size:.65rem;color:var(--red)" onclick="deleteComp(\''+comp.id+'\')">&#x1F5D1;</button>' +
+        '</div>' +
+      '</div>' +
+      startsHTML +
+      (comp.note ? '<div style="margin-top:8px;font-size:.75rem;color:var(--tm);font-style:italic">' + comp.note + '</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+// ── DELETE COMP ───────────────────────────────────────────────────────────────
+async function deleteComp(id) {
+  showConfirm('Wettkampf l\u00f6schen?',
+    'Dieser Wettkampf und die damit verbundenen Punkte werden entfernt.',
+    async function() {
+      var log = await dbAll('points_log');
+      var oldPts = log.filter(function(l){ return l.entryId === id; }).reduce(function(s,l){ return s+l.points; }, 0);
+      if (oldPts !== 0) await dbPut('points_log', { id: genId(), date: today(), reason: 'Wettkampf gel\u00f6scht', points: -oldPts, entryId: id, entryType: 'deletion' });
+      await dbDel('competitions', id);
+      closeModal('m-confirm');
+      showToast('Wettkampf gel\u00f6scht.');
+      renderWkHist();
+    }
+  );
+}
+
+// ── WK TAB ────────────────────────────────────────────────────────────────────
+function wkTab(id, btn) {
+  document.querySelectorAll('#page-wettkampf .tabpane').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('#page-wettkampf .tabbtn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'wk-pbs')  renderPBs();
+  if (id === 'wk-hist') renderWkHist();
+  if (id === 'wk-analyse') renderWkAnalyse();
+}
+
+// ── WETTKAMPF ANALYSE ─────────────────────────────────────────────────────────
+async function renderWkAnalyse() {
+  var c = document.getElementById('wk-analyse-content'); if (!c) return;
+  var comps = await dbAll('competitions');
+  var pbs   = await dbAll('pbs');
+  if (!comps.length) {
+    c.innerHTML = '<div class="empty"><p>Noch keine Wettkampfdaten.</p></div>';
+    return;
+  }
+
+  // Build timeline per distance+stroke+pool
+  var timeline = {};
+  comps.forEach(function(comp) {
+    (comp.starts||[]).forEach(function(s) {
+      var key = s.distance + '|' + s.stroke + '|' + (comp.poolLength||'25');
+      if (!timeline[key]) timeline[key] = [];
+      timeline[key].push({
+        date: comp.date, name: comp.name,
+        cs: s.timeMin*6000 + s.timeSec*100 + s.timeMs,
+        timeStr: fmtTime(s.timeMin, s.timeSec, s.timeMs),
+        isPB: s.isPB, placement: s.placement
+      });
+    });
+  });
+
+  var html = '<div style="margin-bottom:14px">' +
+    '<p style="font-size:.83rem;font-weight:700;margin-bottom:4px">Bestzeiten-Entwicklung</p>' +
+    '<p class="muted">Deine Zeitentwicklung pro Strecke und Lage</p>' +
+    '</div>';
+
+  Object.keys(timeline).sort().forEach(function(key) {
+    var parts = key.split('|');
+    var dist = parts[0], stroke = parts[1], pool = parts[2];
+    var entries = timeline[key].sort(function(a,b){ return a.date.localeCompare(b.date); });
+    var best = entries.reduce(function(b,e){ return e.cs < b.cs ? e : b; }, entries[0]);
+    var worst = entries.reduce(function(b,e){ return e.cs > b.cs ? e : b; }, entries[0]);
+    var improvement = entries.length >= 2 ? (entries[0].cs - entries[entries.length-1].cs) / 100 : null;
+
+    html += '<div class="card" style="margin-bottom:10px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">' +
+        '<div>' +
+          '<div style="font-size:.9rem;font-weight:800">' + dist + ' ' + stroke + '</div>' +
+          '<div style="font-size:.7rem;color:var(--tm)">' + pool + 'm Bahn &middot; ' + entries.length + ' Start' + (entries.length>1?'s':'') + '</div>' +
+        '</div>' +
+        '<div style="text-align:right">' +
+          '<div style="font-size:1.1rem;font-weight:800;color:var(--blue)">' + best.timeStr + '</div>' +
+          '<div style="font-size:.65rem;color:var(--green);font-weight:600">Bestzeit</div>' +
+        '</div>' +
+      '</div>';
+
+    if (improvement !== null && improvement > 0) {
+      html += '<div style="background:var(--green-l);border-radius:8px;padding:6px 10px;margin-bottom:8px;font-size:.78rem;font-weight:600;color:var(--green)">' +
+        'Verbesserung: ' + improvement.toFixed(2) + 's seit dem ersten Start' +
+      '</div>';
+    }
+
+    // Timeline list
+    html += '<div style="display:flex;flex-direction:column;gap:4px">';
+    entries.slice().reverse().forEach(function(entry) {
+      html += '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">' +
+        '<div style="font-size:.7rem;color:var(--tm);min-width:55px">' + fmtDateS(entry.date) + '</div>' +
+        '<div style="font-size:.85rem;font-weight:700;color:var(--blue)">' + entry.timeStr + '</div>' +
+        (entry.isPB ? '<span style="font-size:.6rem;background:var(--amber-l);color:var(--amber);padding:1px 5px;border-radius:4px;font-weight:700">PB</span>' : '') +
+        (entry.placement ? '<span style="font-size:.68rem;color:var(--tm)">Platz ' + entry.placement + '</span>' : '') +
+        '<div style="font-size:.68rem;color:var(--tm);margin-left:auto">' + entry.name + '</div>' +
+      '</div>';
+    });
+    html += '</div></div>';
+  });
+
+  // Summary stats
+  var totalStarts = comps.reduce(function(s,c){ return s + (c.starts||[]).length; }, 0);
+  var totalPBs = comps.reduce(function(s,c){ return s + (c.starts||[]).filter(function(st){ return st.isPB; }).length; }, 0);
+  html = '<div class="card" style="margin-bottom:14px">' +
+    '<div style="display:flex;gap:16px">' +
+      '<div style="text-align:center;flex:1"><div style="font-size:1.3rem;font-weight:800;color:var(--blue)">' + comps.length + '</div><div style="font-size:.65rem;color:var(--tm)">Wettkämpfe</div></div>' +
+      '<div style="text-align:center;flex:1"><div style="font-size:1.3rem;font-weight:800;color:var(--blue)">' + totalStarts + '</div><div style="font-size:.65rem;color:var(--tm)">Starts</div></div>' +
+      '<div style="text-align:center;flex:1"><div style="font-size:1.3rem;font-weight:800;color:var(--amber)">' + totalPBs + '</div><div style="font-size:.65rem;color:var(--tm)">Bestzeiten</div></div>' +
+      '<div style="text-align:center;flex:1"><div style="font-size:1.3rem;font-weight:800;color:var(--green)">' + pbs.length + '</div><div style="font-size:.65rem;color:var(--tm)">Aktuelle PBs</div></div>' +
+    '</div>' +
+  '</div>' + html;
+
+  c.innerHTML = html;
+}
 // ── ÜBUNGEN PAGE ─────────────────────────────────────────────────────────────
 function uebTab(id,btn){
   document.querySelectorAll('#page-uebungen .tabpane').forEach(p=>p.classList.remove('active'));
