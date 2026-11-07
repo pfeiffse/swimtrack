@@ -364,7 +364,7 @@ input,select,textarea{font-family:inherit;font-size:16px}
   <div id="physio-container"></div>
   <div class="card" style="display:flex;align-items:center;gap:12px;cursor:pointer;background:linear-gradient(135deg,#1A1A2E,#0D3B6E);color:#fff" onclick="goTo('uebungen');setTimeout(function(){var b=document.querySelector('#page-uebungen .tabbtn:nth-child(3)');if(b)uebTab('ue-athletik',b);},150)">
     <span style="font-size:1.8rem">&#9889;</span>
-    <div style="flex:1"><div style="font-size:.875rem;font-weight:800">Athletik-Training Generator</div><div style="font-size:.72rem;color:rgba(255,255,255,.75)">15-60 min &#183; Schwimmerspezifisch &#183; Knieschonende Varianten</div></div>
+    <div style="flex:1"><div style="font-size:.875rem;font-weight:800">Athletik-Training Generator</div><div style="font-size:.72rem;color:rgba(255,255,255,.75)">15-60 min &#183; Schwimmerspezifisch</div></div>
     <span style="color:rgba(255,255,255,.6);font-size:1.1rem">&#8250;</span>
   </div>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
@@ -1567,7 +1567,7 @@ function initPWA(){
   if(link)link.href=URL.createObjectURL(mblob);
   if(!('serviceWorker' in navigator))return;
   var swLines=[
-    'const CN="swimtrack-v6";',
+    'const CN="swimtrack-v7";',
     'self.addEventListener("install",e=>{self.skipWaiting();});',
     'self.addEventListener("activate",e=>{',
     '  e.waitUntil(caches.keys().then(function(keys){',
@@ -1607,13 +1607,12 @@ function initPWA(){
       });
     }).catch(function(){});
 }
-
 function showUpdateBanner(){
   if(document.getElementById('upd-banner'))return;
   var b=document.createElement('div');
   b.id='upd-banner';
   b.style.cssText='position:fixed;top:52px;left:0;right:0;z-index:9000;background:linear-gradient(135deg,#00C853,#00A846);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.2);animation:slideDown .3s ease';
-  b.innerHTML='<span style="font-size:.82rem;font-weight:600">&#x1F504; Neue Version verfuegbar!</span>'+
+  b.innerHTML='<span style="font-size:.82rem;font-weight:600">Neue Version verfuegbar!</span>'+
     '<button onclick="location.reload()" style="background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4);color:#fff;padding:5px 12px;border-radius:999px;font-size:.78rem;font-weight:700;cursor:pointer">Aktualisieren</button>';
   document.body.appendChild(b);
 }
@@ -2027,7 +2026,8 @@ function wkTab(id, btn) {
   document.getElementById(id).classList.add('active'); btn.classList.add('active');
   if (id==='wk-pbs')     renderPBs();
   if (id==='wk-hist')    renderWkHist();
-  if (id==='wk-analyse') renderWkAnalyse();
+  if (id==='wk-analyse' && typeof renderWkAnalyse === 'function') renderWkAnalyse();
+  if (id==='wk-prep'    && typeof renderWkPrep    === 'function') renderWkPrep();
 }
 // ══════════════════════════════════════════════════════════════════
 // WETTKAMPF ANALYSE v2
@@ -2340,186 +2340,185 @@ function drawLineChart(canvasId, labels, data, color, minY, maxY) {
   labels.forEach(function(l,i){if(i%step===0)ctx.fillText(l,toX(i),H-4);});
 }
 // ══════════════════════════════════════════════════════════════════
-// WETTKAMPF-VORBEREITUNG MODULE
-// Aufwärmen (knieschonend), Technikkriterien, wissenschaftliche Tipps
-// Quellen: Swimming.org, PMC/PubMed, USMS, DSV-Technikkriterien
+// WETTKAMPF-VORBEREITUNG MODULE v2
+// Eigenständige Strecken-/Lagenauswahl + Aufwärmen + Technik + Tipps
 // ══════════════════════════════════════════════════════════════════
 'use strict';
 
-// ── Technikkriterien aus dem hochgeladenen PDF ────────────────────
+// ── Technikkriterien (aus PDF + DSV-Standards) ────────────────────
 var WK_TECHNIK = {
   'Freistil': {
     icon: '🏊',
-    kriterien: [
+    start: [
+      'Kraftvoller Sprung mit Körperspannung',
+      'Sauberes Eintauchen ohne viel Spritzer',
+      'Sofort in Streamline (Arme geschlossen hinter dem Kopf)',
+      'Mindestens 4 Delphinkicks in der Tauchphase',
+      'Mindestens 7,5 m Tauchphase'
+    ],
+    technik: [
       'Kraftvoller, durchgängiger Beinschlag – Zehenspitzen durchbrechen die Wasseroberfläche',
       '3er-Atmung (alle 3 Züge zur Seite atmen)',
       'Ellenbogen ist der höchste Punkt über Wasser – nicht die Hand',
       'Streckung vorne und langer Abdruck bis zum Oberschenkel',
-      'Wende: Letzter Armzug Luft anhalten → schnelle, kleine Rolle → kraftvoller Abstoß in Streamline',
-      'Tauchphase: Mindestens 4 Delphinkicks, mind. 7,5 m Tauchphase'
+      'Körperrotation 45–60° für maximale Zugkraft'
     ],
-    tipps_wissenschaft: [
-      'Hohe Zugfrequenz bei Kurzstrecken (50/100m), niedrigere Frequenz mit längerem Zug bei Langstrecken (400m+)',
+    wende: [
+      'Letzter Armzug: Luft anhalten',
+      'Schnelle, kleine Rolle (Kraulwende)',
+      'Kraftvoller Abstoß in Streamline',
+      'Mindestens 4 Delphinkicks, mind. 7,5 m Tauchphase'
+    ],
+    wissenschaft: [
+      'Körperrotation von 45–60° verbessert Zugkraft und reduziert Wasserwiderstand',
       'Optimale Atemposition: Kopf dreht mit Körperrotation – nicht separat heben',
-      'Körperrotation von 45–60° verbessert Zugkraft und reduziert Wasserwiderstand (Toussaint & Beek, 1992)',
-      'Streamline nach Wende: Arme vollständig gestreckt, Kopf zwischen den Armen – reduziert Widerstand um bis zu 30%'
+      'Streamline nach Wende reduziert Widerstand um bis zu 30%',
+      'Hohe Zugfrequenz bei 50/100m, längerer Zug bei 400m+'
     ]
   },
   'Rücken': {
     icon: '🔄',
-    kriterien: [
+    start: [
+      'Start vom Beckenrand (Griff, Füße an der Wand)',
+      'Kraftvoller Abwurf mit Körperspannung',
+      'Sauberes Eintauchen in Streamline',
+      'Mindestens 4 Delphinkicks in der Tauchphase',
+      'Mindestens 7,5 m Tauchphase'
+    ],
+    technik: [
       'Kraftvoller, durchgängiger Beinschlag – Zehenspitzen durchbrechen die Wasseroberfläche',
       'Feste Kopfposition – Nasenspitze zeigt zur Decke',
       'Saubere Eintauchphase – kleiner Finger taucht zuerst ein',
       'Beim Abdruck bleibt die Hand unter Wasser',
-      'Schulterrotation: Schulter kommt über Wasser wenn Arm zurückgeführt wird',
-      'Wende: 5m vor der Wand Züge zählen ohne unnötiges Umdrehen → schnelle, kleine Rolle → kraftvoller Abstoß in Streamline',
-      'Tauchphase: Mindestens 4 Delphinkicks, mind. 7,5 m Tauchphase'
+      'Schulterrotation: Schulter kommt über Wasser wenn Arm zurückgeführt wird'
     ],
-    tipps_wissenschaft: [
+    wende: [
+      '5m vor der Wand Züge zählen ohne unnötiges Umdrehen',
+      'Schnelle, kleine Rolle',
+      'Kraftvoller Abstoß in Streamline',
+      'Mindestens 4 Delphinkicks, mind. 7,5 m Tauchphase'
+    ],
+    wissenschaft: [
       'Kopfposition ist entscheidend: Jede Abweichung erhöht den Frontalen Widerstand erheblich',
       'Schulterrotation von 40–50° ermöglicht effektiveren Zug und schont die Schulter',
       'Beinschlag: Knie bleibt unter Wasser – nur Zehen durchbrechen die Oberfläche',
-      '5m-Markierung vor der Wand nutzen: Züge zählen verhindert Disqualifikation durch Umdrehen'
+      '5m-Markierung vor der Wand nutzen: Züge zählen verhindert Disqualifikation'
     ]
   },
   'Brust': {
     icon: '🐸',
-    kriterien: [
+    start: [
+      'Kraftvoller Sprung mit Körperspannung',
+      'Sauberes Eintauchen ohne viel Spritzer',
+      'Tauchzug: Ein vollständiger Brustzug unter Wasser',
+      'Mindestens 7,5 m Tauchphase'
+    ],
+    technik: [
       'Gleitphase/Pause in voller Streckung nach jedem Zyklus',
       'Schnelle Arm- & Beinbewegung ohne Pausen',
       'Enger Beinschlag: Knie werden beim Anziehen maximal hüftbreit geöffnet',
       'Hände gehen gerade nach vorne beim Armzug',
-      'Rhythmus: Armzug → Arme vor + Beine anziehen → Streckung + Beinschlag → Gleiten',
-      'Wende: Anschlag unter Wasser → schnelle Drehung → kraftvoller Abstoß in Streamline',
-      'Tauchphase: Mindestens 4 Delphinkicks, mind. 7,5 m Tauchphase'
+      'Rhythmus: Armzug → Arme vor + Beine anziehen → Streckung + Beinschlag → Gleiten'
     ],
-    tipps_wissenschaft: [
+    wende: [
+      'Anschlag mit beiden Händen gleichzeitig unter Wasser',
+      'Schnelle Drehung',
+      'Kraftvoller Abstoß in Streamline',
+      'Tauchzug + mind. 7,5 m Tauchphase'
+    ],
+    wissenschaft: [
       'Kniewinkel beim Anziehen: 90–130° optimal – zu weites Öffnen erhöht Widerstand stark',
       'Gleitphase ist entscheidend für Effizienz – zu kurze Gleitphase kostet Energie',
-      'Bei Knieproblemen: Knie enger halten, Fußstellung anpassen (weniger Außenrotation)',
+      'Bei Knieproblemen: Knie enger halten, weniger Außenrotation des Fußes',
       'Achtung: Brust-Kick ist häufigste Ursache für Knieschmerzen bei Schwimmern (PFPS/MCL)'
     ]
   },
   'Schmetterling': {
     icon: '🦋',
-    kriterien: [
+    start: [
+      'Kraftvoller Sprung mit Körperspannung',
+      'Sauberes Eintauchen ohne viel Spritzer',
+      'Sofort in Streamline mit Delphinkicks',
+      'Mindestens 4 Delphinkicks, mind. 7,5 m Tauchphase'
+    ],
+    technik: [
       '2 kraftvolle Beinschläge pro Armzug – Zehenspitzen durchbrechen die Wasseroberfläche',
       'Richtiger Rhythmus: Beine/Arme koordiniert',
       '2er-Atmung (alle 2 Züge atmen)',
-      'Wellenbewegung des Körpers',
-      'Zur Atmung kommt nur der Kopf raus – Brust bleibt im Wasser',
-      'Wende: Letzter Armzug Luft anhalten → Anschlag unter Wasser → schnelle Drehung → kraftvoller Abstoß in Streamline',
-      'Tauchphase: Mindestens 4 Delphinkicks, mind. 7,5 m Tauchphase'
+      'Wellenbewegung des Körpers (beginnt in der Hüfte)',
+      'Zur Atmung kommt nur der Kopf raus – Brust bleibt im Wasser'
     ],
-    tipps_wissenschaft: [
+    wende: [
+      'Letzter Armzug: Luft anhalten',
+      'Anschlag mit beiden Händen gleichzeitig unter Wasser',
+      'Schnelle Drehung',
+      'Kraftvoller Abstoß in Streamline',
+      'Mindestens 4 Delphinkicks, mind. 7,5 m Tauchphase'
+    ],
+    wissenschaft: [
       'Undulationsbewegung beginnt in der Hüfte, nicht in den Schultern',
-      'Erster Beinschlag beim Eintauchen der Arme, zweiter beim Abdruck – Timing ist entscheidend',
+      'Erster Beinschlag beim Eintauchen der Arme, zweiter beim Abdruck – Timing entscheidend',
       'Atemposition: Kinn knapp über Wasser – zu hohes Heben bremst stark',
       'Energieintensivste Schwimmart: Pacing bei 200m Schmetterling besonders wichtig'
     ]
   },
   'Lagen': {
     icon: '🔀',
-    kriterien: [
+    start: [
       'Reihenfolge: Schmetterling → Rücken → Brust → Freistil',
-      'Rücken-zu-Brust-Wende (Cross-Over): 5m vor Wand Züge zählen → Anschlag mit oberem Arm hinter dem Ohr → seitliche Körperlage → seitliche Rolle → Abstoß in Streamline',
-      'Achtung: Bauchlage bei Rücken-zu-Brust-Wende = Disqualifikation!',
-      'Alle Wendetechniken der jeweiligen Lagen beachten',
-      'Tauchphase nach jeder Wende: mind. 4 Delphinkicks, mind. 7,5 m'
+      'Start wie Schmetterling: Kraftvoller Sprung, Streamline, Delphinkicks'
     ],
-    tipps_wissenschaft: [
+    technik: [
+      'Schmetterling: 2 Beinschläge, Wellenbewegung, 2er-Atmung',
+      'Rücken: Feste Kopfposition, Schulterrotation, kleiner Finger zuerst',
+      'Brust: Gleitphase, enger Beinschlag, gleichzeitiger Anschlag',
+      'Freistil: Kraftvoller Beinschlag, 3er-Atmung, langer Abdruck'
+    ],
+    wende: [
+      'Schmetterling→Rücken: Anschlag beide Hände → Rücken-Wende',
+      'Rücken→Brust (Cross-Over): 5m vor Wand Züge zählen → Anschlag mit oberem Arm hinter dem Ohr → seitliche Körperlage → seitliche Rolle → Abstoß',
+      '⚠️ Bauchlage bei Rücken→Brust-Wende = Disqualifikation!',
+      'Brust→Freistil: Anschlag beide Hände → Kraulwende'
+    ],
+    wissenschaft: [
       'Lagenwechsel-Wenden sind technisch anspruchsvoll – regelmäßiges Üben entscheidend',
-      'Energieverteilung: Schmetterling nicht zu schnell beginnen – Rücken und Brust sind die kritischen Phasen',
+      'Energieverteilung: Schmetterling nicht zu schnell beginnen',
       'Cross-Over-Wende: Körperlage muss seitlich sein – Videoanalyse empfohlen',
       'Pacing-Strategie: Gleichmäßige Verteilung über alle 4 Lagen anstreben'
     ]
   }
 };
 
-// ── Aufwärm-Protokoll (knieschonend, evidenzbasiert) ──────────────
-var WK_WARMUP = {
-  // Quelle: Swimming.org 3-Phasen-Modell, USMS Dryland Warm-up, PMC 2024
-  dryland: {
-    title: 'Trockenübungen (5–6 Min, knieschonend)',
-    subtitle: 'Evidenzbasiert nach Swimming.org & PMC 2024',
-    phasen: [
-      {
-        name: 'Phase 1: Aktivierung (2 Min)',
-        icon: '🔥',
-        color: '#0044FF',
-        uebungen: [
-          { name: 'Arm-Kreisen', dauer: '30 Sek', beschreibung: 'Beide Arme gleichzeitig vorwärts und rückwärts kreisen – Schultern aufwärmen', knie: true },
-          { name: 'Schulter-Rotation', dauer: '20 Sek', beschreibung: 'Arme seitlich ausstrecken, kleine Kreise vorwärts und rückwärts', knie: true },
-          { name: 'Hüft-Kreisen', dauer: '20 Sek', beschreibung: 'Hände auf Hüfte, große Kreise mit der Hüfte – Rumpf mobilisieren', knie: true },
-          { name: 'Rumpf-Rotation', dauer: '30 Sek', beschreibung: 'Arme ausgestreckt, Oberkörper langsam links-rechts drehen', knie: true }
-        ]
-      },
-      {
-        name: 'Phase 2: Knieschonende Aktivierung (2 Min)',
-        icon: '💙',
-        color: '#00C853',
-        uebungen: [
-          { name: 'Gesäßbrücke', dauer: '15 Wdh.', beschreibung: 'Rückenlage, Knie gebeugt, Hüfte heben und Gesäß anspannen – aktiviert Gesäß ohne Kniebelastung', knie: true },
-          { name: 'Clamshell', dauer: '10 Wdh./Seite', beschreibung: 'Seitlage, Knie 45° gebeugt, oberes Knie zur Decke heben – Hüftabduktoren aktivieren', knie: true },
-          { name: 'Fußkreisen', dauer: '15 Sek/Seite', beschreibung: 'Im Sitzen Fuß kreisen – Sprunggelenke mobilisieren', knie: true },
-          { name: 'Adduktoren-Dehnung', dauer: '20 Sek', beschreibung: 'Froschposition: Knie weit auseinander, langsam nach hinten setzen', knie: true }
-        ]
-      },
-      {
-        name: 'Phase 3: Schwimmspezifisch (1–2 Min)',
-        icon: '🏊',
-        color: '#FF8F00',
-        uebungen: [
-          { name: 'Streamline-Aktivierung', dauer: '5×', beschreibung: 'Arme über Kopf strecken, Körper vollständig strecken und 3 Sek halten', knie: true },
-          { name: 'Schulter-Mobilisation', dauer: '10 Wdh.', beschreibung: 'Arm über Brust ziehen und halten – Schulterkapsel dehnen', knie: true },
-          { name: 'Visualisierung', dauer: '30 Sek', beschreibung: 'Augen schließen, Rennen mental durchschwimmen – Start, Wenden, Finish', knie: true }
-        ]
-      }
-    ],
-    hinweis_knie: '⚠️ Knie-Hinweis: Keine Kniebeugen, keine Sprünge, kein Laufen. Alle Übungen sind knieschonend gewählt. Bei Schmerzen sofort stoppen.',
-    quelle: 'Quellen: Swimming.org (2024), USMS Dryland Warm-up, PMC/PubMed: Zhou et al. (2024) – FIFA 11+ für Schwimmer'
-  },
-  wasser: {
-    title: 'Einwärmen im Wasser (falls möglich)',
-    phasen: [
-      { name: 'Phase 1: Locker einschwimmen', vol: '200–300 m', intensity: 'Locker (<65%)', inhalt: 'Gemischte Lagen, Technikfokus, kein Druck' },
-      { name: 'Phase 2: Rennspezifisch', vol: '4×25 m', intensity: 'Renntempo', inhalt: 'Kurze Sprints in Renntempo, Wenden üben, Atemrhythmus' },
-      { name: 'Phase 3: Aktivierung', vol: '2×15 m', intensity: 'Maximal', inhalt: 'Kurze Sprints mit vollem Start – Nervensystem aktivieren (60–90 Sek Pause)' }
-    ]
-  }
-};
-
-// ── Strecken-spezifische Tipps ────────────────────────────────────
-var WK_STRECKEN_TIPPS = {
+// ── Strecken-Tipps ────────────────────────────────────────────────
+var WK_STRECKEN = {
   '50 m': {
-    pacing: 'Alles geben von Anfang an – maximale Intensität von Start bis Ziel',
-    energie: 'Anaerob-alaktazid: ATP-PCr-System dominiert (erste 10 Sek), dann Laktat',
+    pacing: 'Maximale Intensität von Start bis Ziel – kein Aufbau',
+    energie: 'ATP-PCr-System (erste 10 Sek) + Laktat-System',
     tipps: [
       'Start ist entscheidend: Reaktionszeit + Tauchphase können 0,3–0,5 Sek ausmachen',
-      'Atemfrequenz minimieren: Manche Sprinter atmen gar nicht – Sauerstoffbedarf ist kurz',
+      'Atemfrequenz minimieren – manche Sprinter atmen gar nicht',
       'Maximale Zugfrequenz von Beginn an – kein Aufbau',
       'Tauchphase optimal nutzen: 7,5–10 m mit Delphinkicks'
     ]
   },
   '100 m': {
-    pacing: 'Erste 50m leicht schneller als Renntempo, zweite 50m halten',
-    energie: 'Anaerob-laktazid: Laktat-System dominiert, hohe Laktatproduktion',
+    pacing: 'Erste 50m kontrolliert schnell, zweite 50m halten',
+    energie: 'Anaerob-laktazid: Laktat-System dominiert',
     tipps: [
       'Erste 50m: Kontrolliert schnell – nicht überpacen',
       'Wende ist kritisch: Gute Wende kann 0,5–1 Sek einsparen',
       'Zweite 50m: Technik aufrechterhalten trotz Ermüdung',
-      'Atemrhythmus beibehalten – nicht zu häufig atmen (erhöht Widerstand)'
+      'Atemrhythmus beibehalten – nicht zu häufig atmen'
     ]
   },
   '200 m': {
-    pacing: 'Gleichmäßiges Pacing – alle 50m ähnliche Zeiten anstreben',
+    pacing: 'Gleichmäßiges Pacing – alle 50m ähnliche Zeiten',
     energie: 'Aerob-anaerob gemischt: Beide Systeme stark beansprucht',
     tipps: [
-      'Negative Split anstreben: Zweite Hälfte leicht schneller als erste',
+      'Negative Split anstreben: Zweite Hälfte leicht schneller',
       'Erste 50m: Kontrolliert – Überpacing kostet in der zweiten Hälfte viel',
       'Mentale Strategie: Rennen in 4×50m aufteilen',
-      'Technik bei Ermüdung aufrechterhalten – besonders Wenden und Tauchphasen'
+      'Technik bei Ermüdung aufrechterhalten – besonders Wenden'
     ]
   },
   '400 m': {
@@ -2528,7 +2527,7 @@ var WK_STRECKEN_TIPPS = {
     tipps: [
       'Erste 100m: Kontrolliert – Überpacing ist der häufigste Fehler',
       'Rennen in 4×100m aufteilen – jede 100m-Runde planen',
-      'Atemrhythmus: Regelmäßig und kontrolliert – 3er-Atmung bei Freistil',
+      'Atemrhythmus: Regelmäßig und kontrolliert',
       'Letzte 50m: Alles geben – Frequenz erhöhen'
     ]
   },
@@ -2554,149 +2553,227 @@ var WK_STRECKEN_TIPPS = {
   }
 };
 
-// ── Wettkampfvorbereitung rendern ─────────────────────────────────
+// ── Aufwärm-Protokoll ─────────────────────────────────────────────
+var WK_WARMUP_PHASEN = [
+  {
+    name: 'Phase 1: Aktivierung (2 Min)',
+    icon: '🔥',
+    color: '#0044FF',
+    uebungen: [
+      { name: 'Arm-Kreisen', dauer: '30 Sek', info: 'Beide Arme gleichzeitig vorwärts und rückwärts kreisen' },
+      { name: 'Schulter-Rotation', dauer: '20 Sek', info: 'Arme seitlich, kleine Kreise vor- und rückwärts' },
+      { name: 'Hüft-Kreisen', dauer: '20 Sek', info: 'Hände auf Hüfte, große Kreise – Rumpf mobilisieren' },
+      { name: 'Rumpf-Rotation', dauer: '30 Sek', info: 'Arme ausgestreckt, Oberkörper langsam links-rechts drehen' }
+    ]
+  },
+  {
+    name: 'Phase 2: Knieschonende Aktivierung (2 Min)',
+    icon: '💙',
+    color: '#00C853',
+    uebungen: [
+      { name: 'Gesäßbrücke', dauer: '15 Wdh.', info: 'Rückenlage, Knie gebeugt, Hüfte heben – kein Kniestress' },
+      { name: 'Clamshell', dauer: '10 Wdh./Seite', info: 'Seitlage, oberes Knie zur Decke heben – Hüftabduktoren' },
+      { name: 'Fußkreisen', dauer: '15 Sek/Seite', info: 'Im Sitzen Fuß kreisen – Sprunggelenke mobilisieren' },
+      { name: 'Adduktoren-Dehnung', dauer: '20 Sek', info: 'Froschposition: Knie weit auseinander, langsam nach hinten' }
+    ]
+  },
+  {
+    name: 'Phase 3: Schwimmspezifisch (1–2 Min)',
+    icon: '🏊',
+    color: '#FF8F00',
+    uebungen: [
+      { name: 'Streamline-Aktivierung', dauer: '5×', info: 'Arme über Kopf strecken, Körper vollständig strecken, 3 Sek halten' },
+      { name: 'Schulter-Mobilisation', dauer: '10 Wdh.', info: 'Arm über Brust ziehen und halten – Schulterkapsel dehnen' },
+      { name: 'Visualisierung', dauer: '30 Sek', info: 'Augen schließen, Rennen mental durchschwimmen: Start, Wenden, Finish' }
+    ]
+  }
+];
+
+// ── Hauptfunktion: Vorbereitung rendern ───────────────────────────
 function renderWkPrep() {
   var container = document.getElementById('wk-prep-content');
   if (!container) return;
 
-  // Aktuelle Strecke und Lage aus dem Formular lesen
-  var strecke = '';
-  var lage = '';
-  var startBlocks = document.querySelectorAll('.wk-start-block');
-  if (startBlocks.length > 0) {
-    var firstIdx = startBlocks[0].id.replace('wks-', '');
-    var distEl   = document.getElementById('wkd-' + firstIdx);
-    var strokeEl = document.getElementById('wks-' + firstIdx);
-    if (distEl)   strecke = distEl.value   || '';
-    if (strokeEl) lage    = strokeEl.value || '';
-  }
+  var selectedStrecke = localStorage.getItem('wk_prep_strecke') || '';
+  var selectedLage    = localStorage.getItem('wk_prep_lage')    || '';
 
-  var technik = lage ? WK_TECHNIK[lage] : null;
-  var strTipps = strecke ? WK_STRECKEN_TIPPS[strecke] : null;
-  var warmup = WK_WARMUP;
+  var strecken = ['50 m','100 m','200 m','400 m','800 m','1500 m'];
+  var lagen    = ['Freistil','Rücken','Brust','Schmetterling','Lagen'];
 
   var html = '';
 
-  // ── Aufwärmen ──
+  // ── Auswahl-Bereich ──
+  html += '<div style="background:var(--hero);border-radius:18px;padding:16px;margin-bottom:16px;color:#fff">' +
+    '<div style="font-size:.85rem;font-weight:800;margin-bottom:12px">🎯 Mein Start heute</div>' +
+    '<div style="margin-bottom:10px">' +
+      '<div style="font-size:.72rem;font-weight:700;opacity:.8;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Strecke</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+        strecken.map(function(s) {
+          var active = s === selectedStrecke;
+          return '<button onclick="wkPrepSelect(\'strecke\',\'' + s + '\')" style="padding:7px 13px;border-radius:999px;border:1.5px solid ' +
+            (active ? '#fff' : 'rgba(255,255,255,.35)') + ';background:' +
+            (active ? '#fff' : 'rgba(255,255,255,.12)') + ';color:' +
+            (active ? '#0033CC' : '#fff') + ';font-size:.78rem;font-weight:700;cursor:pointer">' + s + '</button>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div>' +
+      '<div style="font-size:.72rem;font-weight:700;opacity:.8;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px">Lage</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+        lagen.map(function(l) {
+          var active = l === selectedLage;
+          var icons = {'Freistil':'🏊','Rücken':'🔄','Brust':'🐸','Schmetterling':'🦋','Lagen':'🔀'};
+          return '<button onclick="wkPrepSelect(\'lage\',\'' + l + '\')" style="padding:7px 13px;border-radius:999px;border:1.5px solid ' +
+            (active ? '#fff' : 'rgba(255,255,255,.35)') + ';background:' +
+            (active ? '#fff' : 'rgba(255,255,255,.12)') + ';color:' +
+            (active ? '#0033CC' : '#fff') + ';font-size:.78rem;font-weight:700;cursor:pointer">' +
+            (icons[l]||'') + ' ' + l + '</button>';
+        }).join('') +
+      '</div>' +
+    '</div>' +
+  '</div>';
+
+  // ── Aufwärmen (immer sichtbar) ──
   html += '<div style="margin-bottom:16px">' +
-    '<div style="font-size:.95rem;font-weight:800;margin-bottom:4px">🔥 Aufwärmen vor dem Wettkampf</div>' +
-    '<div style="font-size:.75rem;color:var(--tm);margin-bottom:12px">' + warmup.dryland.subtitle + '</div>';
+    '<div style="font-size:.9rem;font-weight:800;margin-bottom:4px">🔥 Aufwärmen (knieschonend)</div>' +
+    '<div style="font-size:.72rem;color:var(--tm);margin-bottom:10px">Evidenzbasiert · Swimming.org 3-Phasen-Modell · PMC 2024</div>' +
+    '<div style="background:rgba(0,68,255,.08);border:1px solid rgba(0,68,255,.2);border-radius:10px;padding:9px 12px;margin-bottom:10px;font-size:.75rem;color:var(--blue,#0044FF);font-weight:500">' +
+      '⚠️ Knie-Hinweis: Keine Kniebeugen, keine Sprünge, kein Laufen. Bei Schmerzen sofort stoppen.' +
+    '</div>';
 
-  // Knie-Hinweis
-  html += '<div style="background:var(--blue-l,#EBF3FF);border:1px solid var(--blue-m,#CCE0FF);border-radius:10px;padding:10px 12px;margin-bottom:12px;font-size:.78rem;color:var(--blue,#0044FF);font-weight:500">' +
-    warmup.dryland.hinweis_knie + '</div>';
-
-  // Phasen
-  warmup.dryland.phasen.forEach(function(phase) {
-    html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:10px;border-left:3px solid ' + phase.color + '">' +
+  WK_WARMUP_PHASEN.forEach(function(phase) {
+    html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px;border-left:3px solid ' + phase.color + '">' +
       '<div style="font-size:.82rem;font-weight:700;margin-bottom:8px">' + phase.icon + ' ' + phase.name + '</div>';
     phase.uebungen.forEach(function(ue) {
       html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">' +
         '<div style="flex:1">' +
           '<div style="font-size:.8rem;font-weight:700">' + ue.name + '</div>' +
-          '<div style="font-size:.7rem;color:var(--tm);margin-top:1px">' + ue.beschreibung + '</div>' +
+          '<div style="font-size:.7rem;color:var(--tm);margin-top:1px">' + ue.info + '</div>' +
         '</div>' +
-        '<div style="font-size:.72rem;font-weight:700;color:var(--blue,#0044FF);white-space:nowrap;flex-shrink:0">' + ue.dauer + '</div>' +
+        '<div style="font-size:.72rem;font-weight:700;color:' + phase.color + ';white-space:nowrap;flex-shrink:0">' + ue.dauer + '</div>' +
       '</div>';
     });
     html += '</div>';
   });
 
   // Wasser-Einwärmen
-  html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:10px">' +
-    '<div style="font-size:.82rem;font-weight:700;margin-bottom:8px">🏊 ' + warmup.wasser.title + '</div>';
-  warmup.wasser.phasen.forEach(function(p) {
-    html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">' +
-      '<div style="flex:1">' +
-        '<div style="font-size:.78rem;font-weight:700">' + p.name + '</div>' +
-        '<div style="font-size:.7rem;color:var(--tm)">' + p.inhalt + '</div>' +
-      '</div>' +
-      '<div style="text-align:right;flex-shrink:0">' +
-        '<div style="font-size:.72rem;font-weight:700;color:var(--blue,#0044FF)">' + p.vol + '</div>' +
-        '<div style="font-size:.65rem;color:var(--tm)">' + p.intensity + '</div>' +
-      '</div>' +
-    '</div>';
-  });
-  html += '<div style="font-size:.65rem;color:var(--tm);margin-top:8px;font-style:italic">' + warmup.dryland.quelle + '</div>';
-  html += '</div>';
+  html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px">' +
+    '<div style="font-size:.82rem;font-weight:700;margin-bottom:8px">🏊 Einwärmen im Wasser (falls möglich)</div>' +
+    '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">' +
+      '<div style="flex:1"><div style="font-size:.78rem;font-weight:700">Phase 1: Locker einschwimmen</div><div style="font-size:.7rem;color:var(--tm)">Gemischte Lagen, Technikfokus, kein Druck</div></div>' +
+      '<div style="font-size:.72rem;font-weight:700;color:#0044FF;white-space:nowrap">200–300 m</div>' +
+    '</div>' +
+    '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">' +
+      '<div style="flex:1"><div style="font-size:.78rem;font-weight:700">Phase 2: Rennspezifisch</div><div style="font-size:.7rem;color:var(--tm)">4×25 m in Renntempo, Wenden üben</div></div>' +
+      '<div style="font-size:.72rem;font-weight:700;color:#0044FF;white-space:nowrap">4×25 m</div>' +
+    '</div>' +
+    '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0">' +
+      '<div style="flex:1"><div style="font-size:.78rem;font-weight:700">Phase 3: Aktivierung</div><div style="font-size:.7rem;color:var(--tm)">2×15 m maximal – Nervensystem aktivieren (60–90 Sek Pause)</div></div>' +
+      '<div style="font-size:.72rem;font-weight:700;color:#0044FF;white-space:nowrap">2×15 m</div>' +
+    '</div>' +
+  '</div>';
   html += '</div>';
 
-  // ── Technikkriterien ──
-  if (technik) {
+  // ── Technikkriterien (nur wenn Lage gewählt) ──
+  if (selectedLage && WK_TECHNIK[selectedLage]) {
+    var t = WK_TECHNIK[selectedLage];
     html += '<div style="margin-bottom:16px">' +
-      '<div style="font-size:.95rem;font-weight:800;margin-bottom:4px">' + technik.icon + ' Technikkriterien: ' + lage + '</div>' +
+      '<div style="font-size:.9rem;font-weight:800;margin-bottom:4px">' + t.icon + ' Technikkriterien: ' + selectedLage + '</div>' +
       '<div style="font-size:.72rem;color:var(--tm);margin-bottom:10px">Aus deinen hinterlegten Bewertungsschwerpunkten</div>';
 
-    html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:10px">';
-    technik.kriterien.forEach(function(k, i) {
-      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">' +
-        '<div style="width:20px;height:20px;border-radius:50%;background:var(--blue,#0044FF);color:#fff;font-size:.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">' + (i+1) + '</div>' +
-        '<div style="font-size:.8rem;color:var(--t1)">' + k + '</div>' +
+    // Start
+    html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px">' +
+      '<div style="font-size:.78rem;font-weight:700;color:var(--blue,#0044FF);margin-bottom:7px">🚀 Start & Tauchphase</div>';
+    t.start.forEach(function(k, i) {
+      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">' +
+        '<div style="width:18px;height:18px;border-radius:50%;background:#0044FF;color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">' + (i+1) + '</div>' +
+        '<div style="font-size:.78rem">' + k + '</div>' +
       '</div>';
     });
     html += '</div>';
 
-    // Wissenschaftliche Tipps für die Lage
-    html += '<div style="background:linear-gradient(135deg,#EBF3FF,#F0FBFF);border:1px solid #CCE0FF;border-radius:12px;padding:12px;margin-bottom:10px">' +
-      '<div style="font-size:.78rem;font-weight:700;color:#0044FF;margin-bottom:8px">🔬 Wissenschaftliche Erkenntnisse: ' + lage + '</div>';
-    technik.tipps_wissenschaft.forEach(function(t) {
+    // Technik
+    html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px">' +
+      '<div style="font-size:.78rem;font-weight:700;color:var(--blue,#0044FF);margin-bottom:7px">🏊 Schwimmtechnik</div>';
+    t.technik.forEach(function(k, i) {
+      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">' +
+        '<div style="width:18px;height:18px;border-radius:50%;background:#0044FF;color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">' + (i+1) + '</div>' +
+        '<div style="font-size:.78rem">' + k + '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+
+    // Wende
+    html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px">' +
+      '<div style="font-size:.78rem;font-weight:700;color:var(--blue,#0044FF);margin-bottom:7px">🔁 Wende</div>';
+    t.wende.forEach(function(k, i) {
+      var isWarning = k.indexOf('⚠️') >= 0 || k.indexOf('Disqualifikation') >= 0;
+      html += '<div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">' +
+        '<div style="width:18px;height:18px;border-radius:50%;background:' + (isWarning?'#F44336':'#0044FF') + ';color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">' + (isWarning?'!':i+1) + '</div>' +
+        '<div style="font-size:.78rem;' + (isWarning?'color:#F44336;font-weight:600':'') + '">' + k + '</div>' +
+      '</div>';
+    });
+    html += '</div>';
+
+    // Wissenschaft
+    html += '<div style="background:linear-gradient(135deg,rgba(0,68,255,.06),rgba(0,194,224,.06));border:1px solid rgba(0,68,255,.15);border-radius:12px;padding:12px;margin-bottom:8px">' +
+      '<div style="font-size:.78rem;font-weight:700;color:#0044FF;margin-bottom:7px">🔬 Wissenschaftliche Erkenntnisse</div>';
+    t.wissenschaft.forEach(function(tip) {
       html += '<div style="display:flex;align-items:flex-start;gap:6px;padding:4px 0">' +
-        '<span style="color:#0044FF;font-size:.8rem;flex-shrink:0">→</span>' +
-        '<div style="font-size:.75rem;color:#0033CC">' + t + '</div>' +
+        '<span style="color:#0044FF;font-size:.85rem;flex-shrink:0;margin-top:1px">→</span>' +
+        '<div style="font-size:.75rem;color:var(--t2)">' + tip + '</div>' +
       '</div>';
     });
     html += '</div>';
     html += '</div>';
-  } else {
-    html += '<div style="background:var(--subtle);border-radius:12px;padding:14px;margin-bottom:16px;text-align:center">' +
-      '<div style="font-size:1.4rem;margin-bottom:6px">📋</div>' +
-      '<div style="font-size:.83rem;font-weight:600">Technikkriterien</div>' +
-      '<div style="font-size:.75rem;color:var(--tm);margin-top:4px">Trage zuerst einen Start ein (Strecke + Lage wählen), dann erscheinen hier die passenden Technikkriterien.</div>' +
+  } else if (!selectedLage) {
+    html += '<div style="background:var(--subtle);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center">' +
+      '<div style="font-size:1.6rem;margin-bottom:6px">📋</div>' +
+      '<div style="font-size:.83rem;font-weight:700">Lage wählen</div>' +
+      '<div style="font-size:.75rem;color:var(--tm);margin-top:4px">Wähle oben deine Lage für die passenden Technikkriterien.</div>' +
     '</div>';
   }
 
-  // ── Strecken-Tipps ──
-  if (strTipps) {
+  // ── Renntaktik (nur wenn Strecke gewählt) ──
+  if (selectedStrecke && WK_STRECKEN[selectedStrecke]) {
+    var st = WK_STRECKEN[selectedStrecke];
     html += '<div style="margin-bottom:16px">' +
-      '<div style="font-size:.95rem;font-weight:800;margin-bottom:4px">📊 Renntaktik: ' + strecke + '</div>' +
-      '<div style="font-size:.72rem;color:var(--tm);margin-bottom:10px">Wissenschaftlich fundierte Empfehlungen</div>';
-
-    html += '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:10px">' +
-      '<div style="display:flex;gap:8px;margin-bottom:8px">' +
-        '<div style="flex:1;background:var(--card);border-radius:8px;padding:9px">' +
-          '<div style="font-size:.65rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Pacing-Strategie</div>' +
-          '<div style="font-size:.78rem;font-weight:600">' + strTipps.pacing + '</div>' +
-        '</div>' +
-      '</div>' +
-      '<div style="background:var(--card);border-radius:8px;padding:9px;margin-bottom:8px">' +
-        '<div style="font-size:.65rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Energiesystem</div>' +
-        '<div style="font-size:.78rem;font-weight:600">' + strTipps.energie + '</div>' +
-      '</div>';
-
-    strTipps.tipps.forEach(function(t) {
+      '<div style="font-size:.9rem;font-weight:800;margin-bottom:4px">📊 Renntaktik: ' + selectedStrecke + '</div>' +
+      '<div style="font-size:.72rem;color:var(--tm);margin-bottom:10px">Wissenschaftlich fundierte Empfehlungen</div>' +
+      '<div style="background:var(--subtle);border-radius:12px;padding:12px;margin-bottom:8px">' +
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">' +
+          '<div style="background:var(--card);border-radius:8px;padding:9px">' +
+            '<div style="font-size:.62rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Pacing</div>' +
+            '<div style="font-size:.75rem;font-weight:600">' + st.pacing + '</div>' +
+          '</div>' +
+          '<div style="background:var(--card);border-radius:8px;padding:9px">' +
+            '<div style="font-size:.62rem;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Energiesystem</div>' +
+            '<div style="font-size:.75rem;font-weight:600">' + st.energie + '</div>' +
+          '</div>' +
+        '</div>';
+    st.tipps.forEach(function(tip) {
       html += '<div style="display:flex;align-items:flex-start;gap:6px;padding:5px 0;border-bottom:1px solid var(--border)">' +
-        '<span style="color:var(--blue,#0044FF);font-size:.8rem;flex-shrink:0">✓</span>' +
-        '<div style="font-size:.78rem">' + t + '</div>' +
+        '<span style="color:#0044FF;font-size:.85rem;flex-shrink:0">✓</span>' +
+        '<div style="font-size:.78rem">' + tip + '</div>' +
       '</div>';
     });
-    html += '</div>';
-    html += '</div>';
-  } else if (!strecke) {
-    html += '<div style="background:var(--subtle);border-radius:12px;padding:14px;margin-bottom:16px;text-align:center">' +
-      '<div style="font-size:1.4rem;margin-bottom:6px">📊</div>' +
-      '<div style="font-size:.83rem;font-weight:600">Renntaktik & Tipps</div>' +
-      '<div style="font-size:.75rem;color:var(--tm);margin-top:4px">Trage zuerst einen Start ein (Strecke wählen), dann erscheinen hier die passenden Renntipps.</div>' +
+    html += '</div></div>';
+  } else if (!selectedStrecke) {
+    html += '<div style="background:var(--subtle);border-radius:12px;padding:16px;margin-bottom:16px;text-align:center">' +
+      '<div style="font-size:1.6rem;margin-bottom:6px">📊</div>' +
+      '<div style="font-size:.83rem;font-weight:700">Strecke wählen</div>' +
+      '<div style="font-size:.75rem;color:var(--tm);margin-top:4px">Wähle oben deine Strecke für Pacing-Strategie und Renntipps.</div>' +
     '</div>';
   }
 
-  // Allgemeine Wettkampf-Checkliste
+  // ── Checkliste ──
   html += '<div style="background:linear-gradient(135deg,#1A1A2E,#0D3B6E);border-radius:12px;padding:14px;margin-bottom:16px;color:#fff">' +
     '<div style="font-size:.85rem;font-weight:800;margin-bottom:10px">✅ Wettkampf-Checkliste</div>';
   var checklist = [
     'Badeanzug/Badehose + Ersatz eingepackt',
     'Schwimmbrille (+ Ersatz)',
     'Badekappe',
-    'Ausreichend Wasser getrunken (mind. 500ml vor dem Start)',
+    'Ausreichend Wasser getrunken (mind. 500 ml vor dem Start)',
     'Leichte Mahlzeit 2–3 Std. vorher (keine schweren Speisen)',
     'Aufwärmprogramm abgeschlossen',
     'Startnummer und Startzeit bekannt',
@@ -2705,7 +2782,7 @@ function renderWkPrep() {
   ];
   checklist.forEach(function(item) {
     html += '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.1)">' +
-      '<span style="font-size:.85rem">☐</span>' +
+      '<span style="font-size:.85rem;opacity:.7">☐</span>' +
       '<span style="font-size:.78rem">' + item + '</span>' +
     '</div>';
   });
@@ -2714,9 +2791,10 @@ function renderWkPrep() {
   container.innerHTML = html;
 }
 
-// ── Tab-Integration ───────────────────────────────────────────────
-// Wird von wkTab() aufgerufen wenn 'wk-prep' aktiv wird
-function initWkPrepTab() {
+// ── Auswahl speichern und neu rendern ─────────────────────────────
+function wkPrepSelect(type, value) {
+  if (type === 'strecke') localStorage.setItem('wk_prep_strecke', value);
+  if (type === 'lage')    localStorage.setItem('wk_prep_lage',    value);
   renderWkPrep();
 }
 // ── ÜBUNGEN PAGE ─────────────────────────────────────────────────────────────
