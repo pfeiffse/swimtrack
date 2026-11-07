@@ -1562,7 +1562,7 @@ function initPWA(){
   var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
   var link=document.getElementById('pwa-manifest');if(link)link.href=URL.createObjectURL(mblob);
   if(!('serviceWorker' in navigator))return;
-  var swLines=['const CN="swimtrack-v9";','self.addEventListener("install",e=>{self.skipWaiting();});','self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CN;}).map(function(k){return caches.delete(k);}));}).then(function(){return self.clients.claim();}));});','self.addEventListener("fetch",function(e){var req=e.request;if(req.method!=="GET")return;var url=req.url;var isNav=req.mode==="navigate"||url.includes("github.io")||url.endsWith("/")||url.endsWith(".html");if(isNav){e.respondWith(fetch(req,{cache:"no-cache"}).then(function(res){if(res&&res.ok){var c=res.clone();caches.open(CN).then(function(ca){ca.put(req,c);});}return res;}).catch(function(){return caches.match(req);}));return;}e.respondWith(caches.match(req).then(function(r){if(r)return r;return fetch(req).then(function(res){if(res&&res.ok){var c=res.clone();caches.open(CN).then(function(ca){ca.put(req,c);});}return res;});}));});'];
+  var swLines=['const CN="swimtrack-v10";','self.addEventListener("install",e=>{self.skipWaiting();});','self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CN;}).map(function(k){return caches.delete(k);}));}).then(function(){return self.clients.claim();}));});','self.addEventListener("fetch",function(e){var req=e.request;if(req.method!=="GET")return;var url=req.url;var isNav=req.mode==="navigate"||url.includes("github.io")||url.endsWith("/")||url.endsWith(".html");if(isNav){e.respondWith(fetch(req,{cache:"no-cache"}).then(function(res){if(res&&res.ok){var c=res.clone();caches.open(CN).then(function(ca){ca.put(req,c);});}return res;}).catch(function(){return caches.match(req);}));return;}e.respondWith(caches.match(req).then(function(r){if(r)return r;return fetch(req).then(function(res){if(res&&res.ok){var c=res.clone();caches.open(CN).then(function(ca){ca.put(req,c);});}return res;});}));});'];
   var swBlob=new Blob([swLines.join('\n')],{type:'application/javascript'});
   navigator.serviceWorker.register(URL.createObjectURL(swBlob),{scope:'./'}).then(function(reg){setInterval(function(){reg.update();},60000);reg.addEventListener('updatefound',function(){var nw=reg.installing;if(nw)nw.addEventListener('statechange',function(){if(nw.state==='installed'&&navigator.serviceWorker.controller)showUpdateBanner();});});}).catch(function(){});
 }
@@ -1782,12 +1782,12 @@ async function saveWettkampf(e) {
   if (btn) { btn.disabled = true; btn.textContent = 'Speichern…'; }
 
   try {
-    var date   = (document.getElementById('wk-date')?.value || '').trim();
-    var name   = (document.getElementById('wk-name')?.value || '').trim();
-    var loc    = (document.getElementById('wk-loc')?.value  || '').trim();
-    var pool   = document.querySelector('input[name="wk-pool"]:checked')?.value || '25';
-    var rating = document.querySelector('input[name="wk-rating"]:checked')?.value || 'gut';
-    var note   = (document.getElementById('wk-note')?.value || '').trim();
+    var date   = ((document.getElementById('wk-date') ? document.getElementById('wk-date').value : '')).trim();
+    var name   = ((document.getElementById('wk-name') ? document.getElementById('wk-name').value : '')).trim();
+    var loc    = ((document.getElementById('wk-loc') ? document.getElementById('wk-loc').value : '')).trim();
+    var pool   = (document.querySelector('input[name="wk-pool"]:checked') || {value:'25'}).value;
+    var rating = (document.querySelector('input[name="wk-rating"]:checked') || {value:'gut'}).value;
+    var note   = ((document.getElementById('wk-note') ? document.getElementById('wk-note').value : '')).trim();
 
     if (!date || !name) {
       if (typeof showToast === 'function') showToast('Datum und Name erforderlich.');
@@ -1922,8 +1922,8 @@ async function renderPBs() {
   var c = document.getElementById('pb-list');
   if (!c) return;
   var pbs = await dbAll('pbs');
-  var pool   = document.getElementById('pb-pool')?.value   || '';
-  var stroke = document.getElementById('pb-stroke')?.value || '';
+  var pbPoolEl = document.getElementById('pb-pool'); var pool = pbPoolEl ? pbPoolEl.value : '';
+  var pbStrokeEl = document.getElementById('pb-stroke'); var stroke = pbStrokeEl ? pbStrokeEl.value : '';
   var filtered = pbs.slice();
   if (pool)   filtered = filtered.filter(function(p){ return p.poolLength === pool; });
   if (stroke) filtered = filtered.filter(function(p){ return p.stroke === stroke; });
@@ -2411,9 +2411,9 @@ var WK_TECHNIK = {
   'Freistil': {
     icon: '🏊',
     dq_risiken: [
-      'Wand bei Wende oder Ziel nicht berührt (SW 5.2)',
-      'Kopf nicht vor der 15m-Marke nach Start/Wende aufgetaucht (SW 5.3)',
-      'Komplett untergetaucht während des Schwimmens (SW 5.3)'
+      'Du musst die Wand bei jeder Wende und am Ziel berühren – sonst gibt es eine DQ!',
+      'Nach dem Start und jeder Wende musst du vor der 15m-Markierung auftauchen',
+      'Du darfst beim Schwimmen nicht komplett unter Wasser bleiben'
     ],
     start: [
       'Kraftvoll abspringen und Körper ganz strecken',
@@ -2444,12 +2444,12 @@ var WK_TECHNIK = {
   'Rücken': {
     icon: '🔄',
     dq_risiken: [
-      'Rückenlage verlassen (außer bei der Rollwende) – sofort DQ! (SW 6.2)',
-      'Kopf nicht vor der 15m-Marke nach Start/Wende aufgetaucht (SW 6.3)',
-      'Wende nicht sofort nach Drehen auf die Brust eingeleitet (SW 6.4)',
-      'Wand bei der Wende nicht berührt (SW 6.4)',
-      'Nach der Wende nicht auf dem Rücken abgestoßen (SW 6.4)',
-      'Rennen nicht auf dem Rücken beendet (SW 6.5)'
+      'Du musst die ganze Zeit auf dem Rücken schwimmen – auf den Bauch drehen gibt sofort DQ!',
+      'Nach Start und Wende musst du vor der 15m-Markierung auftauchen',
+      'Bei der Wende: Wenn du dich auf die Brust drehst, musst du SOFORT die Wende einleiten',
+      'Du musst die Wand bei der Wende berühren',
+      'Nach der Wende musst du auf dem Rücken abstoßen',
+      'Du musst das Rennen auf dem Rücken beenden'
     ],
     start: [
       'Griff am Startblock, Füße an der Wand',
@@ -2481,16 +2481,16 @@ var WK_TECHNIK = {
   'Brust': {
     icon: '🐸',
     dq_risiken: [
-      'Anschlag nur mit einer Hand – beide Hände müssen gleichzeitig die Wand berühren! (SW 7.6)',
-      'Armbewegungen nicht gleichzeitig (SW 7.2)',
-      'Beinbewegungen nicht gleichzeitig (SW 7.4)',
-      'Mehr als ein Delphinkick nach Start/Wende (SW 7.1)',
-      'Delphinkick während des Schwimmens (SW 7.5)',
-      'Ellenbogen über Wasser beim Armzug (SW 7.3)',
-      'Hände über die Hüftlinie zurückgeführt (SW 7.3)',
-      'Füße beim Antrieb nicht nach außen gedreht (SW 7.5)',
-      'Kopf nicht bei jedem Zyklus aufgetaucht (SW 7.4)',
-      'Körper nicht auf der Brust (SW 7.2)'
+      'Anschlag: Immer BEIDE Hände gleichzeitig an die Wand – eine Hand allein gibt DQ!',
+      'Arme müssen immer gleichzeitig schwimmen – nicht abwechselnd wie beim Kraulen!',
+      'Beine müssen immer gleichzeitig schlagen – nicht abwechselnd!',
+      'Nach Start und Wende: Nur EIN Delphinkick erlaubt – danach normaler Brustkick!',
+      'Beim Schwimmen keinen Delphinkick machen – nur Brustkick!',
+      'Ellenbogen müssen beim Armzug unter Wasser bleiben',
+      'Hände dürfen beim Armzug nicht hinter die Hüfte zurückgehen',
+      'Füße beim Beinschlag nach außen drehen (Froschfüße) – sonst DQ!',
+      'Bei jedem Zug muss der Kopf aus dem Wasser kommen',
+      'Du musst auf der Brust schwimmen – nicht auf der Seite oder dem Rücken'
     ],
     start: [
       'Kraftvoll abspringen',
@@ -2521,14 +2521,14 @@ var WK_TECHNIK = {
   'Schmetterling': {
     icon: '🦋',
     dq_risiken: [
-      'Anschlag nur mit einer Hand – beide Hände müssen gleichzeitig die Wand berühren! (SW 8.4)',
-      'Arme nicht gleichzeitig über Wasser nach vorne geführt (SW 8.2)',
-      'Arme nicht gleichzeitig unter Wasser zurückgeführt (SW 8.2)',
-      'Wechselnde (nicht gleichzeitige) Beinbewegung (SW 8.3)',
-      'Brustkick-Bewegung ausgeführt (SW 8.3)',
-      'Mehr als ein Armzug unter Wasser nach Start/Wende (SW 8.5)',
-      'Kopf nicht vor der 15m-Marke aufgetaucht (SW 8.5)',
-      'Körper nicht auf der Brust (SW 8.1)'
+      'Anschlag: Immer BEIDE Hände gleichzeitig an die Wand – eine Hand allein gibt DQ!',
+      'Arme müssen gleichzeitig über Wasser nach vorne schwingen – nicht abwechselnd!',
+      'Arme müssen gleichzeitig unter Wasser zurückziehen – nicht abwechselnd!',
+      'Beine müssen gleichzeitig schlagen – abwechselnde Beinbewegung gibt DQ!',
+      'Keinen Brustkick machen – nur Delphinkick (beide Beine gleichzeitig)!',
+      'Nach Start und Wende: Nur EIN Armzug unter Wasser erlaubt',
+      'Nach Start und Wende vor der 15m-Markierung auftauchen',
+      'Du musst auf der Brust schwimmen'
     ],
     start: [
       'Kraftvoll abspringen',
@@ -2557,12 +2557,12 @@ var WK_TECHNIK = {
   'Lagen': {
     icon: '🔀',
     dq_risiken: [
-      'Falsche Reihenfolge – muss sein: Schmetterling → Rücken → Brust → Freistil! (SW 9.1)',
-      'Rücken→Brust-Wende: Auf den Bauch drehen ohne sofortige Wende = DQ! (SW 6.4)',
-      'Im Freistil-Abschnitt: Schmetterling, Rücken oder Brust geschwommen (SW 5.1)',
-      'Anschlag am Ende jedes Abschnitts nicht regelkonform (SW 9.4)',
-      'Schmetterling-Abschnitt: Anschlag nur mit einer Hand (SW 8.4)',
-      'Brust-Abschnitt: Anschlag nur mit einer Hand (SW 7.6)'
+      'Falsche Reihenfolge gibt sofort DQ! Merke: Schmetterling → Rücken → Brust → Freistil',
+      'Rücken→Brust-Wende: Wenn du dich auf die Brust drehst, SOFORT wenden – nicht weiterschwimmen!',
+      'Im Freistil-Teil darfst du nicht Schmetterling, Rücken oder Brust schwimmen',
+      'Jeder Abschnitt muss mit dem richtigen Anschlag enden (Schmetterling + Brust: beide Hände!)',
+      'Schmetterling-Teil: Beide Hände gleichzeitig anschlagen!',
+      'Brust-Teil: Beide Hände gleichzeitig anschlagen!'
     ],
     start: [
       'Reihenfolge merken: Schmetterling → Rücken → Brust → Freistil',
