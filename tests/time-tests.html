@@ -1,0 +1,17 @@
+<!doctype html><html lang="de"><meta charset="utf-8"><title>SwimTime Tests</title><body><h1>SwimTime Stage 3</h1><pre id="out"></pre><script src="../js/core/time.js?v=5.0.0-stage3"></script><script>
+const tests=[
+ ['31,50 -> 3150',()=>SwimTime.toCentiseconds(0,31,50)===3150],
+ ['1:05,00 -> 6500',()=>SwimTime.toCentiseconds(1,5,0)===6500],
+ ['2:15,99 -> 13599',()=>SwimTime.toCentiseconds(2,15,99)===13599],
+ ['6500 -> 1:05,00',()=>JSON.stringify(SwimTime.fromCentiseconds(6500))===JSON.stringify({timeMin:1,timeSec:5,timeMs:0})],
+ ['59 Sekunden gültig',()=>SwimTime.validate(0,59,99)===true],
+ ['60 Sekunden ungültig',()=>SwimTime.validate(0,60,0)===false],
+ ['99 Hundertstel gültig',()=>SwimTime.validate(0,1,99)===true],
+ ['100 Hundertstel ungültig',()=>SwimTime.validate(0,1,100)===false],
+ ['Format 31,50',()=>SwimTime.format(0,31,50)==='31,50 s'],
+ ['Format 1:05,00',()=>SwimTime.format(1,5,0)==='1:05,00'],
+ ['Alias wkToCs',()=>wkToCs(1,5,0)===6500],
+ ['Alias wkFmt',()=>wkFmt(1,5,0)==='1:05,00']
+];
+let ok=0;const lines=tests.map(([n,f])=>{let r=false;try{r=!!f()}catch(e){} if(r)ok++;return `${r?'✅':'❌'} ${n}`});lines.push(`\n${ok}/${tests.length} Tests erfolgreich`);document.getElementById('out').textContent=lines.join('\n');
+</script></body></html>

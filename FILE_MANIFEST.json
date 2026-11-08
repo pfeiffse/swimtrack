@@ -1,0 +1,247 @@
+[
+  {
+    "path": "README.md",
+    "size": 281,
+    "sha256": "b220cb32dc402e27d6cb0676e17098122da407ec83686e2fd7ef30af83564fbf"
+  },
+  {
+    "path": "css/app.css",
+    "size": 25719,
+    "sha256": "f782227e58045a0ae8872e97dc493c3df7c884ca52ffea1c2d0b403f2ec3703f"
+  },
+  {
+    "path": "docs/CHANGELOG.md",
+    "size": 340,
+    "sha256": "9a4cea1eb1561bb3ab5cc5a37a6c39fca6a7b0926fa5edba1758956b04360856"
+  },
+  {
+    "path": "docs/DATA_COMPATIBILITY.md",
+    "size": 366,
+    "sha256": "17b936f9c9fef1960f0687df92c990962f34e2dd64d7ac1445c673456be9c1a7"
+  },
+  {
+    "path": "docs/MODULES.md",
+    "size": 425,
+    "sha256": "76a594bc7849ee528ccf2b3c2313a26b56876b13d91384c8bf57897072626797"
+  },
+  {
+    "path": "docs/RELEASE_CHECKLIST.md",
+    "size": 733,
+    "sha256": "d68621b1a3b778a0b1444cf6af10fd28f3fcb0f5f24f9b2052b4a7eb430c66a1"
+  },
+  {
+    "path": "docs/STAGE10.3.md",
+    "size": 449,
+    "sha256": "847a35f7cb77f7529f8524b05407a8b78e6be0e0969ad606270811a4cbdbf1c9"
+  },
+  {
+    "path": "docs/STAGE10.md",
+    "size": 524,
+    "sha256": "4b11e23c350eda817184867d6184285639cb6bbb0df647738b5868c83a25aab2"
+  },
+  {
+    "path": "docs/STAGE2.md",
+    "size": 627,
+    "sha256": "bc97106aed10ce4b50e49c6b6a89611f972c69ba4cf55bba440e23faee9107be"
+  },
+  {
+    "path": "docs/STAGE3.md",
+    "size": 675,
+    "sha256": "b5998db070207ce74d424615a673bd367ae3202d6115e7b00fa2d27f3dbe8061"
+  },
+  {
+    "path": "docs/STAGE4.md",
+    "size": 628,
+    "sha256": "2762620d1a90096c00e4e16eb12f511acc2e7fbf555abb4ae2de7324abf91ae0"
+  },
+  {
+    "path": "docs/STAGE5.md",
+    "size": 635,
+    "sha256": "c4a088c4fb91548c3f4a6a7ce6d636360f4fee5a169b184bd1edd1f553ed5245"
+  },
+  {
+    "path": "docs/STAGE6.md",
+    "size": 587,
+    "sha256": "8956821363acffdd880b69ed6645fa2f7679937d09ec2dd37f3b9deb86ab78d4"
+  },
+  {
+    "path": "docs/STAGE7.md",
+    "size": 489,
+    "sha256": "ad0cc13bc1a4076936993f3e8bbbbb455740b8edcf5e0feac42e97543472f14a"
+  },
+  {
+    "path": "docs/STAGE8.md",
+    "size": 439,
+    "sha256": "bc19c565d98a852446285ab9bff7ce8154ed041ea1a5785af5f39fe85363650c"
+  },
+  {
+    "path": "docs/STAGE9.md",
+    "size": 509,
+    "sha256": "8ca7acdd4bd564a40eb3c566b92e3b43b5f944f8869e200ea0d8c3578212cc5c"
+  },
+  {
+    "path": "index.html",
+    "size": 30074,
+    "sha256": "a7698c84703fa822456cac4225ac1df223b36b3e92213123369d76d6195a5038"
+  },
+  {
+    "path": "js/app.js",
+    "size": 881,
+    "sha256": "8c399c3f83da5368db5720b60c66fa9428d54bfa480bdf0d81040e1b02f6a647"
+  },
+  {
+    "path": "js/core/config.js",
+    "size": 3195,
+    "sha256": "4e1768710f1860345feef219093b74f323c1bc08b6873177816bea5e529f8ca2"
+  },
+  {
+    "path": "js/core/dates.js",
+    "size": 696,
+    "sha256": "b67601e17dce518a41f99750ae56a0bb138395b19b4f0a24aff441d5fa1b8a13"
+  },
+  {
+    "path": "js/core/navigation.js",
+    "size": 1346,
+    "sha256": "2ac80c68484a3d670ce5769973d3894993426d1f36f07b1d4f47abf6a061ccbb"
+  },
+  {
+    "path": "js/core/pwa.js",
+    "size": 835,
+    "sha256": "e10277f6bc817fdcb013996cda627dd79fa5b315244cae5527636928da0bc396"
+  },
+  {
+    "path": "js/core/state.js",
+    "size": 378,
+    "sha256": "4d33bcf851188dd0443080cdfc5b12ff7adba2f15f0c506b25140d18e7faca6c"
+  },
+  {
+    "path": "js/core/time.js",
+    "size": 1576,
+    "sha256": "9e2581945d2cc7d61bc59baa64282139d67f749a5d8421e8dd95e6a3500133f9"
+  },
+  {
+    "path": "js/core/utils.js",
+    "size": 379,
+    "sha256": "3c794f73fad4084cfcecb42bb54494ea27d975e2310597e9b0c296c112dd19dc"
+  },
+  {
+    "path": "js/data/db.js",
+    "size": 1400,
+    "sha256": "811e7cc099c2a2f9a4197e8bcb052ae0b99b231c3d01b8930edaa84cf0a5c6af"
+  },
+  {
+    "path": "js/modules/athletics.js",
+    "size": 36012,
+    "sha256": "cc9e4da488a571eea80b7edf18f6078f19d17f957e13ba6c338519374bc63174"
+  },
+  {
+    "path": "js/modules/backup.js",
+    "size": 4341,
+    "sha256": "5d7cbc88bed886190224be5673dbd1fbac39f412c1ea515bf3a48044d03157ba"
+  },
+  {
+    "path": "js/modules/competition-analysis.js",
+    "size": 15524,
+    "sha256": "f309c188d8150c9bfe43ac88f2d95330c256fbac61442350d0a34075bab0c3b5"
+  },
+  {
+    "path": "js/modules/competition-preparation.js",
+    "size": 61463,
+    "sha256": "6a9969be349235daa6dd7fc12b6811a865a4e69929f00833c5baf487b35ca29f"
+  },
+  {
+    "path": "js/modules/competition.js",
+    "size": 36084,
+    "sha256": "e1ee120ada958883930a7e9a7ac497e9092e466444efc1da51c8d562640c8c66"
+  },
+  {
+    "path": "js/modules/dashboard.js",
+    "size": 4821,
+    "sha256": "ddd965a9fdd9d56d90133a78cc458184cb34350c7e6dd2ec9a002d10612a7c31"
+  },
+  {
+    "path": "js/modules/gamification.js",
+    "size": 19363,
+    "sha256": "0e73d458d9220e592a684e4d9abb930fb27bc7d8d0e8500ef073eedb4b15eb1f"
+  },
+  {
+    "path": "js/modules/personal-bests.js",
+    "size": 9076,
+    "sha256": "db2d2670e14d01dbaf06cccd87ed5d4ded03d4a109f7d5b36058af5bd741f93e"
+  },
+  {
+    "path": "js/modules/profile-settings.js",
+    "size": 2237,
+    "sha256": "74cb7b999f0898ce3fe9bf8ce12705bececc5757f7bee1a4258dee6b51f729ec"
+  },
+  {
+    "path": "js/modules/progress.js",
+    "size": 8279,
+    "sha256": "2837b5af59eb03c89580b239dd059529b7ec45801e29dbd500b0b0c86ca02e2e"
+  },
+  {
+    "path": "js/modules/training.js",
+    "size": 18224,
+    "sha256": "a21946bbef6a394cee96e834e7ab2bfe16818a34e7fd0583db4ecd3ac1d64134"
+  },
+  {
+    "path": "manifest.json",
+    "size": 1432,
+    "sha256": "40cc59bb90d54c8ccc5af31df1b5fa825e3777044d375befee37173df5570332"
+  },
+  {
+    "path": "sw.js",
+    "size": 1893,
+    "sha256": "c95afca16b78e0f6c8016a5eca95324eba161b214b4f4f11fe9e24f866fd7fb3"
+  },
+  {
+    "path": "tests/competition-feature-tests.html",
+    "size": 831,
+    "sha256": "583590fd1a2d8b999bea51f93a1be884ec97b9d4e80bc00c37cd06c25a44be82"
+  },
+  {
+    "path": "tests/module-tests.html",
+    "size": 2483,
+    "sha256": "e6e00f9dbc1fe8137d5741116417ed5b1ff1e3a4c112186b5bd6dd9bf712bb88"
+  },
+  {
+    "path": "tests/smoke-test.html",
+    "size": 1468,
+    "sha256": "e287b397c3c4da96942e343301291e7dfc296e4f92e1ca5f6d47bcc7a4915e11"
+  },
+  {
+    "path": "tests/stage10-3-export-tests.html",
+    "size": 541,
+    "sha256": "3dc2958c359fa4a63f16953aa6e87517c7d0bcf4ccd9e7a13a27c62e8c194b29"
+  },
+  {
+    "path": "tests/stage10-consolidation-tests.html",
+    "size": 1044,
+    "sha256": "61296a55c1242cfa77ba2a14299ec950cbdcc6558f7e1d0fe9d4af4d4fd80f94"
+  },
+  {
+    "path": "tests/stage6-module-tests.html",
+    "size": 1297,
+    "sha256": "3311e7075205085faf9d42a12b6e31dfd62f5dabf623d797a962db80ec2d12db"
+  },
+  {
+    "path": "tests/stage7-profile-tests.html",
+    "size": 1089,
+    "sha256": "a8714b45a8223905d51c24b35f446a19488d0e9e5c0cef4999a4c5d2cf3a3945"
+  },
+  {
+    "path": "tests/stage8-ui-tests.html",
+    "size": 1317,
+    "sha256": "9f639749b4cd2f21d9c06679b1cb015ead041ae6b9ea4cf9445026a4bbb52ff5"
+  },
+  {
+    "path": "tests/stage9-athletics-tests.html",
+    "size": 1232,
+    "sha256": "fb35d886460db39c2ac52fed82f99990df04462662c4066967c65f6b65b6fb9c"
+  },
+  {
+    "path": "tests/time-tests.html",
+    "size": 1271,
+    "sha256": "315af1c5808aa892644acb5039b4f7036269bcb0815ce51e0da3e0da79298e3e"
+  }
+]
