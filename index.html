@@ -316,7 +316,7 @@ input,select,textarea{font-family:inherit;font-size:16px}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 
-.wk-start-block{background:var(--subtle);border:1.5px solid var(--border);border-radius:var(--r);padding:12px;margin-bottom:10px;border-left:3px solid var(--blue,#0044FF)}
+.wk-start-block{background:var(--subtle,#F0F0F8);border:1.5px solid var(--border,#DCDCE8);border-radius:12px;padding:12px;margin-bottom:10px;border-left:3px solid #0044FF}
 @keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
 
 </style>
@@ -867,7 +867,7 @@ function goTo(page){
   if(pe)pe.classList.add('active');
   if(ne)ne.classList.add('active');
   const morePages=['fortschritt','uebungen','einstellungen'];
-  if(morePages.includes(page))(document.getElementById('nb-mehr')||{classList:{add:function(){},remove:function(){},toggle:function(){}}}).classList.add('active');
+  if(morePages.includes(page))var nbMehr=document.getElementById('nb-mehr');if(nbMehr)nbMehr.classList.add('active');
   S.page=page;
   try{const ps=document.getElementById('page-'+page);if(ps)ps.scrollTop=0;}catch(e){}
   if(page==='heute')renderHeutePage();
@@ -1020,7 +1020,7 @@ async function updateHeaderAvatar(){
 }
 
 // ── MODALS & TOAST ────────────────────────────────────────────────────────────
-function closeModal(id){(document.getElementById(id)||{classList:{add:function(){},remove:function(){},toggle:function(){}}}).classList.add('hidden');}
+function closeModal(id){var el=document.getElementById(id);if(el)el.classList.add('hidden');}
 function showToast(msg,ms=2500){
   const t=document.getElementById('toast'),tx=document.getElementById('toast-txt');
   if(!t||!tx)return;tx.textContent=msg;t.classList.remove('hidden');
@@ -1562,7 +1562,7 @@ function initPWA(){
   var mblob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
   var link=document.getElementById('pwa-manifest');if(link)link.href=URL.createObjectURL(mblob);
   if(!('serviceWorker' in navigator))return;
-  var swLines=['const CN="swimtrack-v10";','self.addEventListener("install",e=>{self.skipWaiting();});','self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CN;}).map(function(k){return caches.delete(k);}));}).then(function(){return self.clients.claim();}));});','self.addEventListener("fetch",function(e){var req=e.request;if(req.method!=="GET")return;var url=req.url;var isNav=req.mode==="navigate"||url.includes("github.io")||url.endsWith("/")||url.endsWith(".html");if(isNav){e.respondWith(fetch(req,{cache:"no-cache"}).then(function(res){if(res&&res.ok){var c=res.clone();caches.open(CN).then(function(ca){ca.put(req,c);});}return res;}).catch(function(){return caches.match(req);}));return;}e.respondWith(caches.match(req).then(function(r){if(r)return r;return fetch(req).then(function(res){if(res&&res.ok){var c=res.clone();caches.open(CN).then(function(ca){ca.put(req,c);});}return res;});}));});'];
+  var swLines=['const CN="swimtrack-v11";','self.addEventListener("install",e=>{self.skipWaiting();});','self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CN;}).map(function(k){return caches.delete(k);}));}).then(function(){return self.clients.claim();}));});','self.addEventListener("fetch",function(e){var req=e.request;if(req.method!=="GET")return;var url=req.url;var isNav=req.mode==="navigate"||url.includes("github.io")||url.endsWith("/")||url.endsWith(".html");if(isNav){e.respondWith(fetch(req,{cache:"no-cache"}).then(function(res){if(res&&res.ok){var c=res.clone();caches.open(CN).then(function(ca){ca.put(req,c);});}return res;}).catch(function(){return caches.match(req);}));return;}e.respondWith(caches.match(req).then(function(r){if(r)return r;return fetch(req).then(function(res){if(res&&res.ok){var c=res.clone();caches.open(CN).then(function(ca){ca.put(req,c);});}return res;});}));});'];
   var swBlob=new Blob([swLines.join('\n')],{type:'application/javascript'});
   navigator.serviceWorker.register(URL.createObjectURL(swBlob),{scope:'./'}).then(function(reg){setInterval(function(){reg.update();},60000);reg.addEventListener('updatefound',function(){var nw=reg.installing;if(nw)nw.addEventListener('statechange',function(){if(nw.state==='installed'&&navigator.serviceWorker.controller)showUpdateBanner();});});}).catch(function(){});
 }
@@ -1681,53 +1681,6 @@ function wkGetSplitDistances(distStr) {
 
 // ── Start-Block aufbauen ──────────────────────────────────────────
 // OVERRIDE: Diese Funktion ersetzt die alte addWkStart aus js_core
-function addWkStart() {
-  if (typeof S === 'undefined') { window.S = {}; }
-  S.wkIdx = (S.wkIdx || 0) + 1;
-  var idx = S.wkIdx;
-  var container = document.getElementById('wk-starts');
-  if (!container) return;
-
-  var distOpts   = ['50 m','100 m','200 m','400 m','800 m','1500 m'];
-  var strokeOpts = ['Freistil','Rücken','Brust','Schmetterling','Lagen'];
-
-  var el = document.createElement('div');
-  el.className = 'wk-start-block';
-  el.id = 'wks-' + idx;
-
-  var distSelHtml = '<select id="wkd-' + idx + '" style="width:100%;padding:8px 9px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;color:var(--t1);background:var(--card);outline:none" onchange="wkUpdateSplits(' + idx + ')">' +
-    distOpts.map(function(o){ return '<option value="' + o + '">' + o + '</option>'; }).join('') + '</select>';
-
-  var strokeSelHtml = '<select id="wks-' + idx + '" style="width:100%;padding:8px 9px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;color:var(--t1);background:var(--card);outline:none">' +
-    strokeOpts.map(function(o){ return '<option value="' + o + '">' + o + '</option>'; }).join('') + '</select>';
-
-  el.innerHTML =
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
-      '<span style="font-size:.85rem;font-weight:700;color:var(--blue,#0044FF)">Start ' + idx + '</span>' +
-      '<button type="button" style="width:26px;height:26px;border-radius:50%;background:var(--red-l,#FFEBEE);color:var(--red,#F44336);font-size:.75rem;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none" onclick="wkRemoveStart(' + idx + ')">&#x2715;</button>' +
-    '</div>' +
-    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">' +
-      '<div><label style="font-size:.72rem;font-weight:600;color:var(--tm);display:block;margin-bottom:3px">Strecke</label>' + distSelHtml + '</div>' +
-      '<div><label style="font-size:.72rem;font-weight:600;color:var(--tm);display:block;margin-bottom:3px">Lage</label>' + strokeSelHtml + '</div>' +
-    '</div>' +
-    '<div style="margin-bottom:8px">' +
-      '<label style="font-size:.72rem;font-weight:600;color:var(--tm);display:block;margin-bottom:5px">Zeit &nbsp;<span style="font-weight:400;color:var(--tm)">Min : Sek , Hundertstel</span></label>' +
-      '<div style="display:flex;align-items:center;gap:6px">' +
-        '<input type="number" id="wkm-' + idx + '" placeholder="0" min="0" max="59" style="width:52px;padding:9px 6px;border:1.5px solid var(--border);border-radius:8px;font-size:1rem;font-weight:700;text-align:center;color:var(--t1);background:var(--card);outline:none"/>' +
-        '<span style="font-size:1.1rem;font-weight:700;color:var(--tm)">:</span>' +
-        '<input type="number" id="wkse-' + idx + '" placeholder="00" min="0" max="59" style="width:52px;padding:9px 6px;border:1.5px solid var(--border);border-radius:8px;font-size:1rem;font-weight:700;text-align:center;color:var(--t1);background:var(--card);outline:none"/>' +
-        '<span style="font-size:1.1rem;font-weight:700;color:var(--tm)">,</span>' +
-        '<input type="number" id="wkms-' + idx + '" placeholder="00" min="0" max="99" style="width:52px;padding:9px 6px;border:1.5px solid var(--border);border-radius:8px;font-size:1rem;font-weight:700;text-align:center;color:var(--t1);background:var(--card);outline:none"/>' +
-      '</div>' +
-    '</div>' +
-    '<div style="margin-bottom:6px">' +
-      '<label style="font-size:.72rem;font-weight:600;color:var(--tm);display:block;margin-bottom:3px">Platzierung <span style="font-weight:400">(optional)</span></label>' +
-      '<input type="number" id="wkp-' + idx + '" placeholder="z.B. 3" min="1" style="width:100px;padding:8px 9px;border:1.5px solid var(--border);border-radius:8px;font-size:15px;color:var(--t1);background:var(--card);outline:none"/>' +
-    '</div>' +
-    '<div id="wk-splits-' + idx + '"></div>';
-
-  container.appendChild(el);
-}
 
 function wkRemoveStart(idx) {
   var el = document.getElementById('wks-' + idx);
@@ -1775,266 +1728,579 @@ function wkCollectSplits(idx, distStr) {
   return result;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   WETTKAMPF MODULE v3 – Komplett neu, maximale Kompatibilität
+   Kein optional chaining, kein arrow function in kritischen Pfaden
+   ═══════════════════════════════════════════════════════════════ */
+
+// ── Globaler Wettkampf-State ──────────────────────────────────────
+var WK = {
+  startIdx: 0
+};
+
+// ── Hilfsfunktionen ───────────────────────────────────────────────
+function wkVal(id) {
+  var el = document.getElementById(id);
+  if (!el) return '';
+  return el.value || '';
+}
+
+function wkIntVal(id) {
+  var el = document.getElementById(id);
+  if (!el) return 0;
+  return parseInt(el.value) || 0;
+}
+
+function wkFmt(min, sec, ms) {
+  var m = parseInt(min) || 0;
+  var s = parseInt(sec) || 0;
+  var h = parseInt(ms)  || 0;
+  if (m > 0) {
+    return m + ':' + (s < 10 ? '0' : '') + s + ',' + (h < 10 ? '0' : '') + h;
+  }
+  return s + ',' + (h < 10 ? '0' : '') + h + ' s';
+}
+
+function wkToCs(min, sec, ms) {
+  return (parseInt(min) || 0) * 6000 +
+         (parseInt(sec) || 0) * 100  +
+         (parseInt(ms)  || 0);
+}
+
+function wkSplitDists(distStr) {
+  var d = parseInt(distStr) || 0;
+  if (d <= 50)   return [];
+  if (d === 100) return [50];
+  if (d === 200) return [50, 100, 150];
+  if (d === 400) return [100, 200, 300];
+  if (d === 800) return [100, 200, 300, 400, 500, 600, 700];
+  if (d === 1500) return [100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400];
+  return [];
+}
+
+function wkRadioVal(name, fallback) {
+  var els = document.getElementsByName(name);
+  for (var i = 0; i < els.length; i++) {
+    if (els[i].checked) return els[i].value;
+  }
+  return fallback || '';
+}
+
+// ── Start-Block hinzufügen ────────────────────────────────────────
+function addWkStart() {
+  WK.startIdx = WK.startIdx + 1;
+  var idx = WK.startIdx;
+  var container = document.getElementById('wk-starts');
+  if (!container) return;
+
+  var distOpts   = ['50 m','100 m','200 m','400 m','800 m','1500 m'];
+  var strokeOpts = ['Freistil','Rücken','Brust','Schmetterling','Lagen'];
+
+  var distHtml = '<select id="wkd-' + idx + '" onchange="wkShowSplits(' + idx + ')">';
+  for (var i = 0; i < distOpts.length; i++) {
+    distHtml += '<option value="' + distOpts[i] + '">' + distOpts[i] + '</option>';
+  }
+  distHtml += '</select>';
+
+  var strokeHtml = '<select id="wks-' + idx + '">';
+  for (var j = 0; j < strokeOpts.length; j++) {
+    strokeHtml += '<option value="' + strokeOpts[j] + '">' + strokeOpts[j] + '</option>';
+  }
+  strokeHtml += '</select>';
+
+  var block = document.createElement('div');
+  block.id = 'wks-' + idx;
+  block.className = 'wk-start-block';
+  block.innerHTML =
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
+      '<span style="font-size:.85rem;font-weight:700;color:#0044FF">Start ' + idx + '</span>' +
+      '<button type="button" onclick="wkDelStart(' + idx + ')" style="width:26px;height:26px;border-radius:50%;background:#FFEBEE;color:#F44336;font-size:.8rem;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center">&#x2715;</button>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">' +
+      '<div>' +
+        '<label style="font-size:.72rem;font-weight:600;color:#9090A8;display:block;margin-bottom:3px">Strecke</label>' +
+        distHtml +
+      '</div>' +
+      '<div>' +
+        '<label style="font-size:.72rem;font-weight:600;color:#9090A8;display:block;margin-bottom:3px">Lage</label>' +
+        strokeHtml +
+      '</div>' +
+    '</div>' +
+    '<div style="margin-bottom:8px">' +
+      '<label style="font-size:.72rem;font-weight:600;color:#9090A8;display:block;margin-bottom:5px">Zeit &nbsp;<span style="font-weight:400">Min : Sek , Hundertstel</span></label>' +
+      '<div style="display:flex;align-items:center;gap:6px">' +
+        '<input type="number" id="wkm-' + idx + '" placeholder="0" min="0" max="59" style="width:52px;padding:9px 6px;border:1.5px solid #DCDCE8;border-radius:8px;font-size:1rem;font-weight:700;text-align:center;color:#0D0D1A;background:#FFF;outline:none">' +
+        '<span style="font-size:1.1rem;font-weight:700;color:#9090A8">:</span>' +
+        '<input type="number" id="wkse-' + idx + '" placeholder="00" min="0" max="59" style="width:52px;padding:9px 6px;border:1.5px solid #DCDCE8;border-radius:8px;font-size:1rem;font-weight:700;text-align:center;color:#0D0D1A;background:#FFF;outline:none">' +
+        '<span style="font-size:1.1rem;font-weight:700;color:#9090A8">,</span>' +
+        '<input type="number" id="wkms-' + idx + '" placeholder="00" min="0" max="99" style="width:52px;padding:9px 6px;border:1.5px solid #DCDCE8;border-radius:8px;font-size:1rem;font-weight:700;text-align:center;color:#0D0D1A;background:#FFF;outline:none">' +
+      '</div>' +
+    '</div>' +
+    '<div style="margin-bottom:6px">' +
+      '<label style="font-size:.72rem;font-weight:600;color:#9090A8;display:block;margin-bottom:3px">Platzierung <span style="font-weight:400">(optional)</span></label>' +
+      '<input type="number" id="wkp-' + idx + '" placeholder="z.B. 3" min="1" style="width:100px;padding:8px 9px;border:1.5px solid #DCDCE8;border-radius:8px;font-size:15px;color:#0D0D1A;background:#FFF;outline:none">' +
+    '</div>' +
+    '<div id="wksplits-' + idx + '"></div>';
+
+  container.appendChild(block);
+
+  // Style the selects
+  var selStyle = 'width:100%;padding:8px 9px;border:1.5px solid #DCDCE8;border-radius:8px;font-size:15px;color:#0D0D1A;background:#FFF;outline:none';
+  var distSel = document.getElementById('wkd-' + idx);
+  var strokeSel = document.getElementById('wks-' + idx);
+  if (distSel) distSel.style.cssText = selStyle;
+  if (strokeSel) strokeSel.style.cssText = selStyle;
+}
+
+function wkDelStart(idx) {
+  var el = document.getElementById('wks-' + idx);
+  if (el) el.parentNode.removeChild(el);
+}
+
+function wkShowSplits(idx) {
+  var distEl = document.getElementById('wkd-' + idx);
+  var container = document.getElementById('wksplits-' + idx);
+  if (!distEl || !container) return;
+
+  var splits = wkSplitDists(distEl.value);
+  if (!splits.length) { container.innerHTML = ''; return; }
+
+  var html = '<div style="background:#F0F0F8;border-radius:8px;padding:10px;margin-top:4px">' +
+    '<div style="font-size:.72rem;font-weight:700;color:#9090A8;margin-bottom:8px">Zwischenzeiten (optional)</div>';
+
+  for (var i = 0; i < splits.length; i++) {
+    var sp = splits[i];
+    html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">' +
+      '<span style="font-size:.72rem;font-weight:700;color:#0044FF;min-width:48px">' + sp + 'm:</span>' +
+      '<div style="display:flex;align-items:center;gap:4px">' +
+        '<input type="number" id="wksp-' + idx + '-' + sp + '-m" placeholder="0" min="0" max="59" style="width:44px;padding:6px 4px;border:1.5px solid #DCDCE8;border-radius:6px;font-size:.85rem;font-weight:700;text-align:center;color:#0D0D1A;background:#FFF;outline:none">' +
+        '<span style="font-size:.9rem;font-weight:700;color:#9090A8">:</span>' +
+        '<input type="number" id="wksp-' + idx + '-' + sp + '-s" placeholder="00" min="0" max="59" style="width:44px;padding:6px 4px;border:1.5px solid #DCDCE8;border-radius:6px;font-size:.85rem;font-weight:700;text-align:center;color:#0D0D1A;background:#FFF;outline:none">' +
+        '<span style="font-size:.9rem;font-weight:700;color:#9090A8">,</span>' +
+        '<input type="number" id="wksp-' + idx + '-' + sp + '-ms" placeholder="00" min="0" max="99" style="width:44px;padding:6px 4px;border:1.5px solid #DCDCE8;border-radius:6px;font-size:.85rem;font-weight:700;text-align:center;color:#0D0D1A;background:#FFF;outline:none">' +
+      '</div>' +
+    '</div>';
+  }
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function wkGetSplits(idx, distStr) {
+  var splits = wkSplitDists(distStr);
+  var result = [];
+  for (var i = 0; i < splits.length; i++) {
+    var sp = splits[i];
+    var m  = wkIntVal('wksp-' + idx + '-' + sp + '-m');
+    var s  = wkIntVal('wksp-' + idx + '-' + sp + '-s');
+    var ms = wkIntVal('wksp-' + idx + '-' + sp + '-ms');
+    var cs = wkToCs(m, s, ms);
+    if (cs > 0) {
+      result.push({ distance: sp, timeCs: cs, timeMin: m, timeSec: s, timeMs: ms });
+    }
+  }
+  return result;
+}
+
 // ── Wettkampf speichern ───────────────────────────────────────────
-async function saveWettkampf(e) {
+function saveWettkampf(e) {
   e.preventDefault();
-  var btn = e.target.querySelector('button[type=submit]');
+
+  var btn = null;
+  var form = document.getElementById('wkform');
+  if (form) {
+    var btns = form.getElementsByTagName('button');
+    for (var b = 0; b < btns.length; b++) {
+      if (btns[b].type === 'submit') { btn = btns[b]; break; }
+    }
+  }
   if (btn) { btn.disabled = true; btn.textContent = 'Speichern…'; }
 
+  var dateEl   = document.getElementById('wk-date');
+  var nameEl   = document.getElementById('wk-name');
+  var locEl    = document.getElementById('wk-loc');
+  var noteEl   = document.getElementById('wk-note');
+
+  var date   = dateEl   ? (dateEl.value   || '').trim() : '';
+  var name   = nameEl   ? (nameEl.value   || '').trim() : '';
+  var loc    = locEl    ? (locEl.value    || '').trim() : '';
+  var note   = noteEl   ? (noteEl.value   || '').trim() : '';
+  var pool   = wkRadioVal('wk-pool',   '25');
+  var rating = wkRadioVal('wk-rating', 'gut');
+
+  if (!date || !name) {
+    showToast('Bitte Datum und Name ausfüllen.');
+    if (btn) { btn.disabled = false; btn.textContent = 'Wettkampf speichern'; }
+    return;
+  }
+
+  // Collect starts
+  var startBlocks = document.getElementById('wk-starts');
+  if (!startBlocks) {
+    showToast('Fehler: Starts-Container nicht gefunden.');
+    if (btn) { btn.disabled = false; btn.textContent = 'Wettkampf speichern'; }
+    return;
+  }
+
+  var blocks = startBlocks.getElementsByClassName('wk-start-block');
+  var startsData = [];
+
+  for (var i = 0; i < blocks.length; i++) {
+    var blockId = blocks[i].id; // 'wks-N'
+    var idx = blockId.replace('wks-', '');
+
+    var distEl   = document.getElementById('wkd-'  + idx);
+    var strokeEl = document.getElementById('wks-'  + idx);
+    var minEl    = document.getElementById('wkm-'  + idx);
+    var secEl    = document.getElementById('wkse-' + idx);
+    var msEl     = document.getElementById('wkms-' + idx);
+    var placeEl  = document.getElementById('wkp-'  + idx);
+
+    var dist   = distEl   ? (distEl.value   || '') : '';
+    var stroke = strokeEl ? (strokeEl.value || '') : '';
+    var min    = minEl    ? (parseInt(minEl.value)  || 0) : 0;
+    var sec    = secEl    ? (parseInt(secEl.value)  || 0) : 0;
+    var ms     = msEl     ? (parseInt(msEl.value)   || 0) : 0;
+    var place  = placeEl  ? (parseInt(placeEl.value) || 0) : 0;
+
+    if (!dist || !stroke) continue;
+    var cs = wkToCs(min, sec, ms);
+    if (cs === 0) continue;
+
+    var splits = wkGetSplits(idx, dist);
+    startsData.push({
+      idx: idx, dist: dist, stroke: stroke,
+      min: min, sec: sec, ms: ms, cs: cs,
+      place: place > 0 ? place : null,
+      splits: splits
+    });
+  }
+
+  // Process async
+  wkSaveAsync(date, name, loc, note, pool, rating, startsData, btn);
+}
+
+async function wkSaveAsync(date, name, loc, note, pool, rating, startsData, btn) {
   try {
-    var date   = ((document.getElementById('wk-date') ? document.getElementById('wk-date').value : '')).trim();
-    var name   = ((document.getElementById('wk-name') ? document.getElementById('wk-name').value : '')).trim();
-    var loc    = ((document.getElementById('wk-loc') ? document.getElementById('wk-loc').value : '')).trim();
-    var pool   = (document.querySelector('input[name="wk-pool"]:checked') || {value:'25'}).value;
-    var rating = (document.querySelector('input[name="wk-rating"]:checked') || {value:'gut'}).value;
-    var note   = ((document.getElementById('wk-note') ? document.getElementById('wk-note').value : '')).trim();
-
-    if (!date || !name) {
-      if (typeof showToast === 'function') showToast('Datum und Name erforderlich.');
-      if (btn) { btn.disabled = false; btn.textContent = 'Wettkampf speichern'; }
-      return;
-    }
-
-    // Alle Start-Blöcke sammeln (Klasse wk-start-block)
-    var startBlocks = document.querySelectorAll('#wk-starts .wk-start-block');
-    console.log('[WK] Found start blocks:', startBlocks.length);
-
+    var pbs = await dbAll('pbs');
     var starts = [];
     var newPBs = [];
-    var pbs = await dbAll('pbs');
 
-    for (var i = 0; i < startBlocks.length; i++) {
-      var block = startBlocks[i];
-      var idx = block.id.replace('wks-', '');
+    for (var i = 0; i < startsData.length; i++) {
+      var sd = startsData[i];
+      var pbKey = sd.dist + '|' + sd.stroke + '|' + pool;
 
-      var distEl   = document.getElementById('wkd-'  + idx);
-      var strokeEl = document.getElementById('wks-'  + idx);
-      var minEl    = document.getElementById('wkm-'  + idx);
-      var secEl    = document.getElementById('wkse-' + idx);
-      var msEl     = document.getElementById('wkms-' + idx);
-      var placeEl  = document.getElementById('wkp-'  + idx);
-
-      var dist   = distEl   ? distEl.value.trim()   : '';
-      var stroke = strokeEl ? strokeEl.value.trim() : '';
-      var min    = parseInt(minEl  ? minEl.value  : 0) || 0;
-      var sec    = parseInt(secEl  ? secEl.value  : 0) || 0;
-      var ms     = parseInt(msEl   ? msEl.value   : 0) || 0;
-      var place  = placeEl && placeEl.value ? parseInt(placeEl.value) : null;
-
-      console.log('[WK] Start ' + idx + ':', dist, stroke, min, sec, ms);
-
-      if (!dist || !stroke) { console.log('[WK] Skipping - no dist/stroke'); continue; }
-      var cs = min*6000 + sec*100 + ms;
-      if (cs === 0) { console.log('[WK] Skipping - no time entered'); continue; }
-
-      var splits = wkCollectSplits(idx, dist);
-
-      // PB-Erkennung
-      var pbKey = dist + '|' + stroke + '|' + pool;
+      // Find existing PB
       var existing = null;
       for (var j = 0; j < pbs.length; j++) {
         if (pbs[j].key === pbKey) { existing = pbs[j]; break; }
       }
+
       var existingCs = existing
-        ? (existing.timeMin*6000 + existing.timeSec*100 + existing.timeMs)
-        : Infinity;
-      var isPB = cs < existingCs;
+        ? wkToCs(existing.timeMin, existing.timeSec, existing.timeMs)
+        : 999999;
+      var isPB = sd.cs < existingCs;
 
       if (isPB) {
-        var improvement = existing ? (existingCs - cs) / 100 : null;
-        newPBs.push({ dist:dist, stroke:stroke, pool:pool,
-          timeMin:min, timeSec:sec, timeMs:ms,
-          improvement:improvement, isFirst:!existing });
-        var pbEntry = { id: existing ? existing.id : genId(),
-          key:pbKey, distance:dist, stroke:stroke, poolLength:pool,
-          timeMin:min, timeSec:sec, timeMs:ms, date:date };
+        var improvement = existing ? (existingCs - sd.cs) / 100 : null;
+        newPBs.push({
+          dist: sd.dist, stroke: sd.stroke, pool: pool,
+          min: sd.min, sec: sd.sec, ms: sd.ms,
+          improvement: improvement, isFirst: !existing
+        });
+        var pbEntry = {
+          id: existing ? existing.id : genId(),
+          key: pbKey,
+          distance: sd.dist, stroke: sd.stroke, poolLength: pool,
+          timeMin: sd.min, timeSec: sd.sec, timeMs: sd.ms,
+          date: date
+        };
         await dbPut('pbs', pbEntry);
-        var existIdx = -1;
+        // Update local pbs array
+        var found = false;
         for (var k = 0; k < pbs.length; k++) {
-          if (pbs[k].key === pbKey) { existIdx = k; break; }
+          if (pbs[k].key === pbKey) { pbs[k] = pbEntry; found = true; break; }
         }
-        if (existIdx >= 0) pbs[existIdx] = pbEntry;
-        else pbs.push(pbEntry);
+        if (!found) pbs.push(pbEntry);
       }
 
-      starts.push({ id:genId(), distance:dist, stroke:stroke,
-        timeMin:min, timeSec:sec, timeMs:ms,
-        placement:place, isPB:isPB, splits:splits });
+      starts.push({
+        id: genId(),
+        distance: sd.dist, stroke: sd.stroke,
+        timeMin: sd.min, timeSec: sd.sec, timeMs: sd.ms,
+        placement: sd.place, isPB: isPB, splits: sd.splits
+      });
     }
 
-    console.log('[WK] Collected starts:', starts.length, 'PBs:', newPBs.length);
-
+    // Points
     var totalPts = 5;
-    var ptReasons = [{ reason:'Wettkampfergebnis eingetragen', pts:5 }];
-    newPBs.forEach(function(pb) {
+    var ptReasons = [{ reason: 'Wettkampfergebnis eingetragen', pts: 5 }];
+    for (var p = 0; p < newPBs.length; p++) {
       totalPts += 15;
-      ptReasons.push({ reason:'Neue persönliche Bestzeit: ' + pb.dist + ' ' + pb.stroke, pts:15 });
-    });
+      ptReasons.push({ reason: 'Neue persönliche Bestzeit: ' + newPBs[p].dist + ' ' + newPBs[p].stroke, pts: 15 });
+    }
 
+    // Save competition
     var compId = genId();
-    await dbPut('competitions', { id:compId, date:date, name:name, location:loc,
-      poolLength:pool, rating:rating, note:note, starts:starts, pointsEarned:totalPts });
+    await dbPut('competitions', {
+      id: compId, date: date, name: name, location: loc,
+      poolLength: pool, rating: rating, note: note,
+      starts: starts, pointsEarned: totalPts
+    });
     await logPts(ptReasons, compId, 'competition', date);
     var newBadges = await checkBadges();
 
-    // Formular zurücksetzen
-    var form = document.getElementById('wkform');
-    if (form) form.reset();
-    var dateEl = document.getElementById('wk-date');
-    if (dateEl) dateEl.value = today();
+    // Reset form
     var startsContainer = document.getElementById('wk-starts');
     if (startsContainer) startsContainer.innerHTML = '';
-    S.wkIdx = 0;
+    WK.startIdx = 0;
+
+    var dateEl = document.getElementById('wk-date');
+    if (dateEl) dateEl.value = today();
+
+    var wkformEl = document.getElementById('wkform');
+    if (wkformEl) {
+      var inputs = wkformEl.getElementsByTagName('input');
+      for (var ri = 0; ri < inputs.length; ri++) {
+        if (inputs[ri].type === 'text' || inputs[ri].type === 'url') inputs[ri].value = '';
+        if (inputs[ri].type === 'number') inputs[ri].value = '';
+      }
+      var textareas = wkformEl.getElementsByTagName('textarea');
+      for (var rt = 0; rt < textareas.length; rt++) textareas[rt].value = '';
+    }
+
     addWkStart();
 
-    // Erfolgsmeldung
+    // Show result
     if (newPBs.length > 0) {
       var pb = newPBs[0];
       var detailEl = document.getElementById('m-pb-detail');
       var imprEl   = document.getElementById('m-pb-impr');
+      var mpbEl    = document.getElementById('m-pb');
       if (detailEl) detailEl.textContent = 'Neuer persönlicher Rekord: ' + pb.dist + ' ' + pb.stroke;
-      if (imprEl) imprEl.textContent = pb.isFirst
-        ? 'Erste Zeit für diese Strecke eingetragen!'
-        : 'Du hast dich um ' + pb.improvement.toFixed(2) + ' Sekunden verbessert.';
-      var mpb = document.getElementById('m-pb');
-      if (mpb) mpb.classList.remove('hidden');
-    } else {
-      if (typeof showSaveModal === 'function') {
-        showSaveModal({ total:totalPts, reasons:ptReasons }, newBadges, 'Wettkampf gespeichert!');
-      } else {
-        if (typeof showToast === 'function') showToast('Wettkampf gespeichert! +' + totalPts + ' Punkte');
+      if (imprEl) {
+        if (pb.isFirst) {
+          imprEl.textContent = 'Erste Zeit für diese Strecke eingetragen!';
+        } else {
+          imprEl.textContent = 'Du hast dich um ' + pb.improvement.toFixed(2) + ' Sekunden verbessert.';
+        }
       }
+      if (mpbEl) mpbEl.classList.remove('hidden');
+    } else {
+      showSaveModal({ total: totalPts, reasons: ptReasons }, newBadges, 'Wettkampf gespeichert!');
     }
 
     renderPBs();
     renderWkHist();
 
-  } catch(err) {
-    console.error('[WK] saveWettkampf error:', err);
-    if (typeof showToast === 'function') showToast('Fehler: ' + (err.message || 'Unbekannter Fehler'));
+  } catch (err) {
+    console.error('WK save error:', err);
+    showToast('Fehler beim Speichern: ' + (err.message || String(err)));
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = 'Wettkampf speichern'; }
   }
+}
+
+// ── Tab-Navigation ────────────────────────────────────────────────
+function wkTab(id, btn) {
+  var panes = document.querySelectorAll('#page-wettkampf .tabpane');
+  for (var i = 0; i < panes.length; i++) panes[i].classList.remove('active');
+  var btns = document.querySelectorAll('#page-wettkampf .tabbtn');
+  for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+
+  var pane = document.getElementById(id);
+  if (pane) pane.classList.add('active');
+  if (btn) btn.classList.add('active');
+
+  if (id === 'wk-pbs')     renderPBs();
+  if (id === 'wk-hist')    renderWkHist();
+  if (id === 'wk-analyse') { if (typeof renderWkAnalyse === 'function') renderWkAnalyse(); }
+  if (id === 'wk-prep')    { if (typeof renderWkPrep    === 'function') renderWkPrep(); }
+}
+
+// ── Seite initialisieren ──────────────────────────────────────────
+function renderWettkampfPage() {
+  var dateEl = document.getElementById('wk-date');
+  if (dateEl) dateEl.value = today();
+  var startsContainer = document.getElementById('wk-starts');
+  if (startsContainer && startsContainer.children.length === 0) {
+    addWkStart();
+  }
+  renderPBs();
+  renderWkHist();
 }
 
 // ── Bestzeiten anzeigen ───────────────────────────────────────────
 async function renderPBs() {
   var c = document.getElementById('pb-list');
   if (!c) return;
+
   var pbs = await dbAll('pbs');
-  var pbPoolEl = document.getElementById('pb-pool'); var pool = pbPoolEl ? pbPoolEl.value : '';
-  var pbStrokeEl = document.getElementById('pb-stroke'); var stroke = pbStrokeEl ? pbStrokeEl.value : '';
-  var filtered = pbs.slice();
-  if (pool)   filtered = filtered.filter(function(p){ return p.poolLength === pool; });
-  if (stroke) filtered = filtered.filter(function(p){ return p.stroke === stroke; });
+
+  var pbPoolEl   = document.getElementById('pb-pool');
+  var pbStrokeEl = document.getElementById('pb-stroke');
+  var pool   = pbPoolEl   ? (pbPoolEl.value   || '') : '';
+  var stroke = pbStrokeEl ? (pbStrokeEl.value || '') : '';
+
+  var filtered = [];
+  for (var i = 0; i < pbs.length; i++) {
+    var p = pbs[i];
+    if (pool   && p.poolLength !== pool)   continue;
+    if (stroke && p.stroke    !== stroke)  continue;
+    filtered.push(p);
+  }
 
   if (!filtered.length) {
-    c.innerHTML = '<div style="text-align:center;padding:28px 14px;color:var(--tm)"><div style="font-size:2.2rem;margin-bottom:7px">⏱️</div><p style="font-size:.875rem;font-weight:500">Noch keine Bestzeiten.</p><p style="font-size:.75rem;margin-top:3px">Trage deinen ersten Wettkampf ein!</p></div>';
+    c.innerHTML = '<div style="text-align:center;padding:28px 14px;color:#9090A8">' +
+      '<div style="font-size:2.2rem;margin-bottom:7px">⏱️</div>' +
+      '<p style="font-size:.875rem;font-weight:500">Noch keine Bestzeiten.</p>' +
+      '<p style="font-size:.75rem;margin-top:3px">Trage deinen ersten Wettkampf ein!</p>' +
+      '</div>';
     return;
   }
-  filtered.sort(function(a,b){
-    var da=parseInt(a.distance)||0, db=parseInt(b.distance)||0;
-    if(da!==db)return da-db;
-    return(a.stroke||'').localeCompare(b.stroke||'');
+
+  filtered.sort(function(a, b) {
+    var da = parseInt(a.distance) || 0;
+    var db = parseInt(b.distance) || 0;
+    if (da !== db) return da - db;
+    return (a.stroke || '').localeCompare(b.stroke || '');
   });
-  c.innerHTML = filtered.map(function(p){
-    return '<div style="background:var(--card);border-radius:14px;padding:12px 13px;margin-bottom:8px;box-shadow:var(--sh);border:1px solid var(--border);display:flex;align-items:center;gap:10px">' +
-      '<div style="width:36px;height:36px;border-radius:10px;background:var(--amber-l,#FFF3E0);display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0">⏱️</div>' +
+
+  var html = '';
+  for (var j = 0; j < filtered.length; j++) {
+    var pb = filtered[j];
+    var timeStr = wkFmt(pb.timeMin, pb.timeSec, pb.timeMs);
+    var dateStr = typeof fmtDate === 'function' ? fmtDate(pb.date) : (pb.date || '');
+    html += '<div style="background:var(--card,#FFF);border-radius:14px;padding:12px 13px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid var(--border,#DCDCE8);display:flex;align-items:center;gap:10px">' +
+      '<div style="width:36px;height:36px;border-radius:10px;background:#FFF3E0;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0">⏱️</div>' +
       '<div style="flex:1">' +
-        '<div style="font-size:.875rem;font-weight:700">'+(p.distance||'')+' '+(p.stroke||'')+'</div>' +
-        '<div style="font-size:1.1rem;font-weight:800;color:var(--blue,#0044FF);letter-spacing:-.3px">'+wkFmtTime(p.timeMin,p.timeSec,p.timeMs)+'</div>' +
-        '<div style="font-size:.7rem;color:var(--tm)">'+(p.poolLength||'?')+'m Bahn · '+(typeof fmtDate==='function'?fmtDate(p.date):p.date)+'</div>' +
+        '<div style="font-size:.875rem;font-weight:700">' + (pb.distance || '') + ' ' + (pb.stroke || '') + '</div>' +
+        '<div style="font-size:1.1rem;font-weight:800;color:#0044FF;letter-spacing:-.3px">' + timeStr + '</div>' +
+        '<div style="font-size:.7rem;color:#9090A8">' + (pb.poolLength || '?') + 'm Bahn · ' + dateStr + '</div>' +
       '</div>' +
     '</div>';
-  }).join('');
+  }
+  c.innerHTML = html;
 }
 
 // ── Verlauf anzeigen ──────────────────────────────────────────────
 async function renderWkHist() {
   var c = document.getElementById('wk-hist-list');
   if (!c) return;
+
   var comps = await dbAll('competitions');
   if (!comps.length) {
-    c.innerHTML = '<div style="text-align:center;padding:28px 14px;color:var(--tm)"><div style="font-size:2.2rem;margin-bottom:7px">🏆</div><p style="font-size:.875rem;font-weight:500">Noch keine Wettkämpfe.</p><p style="font-size:.75rem;margin-top:3px">Trage deinen ersten Wettkampf ein!</p></div>';
+    c.innerHTML = '<div style="text-align:center;padding:28px 14px;color:#9090A8">' +
+      '<div style="font-size:2.2rem;margin-bottom:7px">🏆</div>' +
+      '<p style="font-size:.875rem;font-weight:500">Noch keine Wettkämpfe.</p>' +
+      '<p style="font-size:.75rem;margin-top:3px">Trage deinen ersten Wettkampf ein!</p>' +
+      '</div>';
     return;
   }
-  comps.sort(function(a,b){ return b.date.localeCompare(a.date); });
-  var ratingIcons = {'sehr gut':'⭐⭐⭐','gut':'⭐⭐','okay':'⭐','schwierig':'💪'};
-  c.innerHTML = comps.map(function(comp){
+
+  comps.sort(function(a, b) { return b.date.localeCompare(a.date); });
+
+  var ratingMap = { 'sehr gut': '⭐⭐⭐', 'gut': '⭐⭐', 'okay': '⭐', 'schwierig': '💪' };
+  var html = '';
+
+  for (var ci = 0; ci < comps.length; ci++) {
+    var comp = comps[ci];
     var starts = comp.starts || [];
-    var fmtD = typeof fmtDate==='function' ? fmtDate(comp.date) : comp.date;
-    var startsHTML = starts.length === 0
-      ? '<div style="font-size:.78rem;color:var(--tm);padding:6px 0;font-style:italic">Keine Starts eingetragen.</div>'
-      : starts.map(function(s){
-          var timeStr = wkFmtTime(s.timeMin,s.timeSec,s.timeMs);
-          var pbBadge = s.isPB ? '<span style="font-size:.6rem;background:var(--amber-l,#FFF3E0);color:var(--amber,#FF8F00);padding:2px 6px;border-radius:4px;font-weight:700;margin-left:6px">PB ⭐</span>' : '';
-          var placeStr = s.placement ? '<span style="font-size:.7rem;color:var(--tm);margin-left:6px">Platz '+s.placement+'</span>' : '';
-          var splitsArr = s.splits || [];
-          var splitsStr = splitsArr.length > 0
-            ? '<div style="margin-top:4px;font-size:.65rem;color:var(--tm)">'+splitsArr.map(function(sp){return sp.distance+'m: '+wkFmtTime(sp.timeMin||0,sp.timeSec||0,sp.timeMs||0);}).join(' · ')+'</div>'
-            : '';
-          return '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">' +
-            '<div style="min-width:90px"><div style="font-size:.82rem;font-weight:700">'+(s.distance||'')+' '+(s.stroke||'')+'</div><div style="font-size:.65rem;color:var(--tm)">'+(comp.poolLength||'?')+'m Bahn</div></div>' +
-            '<div style="flex:1"><div style="display:flex;align-items:center;flex-wrap:wrap"><span style="font-size:1.05rem;font-weight:800;color:var(--blue,#0044FF)">'+timeStr+'</span>'+pbBadge+placeStr+'</div>'+splitsStr+'</div>' +
+    var fmtD = typeof fmtDate === 'function' ? fmtDate(comp.date) : (comp.date || '');
+    var ratingStr = ratingMap[comp.rating] || '';
+
+    var startsHtml = '';
+    if (starts.length === 0) {
+      startsHtml = '<div style="font-size:.78rem;color:#9090A8;padding:6px 0;font-style:italic">Keine Starts eingetragen.</div>';
+    } else {
+      for (var si = 0; si < starts.length; si++) {
+        var st = starts[si];
+        var timeStr = wkFmt(st.timeMin, st.timeSec, st.timeMs);
+        var pbBadge = st.isPB ? '<span style="font-size:.6rem;background:#FFF3E0;color:#FF8F00;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:6px">PB ⭐</span>' : '';
+        var placeStr = st.placement ? '<span style="font-size:.7rem;color:#9090A8;margin-left:6px">Platz ' + st.placement + '</span>' : '';
+
+        var splitsHtml = '';
+        var spl = st.splits || [];
+        if (spl.length > 0) {
+          var splParts = [];
+          for (var spi = 0; spi < spl.length; spi++) {
+            splParts.push(spl[spi].distance + 'm: ' + wkFmt(spl[spi].timeMin || 0, spl[spi].timeSec || 0, spl[spi].timeMs || 0));
+          }
+          splitsHtml = '<div style="margin-top:4px;font-size:.65rem;color:#9090A8">' + splParts.join(' · ') + '</div>';
+        }
+
+        startsHtml +=
+          '<div style="display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border,#DCDCE8)">' +
+            '<div style="min-width:90px">' +
+              '<div style="font-size:.82rem;font-weight:700">' + (st.distance || '') + ' ' + (st.stroke || '') + '</div>' +
+              '<div style="font-size:.65rem;color:#9090A8">' + (comp.poolLength || '?') + 'm Bahn</div>' +
+            '</div>' +
+            '<div style="flex:1">' +
+              '<div style="display:flex;align-items:center;flex-wrap:wrap">' +
+                '<span style="font-size:1.05rem;font-weight:800;color:#0044FF">' + timeStr + '</span>' +
+                pbBadge + placeStr +
+              '</div>' +
+              splitsHtml +
+            '</div>' +
           '</div>';
-        }).join('');
-    return '<div style="background:var(--card);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--sh);border:1px solid var(--border)">' +
-      '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">' +
-        '<div style="flex:1"><div style="font-size:.95rem;font-weight:800">'+(comp.name||'Wettkampf')+'</div>' +
-        '<div style="font-size:.72rem;color:var(--tm);margin-top:2px">'+fmtD+(comp.location?' · '+comp.location:'')+' · '+(comp.poolLength||'?')+'m'+(ratingIcons[comp.rating]?' · '+ratingIcons[comp.rating]:'')+'</div></div>' +
-        '<div style="display:flex;gap:6px;align-items:center;flex-shrink:0">' +
-          '<span style="font-size:.72rem;font-weight:700;color:var(--blue,#0044FF)">+'+(comp.pointsEarned||0)+' Pkt.</span>' +
-          '<button onclick="wkDeleteComp(\''+comp.id+'\')" style="width:26px;height:26px;border-radius:50%;background:var(--red-l,#FFEBEE);color:var(--red,#F44336);font-size:.75rem;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none">🗑️</button>' +
+      }
+    }
+
+    html +=
+      '<div style="background:var(--card,#FFF);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid var(--border,#DCDCE8)">' +
+        '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">' +
+          '<div style="flex:1">' +
+            '<div style="font-size:.95rem;font-weight:800">' + (comp.name || 'Wettkampf') + '</div>' +
+            '<div style="font-size:.72rem;color:#9090A8;margin-top:2px">' +
+              fmtD +
+              (comp.location ? ' · ' + comp.location : '') +
+              ' · ' + (comp.poolLength || '?') + 'm' +
+              (ratingStr ? ' · ' + ratingStr : '') +
+            '</div>' +
+          '</div>' +
+          '<div style="display:flex;gap:6px;align-items:center;flex-shrink:0">' +
+            '<span style="font-size:.72rem;font-weight:700;color:#0044FF">+' + (comp.pointsEarned || 0) + ' Pkt.</span>' +
+            '<button onclick="wkDelComp(\'' + comp.id + '\')" style="width:26px;height:26px;border-radius:50%;background:#FFEBEE;color:#F44336;font-size:.75rem;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center">🗑️</button>' +
+          '</div>' +
         '</div>' +
-      '</div>' +
-      '<div>'+startsHTML+'</div>' +
-      (comp.note?'<div style="margin-top:8px;font-size:.75rem;color:var(--tm);font-style:italic;padding-top:6px;border-top:1px solid var(--border)">'+comp.note+'</div>':'') +
-    '</div>';
-  }).join('');
+        '<div>' + startsHtml + '</div>' +
+        (comp.note ? '<div style="margin-top:8px;font-size:.75rem;color:#9090A8;font-style:italic;padding-top:6px;border-top:1px solid var(--border,#DCDCE8)">' + comp.note + '</div>' : '') +
+      '</div>';
+  }
+
+  c.innerHTML = html;
 }
 
 // ── Wettkampf löschen ─────────────────────────────────────────────
-async function wkDeleteComp(id) {
-  if (typeof showConfirm === 'function') {
-    showConfirm('Wettkampf löschen?','Dieser Wettkampf und die damit verbundenen Punkte werden entfernt.',async function(){
-      await wkDoDelete(id);
-      if(typeof closeModal==='function')closeModal('m-confirm');
-    });
-  } else {
-    if(confirm('Wettkampf löschen?'))await wkDoDelete(id);
+function wkDelComp(id) {
+  showConfirm(
+    'Wettkampf löschen?',
+    'Dieser Wettkampf und die damit verbundenen Punkte werden entfernt.',
+    function() { wkDelCompAsync(id); }
+  );
+}
+
+async function wkDelCompAsync(id) {
+  try {
+    var log = await dbAll('points_log');
+    var oldPts = 0;
+    for (var i = 0; i < log.length; i++) {
+      if (log[i].entryId === id) oldPts += log[i].points;
+    }
+    if (oldPts !== 0) {
+      await dbPut('points_log', {
+        id: genId(), date: today(),
+        reason: 'Wettkampf gelöscht', points: -oldPts,
+        entryId: id, entryType: 'deletion'
+      });
+    }
+    await dbDel('competitions', id);
+    closeModal('m-confirm');
+    showToast('Wettkampf gelöscht.');
+    renderPBs();
+    renderWkHist();
+  } catch (err) {
+    showToast('Fehler: ' + (err.message || String(err)));
   }
-}
-async function wkDoDelete(id) {
-  var log = await dbAll('points_log');
-  var oldPts = 0;
-  log.forEach(function(l){if(l.entryId===id)oldPts+=l.points;});
-  if(oldPts!==0)await dbPut('points_log',{id:genId(),date:today(),reason:'Wettkampf gelöscht',points:-oldPts,entryId:id,entryType:'deletion'});
-  await dbDel('competitions',id);
-  if(typeof showToast==='function')showToast('Wettkampf gelöscht.');
-  renderPBs(); renderWkHist();
-}
-
-// ── Tab-Navigation ────────────────────────────────────────────────
-function wkTab(id, btn) {
-  document.querySelectorAll('#page-wettkampf .tabpane').forEach(function(p){p.classList.remove('active');});
-  document.querySelectorAll('#page-wettkampf .tabbtn').forEach(function(b){b.classList.remove('active');});
-  var pane = document.getElementById(id);
-  if(pane)pane.classList.add('active');
-  if(btn)btn.classList.add('active');
-  if(id==='wk-pbs')     renderPBs();
-  if(id==='wk-hist')    renderWkHist();
-  if(id==='wk-analyse' && typeof renderWkAnalyse==='function') renderWkAnalyse();
-  if(id==='wk-prep'    && typeof renderWkPrep   ==='function') renderWkPrep();
-}
-
-// ── Seite initialisieren ──────────────────────────────────────────
-async function renderWettkampfPage() {
-  var dateEl = document.getElementById('wk-date');
-  if(dateEl)dateEl.value = today();
-  var startsContainer = document.getElementById('wk-starts');
-  if(startsContainer && startsContainer.children.length===0) addWkStart();
-  renderPBs();
-  renderWkHist();
 }
 // ══════════════════════════════════════════════════════════════════
 // WETTKAMPF ANALYSE v2
