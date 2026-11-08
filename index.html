@@ -825,9 +825,9 @@ const haptic=()=>{try{navigator.vibrate&&navigator.vibrate(10);}catch(e){}};
 async function getProfile(){const p=await dbGet('profile','main');return p||{id:'main',name:'',club:'',weeklyGoal:5};}
 async function saveProfile(){
   const p=await getProfile();
-  p.name=document.getElementById('s-name')?.value.trim()||p.name;
-  p.club=document.getElementById('s-club')?.value.trim()||p.club;
-  p.weeklyGoal=parseInt(document.getElementById('s-goal')?.value)||5;
+  p.name=(document.getElementById('s-name')||{}).value.trim()||p.name;
+  p.club=(document.getElementById('s-club')||{}).value.trim()||p.club;
+  p.weeklyGoal=parseInt((document.getElementById('s-goal')||{}).value)||5;
   await dbPut('profile',p);showToast('Profil gespeichert.');renderHeutePage();
 }
 async function loadSettingsPage(){
@@ -867,7 +867,7 @@ function goTo(page){
   if(pe)pe.classList.add('active');
   if(ne)ne.classList.add('active');
   const morePages=['fortschritt','uebungen','einstellungen'];
-  if(morePages.includes(page))document.getElementById('nb-mehr')?.classList.add('active');
+  if(morePages.includes(page))(document.getElementById('nb-mehr')||{classList:{add:function(){},remove:function(){},toggle:function(){}}}).classList.add('active');
   S.page=page;
   try{const ps=document.getElementById('page-'+page);if(ps)ps.scrollTop=0;}catch(e){}
   if(page==='heute')renderHeutePage();
@@ -1020,7 +1020,7 @@ async function updateHeaderAvatar(){
 }
 
 // ── MODALS & TOAST ────────────────────────────────────────────────────────────
-function closeModal(id){document.getElementById(id)?.classList.add('hidden');}
+function closeModal(id){(document.getElementById(id)||{classList:{add:function(){},remove:function(){},toggle:function(){}}}).classList.add('hidden');}
 function showToast(msg,ms=2500){
   const t=document.getElementById('toast'),tx=document.getElementById('toast-txt');
   if(!t||!tx)return;tx.textContent=msg;t.classList.remove('hidden');
@@ -1191,13 +1191,13 @@ function addSet(){
 }
 function removeSet(idx){const e=document.getElementById('set-'+idx);if(e)e.remove();}
 function updPrev(idx){
-  const r=document.getElementById('sr-'+idx)?.value||'1';
-  const d=document.getElementById('sd-'+idx)?.value||'';
-  const s=document.getElementById('ss-'+idx)?.value||'';
-  const z=document.getElementById('sz-'+idx)?.value||'';
-  const p=document.getElementById('sp-'+idx)?.value||'0';
-  const e=document.getElementById('se-'+idx)?.value||'';
-  const n=document.getElementById('sn-'+idx)?.value||'';
+  const r=(document.getElementById('sr-'+idx)||{}).value||'1';
+  const d=(document.getElementById('sd-'+idx)||{}).value||'';
+  const s=(document.getElementById('ss-'+idx)||{}).value||'';
+  const z=(document.getElementById('sz-'+idx)||{}).value||'';
+  const p=(document.getElementById('sp-'+idx)||{}).value||'0';
+  const e=(document.getElementById('se-'+idx)||{}).value||'';
+  const n=(document.getElementById('sn-'+idx)||{}).value||'';
   let lbl='';
   if(r>1)lbl+=r+'×';if(d)lbl+=d;if(s)lbl+=' '+s;if(z)lbl+=' '+z;
   if(parseInt(p)>0)lbl+=' | Pause '+p+'s';if(e)lbl+=' | '+e;if(n)lbl+=' → '+n;
@@ -1207,7 +1207,7 @@ function collectSets(){
   const sets=[];
   document.querySelectorAll('.set-row').forEach(row=>{
     const idx=row.id.replace('set-','');
-    const s={reps:parseInt(document.getElementById('sr-'+idx)?.value)||1,distance:document.getElementById('sd-'+idx)?.value||'',stroke:document.getElementById('ss-'+idx)?.value||'',zone:document.getElementById('sz-'+idx)?.value||'',restSec:parseInt(document.getElementById('sp-'+idx)?.value)||0,equipment:document.getElementById('se-'+idx)?.value||'',note:document.getElementById('sn-'+idx)?.value||''};
+    const s={reps:parseInt((document.getElementById('sr-'+idx)||{}).value)||1,distance:(document.getElementById('sd-'+idx)||{}).value||'',stroke:(document.getElementById('ss-'+idx)||{}).value||'',zone:(document.getElementById('sz-'+idx)||{}).value||'',restSec:parseInt((document.getElementById('sp-'+idx)||{}).value)||0,equipment:(document.getElementById('se-'+idx)||{}).value||'',note:(document.getElementById('sn-'+idx)||{}).value||''};
     if(s.distance||s.stroke||s.note)sets.push(s);
   });
   return sets;
@@ -1220,24 +1220,24 @@ async function saveTraining(e){
   try{
     const date=document.getElementById('tf-date').value;
     const type=document.getElementById('tf-type').value;
-    const unit=document.querySelector('input[name="tf-unit"]:checked')?.value||'absolviert';
+    const unit=(document.querySelector('input[name="tf-unit"]:checked')||{}).value||'absolviert';
     const dur=parseInt(document.getElementById('tf-dur').value)||60;
     const load=parseInt(document.getElementById('tf-load').value)||5;
     const well=parseInt(document.getElementById('tf-well').value)||3;
-    const plan=document.querySelector('input[name="tf-plan"]:checked')?.value||'teilweise';
+    const plan=(document.querySelector('input[name="tf-plan"]:checked')||{}).value||'teilweise';
     if(!date||!type){showToast('Bitte Datum und Trainingsart ausfüllen.');return;}
     if(!S.editId){
       const existing=await dbAll('training');
       const dup=existing.find(en=>en.date===date&&en.type===type&&en.durationMin===dur);
       if(dup){showToast('Ein ähnlicher Eintrag für diesen Tag existiert bereits.');return;}
     }
-    const km=parseFloat(document.getElementById('tf-km')?.value)||null;
-    const focus=document.getElementById('tf-focus')?.value.trim()||'';
+    const km=parseFloat((document.getElementById('tf-km')||{}).value)||null;
+    const focus=(document.getElementById('tf-focus')||{}).value.trim()||'';
     const strokes=Array.from(document.querySelectorAll('#stroke-chips .chip.sel')).map(c=>c.dataset.v);
-    const reflGood=document.getElementById('tf-good')?.value.trim()||'';
-    const reflHard=document.getElementById('tf-hard')?.value.trim()||'';
-    const reflNext=document.getElementById('tf-next')?.value.trim()||'';
-    const note=document.getElementById('tf-note')?.value.trim()||'';
+    const reflGood=(document.getElementById('tf-good')||{}).value.trim()||'';
+    const reflHard=(document.getElementById('tf-hard')||{}).value.trim()||'';
+    const reflNext=(document.getElementById('tf-next')||{}).value.trim()||'';
+    const note=(document.getElementById('tf-note')||{}).value.trim()||'';
     const sets=collectSets();
     const id=S.editId||genId();
     const entry={id,date,type,unit,durationMin:dur,load,wellbeing:well,planCompleted:plan,km,focus,strokes,reflGood,reflHard,reflNext,note,sets,createdAt:new Date().toISOString()};
