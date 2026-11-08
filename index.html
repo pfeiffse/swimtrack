@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -320,6 +321,8 @@ input,select,textarea{font-family:inherit;font-size:16px}
 @keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
 
 </style>
+
+<!-- SwimTrack consolidated fix build 2026-11-08-v2: competition IDs + PWA cache -->
 </head>
 <body>
 <div id="app">
@@ -1683,7 +1686,7 @@ function wkGetSplitDistances(distStr) {
 // OVERRIDE: Diese Funktion ersetzt die alte addWkStart aus js_core
 
 function wkRemoveStart(idx) {
-  var el = document.getElementById('wks-' + idx);
+  var el = document.getElementById('wk-start-block-' + idx);
   if (el) el.remove();
 }
 
@@ -1802,14 +1805,14 @@ function addWkStart() {
   }
   distHtml += '</select>';
 
-  var strokeHtml = '<select id="wks-' + idx + '">';
+  var strokeHtml = '<select id="wk-stroke-' + idx + '" data-field="stroke">';
   for (var j = 0; j < strokeOpts.length; j++) {
     strokeHtml += '<option value="' + strokeOpts[j] + '">' + strokeOpts[j] + '</option>';
   }
   strokeHtml += '</select>';
 
   var block = document.createElement('div');
-  block.id = 'wks-' + idx;
+  block.id = 'wk-start-block-' + idx;
   block.className = 'wk-start-block';
   block.innerHTML =
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">' +
@@ -1847,13 +1850,13 @@ function addWkStart() {
   // Style the selects
   var selStyle = 'width:100%;padding:8px 9px;border:1.5px solid #DCDCE8;border-radius:8px;font-size:15px;color:#0D0D1A;background:#FFF;outline:none';
   var distSel = document.getElementById('wkd-' + idx);
-  var strokeSel = document.getElementById('wks-' + idx);
+  var strokeSel = document.getElementById('wk-stroke-' + idx);
   if (distSel) distSel.style.cssText = selStyle;
   if (strokeSel) strokeSel.style.cssText = selStyle;
 }
 
 function wkDelStart(idx) {
-  var el = document.getElementById('wks-' + idx);
+  var el = document.getElementById('wk-start-block-' + idx);
   if (el) el.parentNode.removeChild(el);
 }
 
@@ -1945,11 +1948,11 @@ function saveWettkampf(e) {
   var startsData = [];
 
   for (var i = 0; i < blocks.length; i++) {
-    var blockId = blocks[i].id; // 'wks-N'
-    var idx = blockId.replace('wks-', '');
+    var blockId = blocks[i].id; // 'wk-start-block-N'
+    var idx = blockId.replace('wk-start-block-', '');
 
     var distEl   = document.getElementById('wkd-'  + idx);
-    var strokeEl = document.getElementById('wks-'  + idx);
+    var strokeEl = document.getElementById('wk-stroke-'  + idx);
     var minEl    = document.getElementById('wkm-'  + idx);
     var secEl    = document.getElementById('wkse-' + idx);
     var msEl     = document.getElementById('wkms-' + idx);
@@ -4055,3 +4058,4 @@ async function saveWorkoutAsEntry(){
 </script>
 </body>
 </html>
+
