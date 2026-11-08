@@ -1258,7 +1258,7 @@ async function saveTraining(e){
   finally{btn.disabled=false;btn.textContent=S.editId?'Änderungen speichern':'Training speichern';}
 }
 function resetTrainingForm(){
-  document.getElementById('tform')?.reset();
+  var tformEl=document.getElementById('tform');if(tformEl)tformEl.reset();
   const d=document.getElementById('tf-date');if(d){d.value=today();d.style.display='none';}
   document.getElementById('tf-type').value='';
   document.querySelectorAll('#type-chips .chip').forEach(c=>c.classList.remove('sel'));
@@ -1293,7 +1293,7 @@ async function openEntry(id){
   if(e.note)document.getElementById('tf-note').value=e.note;
   if(e.km||e.focus||e.reflGood||e.reflHard||e.reflNext||e.note){document.getElementById('opt-fields').classList.remove('hidden');document.getElementById('opt-toggle').textContent='− Weniger Details';}
   document.getElementById('sets-container').innerHTML='';S.setIdx=0;
-  if(e.sets?.length){e.sets.forEach(s=>{addSet();const idx=S.setIdx;if(s.reps)document.getElementById('sr-'+idx).value=s.reps;if(s.distance)document.getElementById('sd-'+idx).value=s.distance;if(s.stroke)document.getElementById('ss-'+idx).value=s.stroke;if(s.zone)document.getElementById('sz-'+idx).value=s.zone;if(s.restSec)document.getElementById('sp-'+idx).value=s.restSec;if(s.equipment)document.getElementById('se-'+idx).value=s.equipment;if(s.note)document.getElementById('sn-'+idx).value=s.note;updPrev(idx);});}
+  if(e.sets&&e.sets.length){e.sets.forEach(s=>{addSet();const idx=S.setIdx;if(s.reps)document.getElementById('sr-'+idx).value=s.reps;if(s.distance)document.getElementById('sd-'+idx).value=s.distance;if(s.stroke)document.getElementById('ss-'+idx).value=s.stroke;if(s.zone)document.getElementById('sz-'+idx).value=s.zone;if(s.restSec)document.getElementById('sp-'+idx).value=s.restSec;if(s.equipment)document.getElementById('se-'+idx).value=s.equipment;if(s.note)document.getElementById('sn-'+idx).value=s.note;updPrev(idx);});}
   document.getElementById('edit-banner').classList.remove('hidden');
   const btn=document.getElementById('tf-submit');if(btn)btn.textContent='Änderungen speichern';
 }
